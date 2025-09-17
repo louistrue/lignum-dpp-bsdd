@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ids:IDS xmlns:ids="http://standards.buildingsmart.org/IDS">
+  <ids:Specification name="Insulation λ declared">
+    <ids:Entity name="IfcWallStandardCase"/>
+    <ids:Property>
+      <ids:PropertySet>CPset_Insulation_Performance</ids:PropertySet>
+      <ids:Name>lambdaDeclared_EN12664</ids:Name>
+      <ids:HasValue datatype="xs:double"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/thermalConductivityDeclared_EN12664</ids:Uri>
+    </ids:Property>
+    <ids:Property>
+      <ids:PropertySet>CPset_Insulation_Performance</ids:PropertySet>
+      <ids:Name>fireReactionEuroclass_EN13501</ids:Name>
+      <ids:HasValue datatype="xs:string"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/fireReactionEuroclass_EN13501</ids:Uri>
+    </ids:Property>
+  </ids:Specification>
+
+  <ids:Specification name="PVC Pipe Properties">
+    <ids:Entity name="IfcPipeSegment"/>
+    <ids:Property>
+      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
+      <ids:Name>nominalDiameter</ids:Name>
+      <ids:HasValue datatype="xs:string"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/nominalDiameter</ids:Uri>
+    </ids:Property>
+    <ids:Property>
+      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
+      <ids:Name>materialType</ids:Name>
+      <ids:HasValue datatype="xs:string"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/material</ids:Uri>
+    </ids:Property>
+    <ids:Property>
+      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
+      <ids:Name>density</ids:Name>
+      <ids:HasValue datatype="xs:double"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/density</ids:Uri>
+    </ids:Property>
+    <ids:Property>
+      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
+      <ids:Name>thermalConductivity</ids:Name>
+      <ids:HasValue datatype="xs:double"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/thermalConductivity</ids:Uri>
+    </ids:Property>
+  </ids:Specification>
+
+  <ids:Specification name="Glulam Properties">
+    <ids:Entity name="IfcMember"/>
+    <ids:Property>
+      <ids:PropertySet>CPset_Timber_Performance</ids:PropertySet>
+      <ids:Name>strengthClass_EN14080</ids:Name>
+      <ids:HasValue datatype="xs:string"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0/prop/strengthClass_EN14080</ids:Uri>
+    </ids:Property>
+    <ids:Property>
+      <ids:PropertySet>CPset_Timber_Performance</ids:PropertySet>
+      <ids:Name>density</ids:Name>
+      <ids:HasValue datatype="xs:double"/>
+      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0/prop/density_EN14080</ids:Uri>
+    </ids:Property>
+  </ids:Specification>
+</ids:IDS>

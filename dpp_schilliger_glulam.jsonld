@@ -1,0 +1,94 @@
+{
+    "@context": {
+        "dpp": "http://www.w3id.org/dpp#",
+        "bsdd": "https://identifier.buildingsmart.org/uri/"
+    },
+    "type": "dpp:Product",
+    "dpp:hasName": "Schilliger Brettschichtholz",
+    "dpp:hasIdentifier": [
+        {
+            "@type": "dpp:URI",
+            "dpp:identifierAsText": "SCHILLIGER-BSH-GL24h-2022"
+        }
+    ],
+    "dpp:hasSpecification": {
+        "@type": "dpp:ProductSpecification",
+        "dpp:hasQuantity": [
+            {
+                "@type": "dpp:Quantity",
+                "dpp:hasQuantityKind": {
+                    "@type": "dpp:QuantityKind",
+                    "dpp:hasName": "strengthClass_EN14080"
+                },
+                "dpp:hasQuantityValue": {
+                    "@type": "dpp:QuantityValue",
+                    "dpp:hasTextValue": "GL24h",
+                    "dpp:hasUnit": "-"
+                },
+                "dpp:hasConceptUri": "https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0/prop/strengthClass_EN14080",
+                "dpp:wasDerivedFrom": {
+                    "@type": "dpp:EntityWithProvenance",
+                    "dpp:attributedTo": {
+                        "@type": "dpp:Agent",
+                        "dpp:hasName": "Schilliger Holz AG"
+                    },
+                    "dpp:hasDocument": [
+                        {
+                            "@type": "dpp:Document",
+                            "dpp:hasName": "01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
+                            "dpp:hasUri": "/mnt/data/OneDrive_3_16.9.2025/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    ]
+                }
+            },
+            {
+                "@type": "dpp:Quantity",
+                "dpp:hasQuantityKind": {
+                    "@type": "dpp:QuantityKind",
+                    "dpp:hasName": "density"
+                },
+                "dpp:hasQuantityValue": {
+                    "@type": "dpp:QuantityValue",
+                    "dpp:hasNumericValue": 410,
+                    "dpp:hasUnit": "kg/m³"
+                },
+                "dpp:hasConceptUri": "https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0/prop/density_EN14080",
+                "dpp:wasDerivedFrom": {
+                    "@type": "dpp:EntityWithProvenance",
+                    "dpp:attributedTo": {
+                        "@type": "dpp:Agent",
+                        "dpp:hasName": "Schilliger Holz AG"
+                    },
+                    "dpp:hasDocument": [
+                        {
+                            "@type": "dpp:Document",
+                            "dpp:hasName": "EPD Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
+                            "dpp:hasUri": "/mnt/data/OneDrive_3_16.9.2025/EPD Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf"
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "dpp:generatedBy": {
+        "@type": "dpp:ProvenanceActivity",
+        "dpp:hasName": "manufacturing"
+    },
+    "dpp:hasClassification": {
+        "@type": "dpp:Classification",
+        "dpp:hasConceptUri": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/class/glulam",
+        "dpp:hasName": "glued laminated timber"
+    },
+    "dpp:hasDocument": [
+        {
+            "@type": "dpp:Document",
+            "dpp:hasName": "Leistungserklaerung",
+            "dpp:hasUri": "file:///mnt/data/OneDrive_3_16.9.2025/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+        },
+        {
+            "@type": "dpp:Document",
+            "dpp:hasName": "EPD",
+            "dpp:hasUri": "file:///mnt/data/OneDrive_3_16.9.2025/EPD Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf"
+        }
+    ]
+}
