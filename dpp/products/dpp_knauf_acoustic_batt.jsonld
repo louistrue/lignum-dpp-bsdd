@@ -1,0 +1,558 @@
+{
+    "@context": {
+        "schema": "https://schema.org/",
+        "dcterms": "http://purl.org/dc/terms/",
+        "prov": "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "dpp": "http://www.w3id.org/dpp#",
+        "bsdd": "https://identifier.buildingsmart.org/uri/",
+        "id": "@id",
+        "type": "@type"
+    },
+    "id": "did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001",
+    "type": "dpp:DigitalProductPassport",
+    "dcterms:conformsTo": [
+        "prEN 18223:2025 - System Interoperability and Data Model",
+        "prEN 18222:2025 - API",
+        "prEN 18216:2025 - Data Exchange Protocols",
+        "prEN 18220:2025 - Data Carrier",
+        "prEN 18219:2025 - Identifiers",
+        "ISO 22057:2022 - Data templates for EPD in BIM"
+    ],
+    "dpp:registry": {
+        "id": "urn:eu-dpp-reg:knauf-001-2025",
+        "schema:url": "http://localhost:8000/registry/knauf-001-2025"
+    },
+    "dpp:status": "active",
+    "dcterms:created": "2025-09-19T09:00:00Z",
+    "dcterms:modified": "2025-09-19T09:00:00Z",
+    "dcterms:language": "en",
+    "dpp:dppSchemaVersion": "1.0.0",
+    "dpp:granularity": "model",
+    "dpp:economicOperator": {
+        "type": "schema:Organization",
+        "id": "did:web:knaufinsulation.com",
+        "schema:name": "Knauf Insulation GmbH",
+        "dpp:lei": "529900KNAUF12345678",
+        "dpp:gln": "4012345000001"
+    },
+    "dpp:backupOperator": {
+        "type": "schema:Organization",
+        "schema:name": "DPP Backup Services AG",
+        "dpp:lei": "529900BACKUP123456"
+    },
+    "dpp:productIdentifiers": [
+        {
+            "dpp:scheme": "gtin",
+            "dpp:value": "04012345678901"
+        },
+        {
+            "dpp:scheme": "mpn",
+            "dpp:value": "KNAUF-ACOUSTIC-BATT-2025"
+        },
+        {
+            "dpp:scheme": "custom",
+            "dpp:namespace": "knaufId",
+            "dpp:value": "KI-AB-2025-001"
+        }
+    ],
+    "dpp:labels": [
+        "construction",
+        "insulation",
+        "thermal",
+        "acoustic",
+        "glasswool"
+    ],
+    "dpp:dataElementCollections": [
+        {
+            "id": "#productProperties",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Product Properties",
+            "dpp:labelSet": [
+                "technical",
+                "performance"
+            ],
+            "dpp:elements": [
+                {
+                    "id": "#thermalConductivity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/thermal/conductivity",
+                    "dpp:name": "LAMBDA_DECLARED_EN12664",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/thermalConductivityDeclared_EN12664",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 0.047,
+                        "dpp:unit": "W/mK"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Data.pdf",
+                            "schema:url": "http://localhost:8000/files/insul/Data.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#density",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/physical/density",
+                    "dpp:name": "DENSITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/Density",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 85,
+                        "dpp:unit": "kg/m³"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Acoustic Batt Datasheet",
+                            "schema:url": "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#waterVapourResistivity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/hygrothermal/waterVapourResistivity",
+                    "dpp:name": "WATER_VAPOUR_RESISTIVITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/WaterVapourResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 5.00,
+                        "dpp:unit": "MNs/g.m"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#compressiveStrength",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/mechanical/compressiveStrength",
+                    "dpp:name": "COMPRESSIVE_STRENGTH",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/CompressiveStrength",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 10,
+                        "dpp:unit": "kPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dimensionalStability",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/mechanical/dimensionalStability",
+                    "dpp:name": "DIMENSIONAL_STABILITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/DimensionalStability",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 1,
+                        "dpp:unit": "%"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#airFlowResistivity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/acoustic/airFlowResistivity",
+                    "dpp:name": "AIR_FLOW_RESISTIVITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/AirFlowResistivity",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 10,
+                        "dpp:unit": "kPa·s/m²"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Product Datasheet",
+                            "schema:url": "http://localhost:8000/files/insul/Acoustic Batt Datasheet .pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#longTermWaterAbsorption",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/hygrothermal/longTermWaterAbsorption",
+                    "dpp:name": "LONG_TERM_WATER_ABSORPTION_TOTAL",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/LongTermWaterAbsorptionTotal",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 10,
+                        "dpp:unit": "%"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#fireReaction",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/fire/reaction",
+                    "dpp:name": "REACTION_TO_FIRE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ReactionToFire",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "A1",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Acoustic Batt Datasheet",
+                            "schema:url": "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "#epd",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Environmental Product Declaration",
+            "dpp:labelSet": [
+                "EPD",
+                "EN15804+A2",
+                "ISO22057"
+            ],
+            "dpp:elements": [
+                {
+                    "id": "#epdHeader",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/general",
+                    "dpp:value": {
+                        "programmeOperator": "EPD International",
+                        "epdNumber": "S-P-05678",
+                        "validFrom": "2024-01-01",
+                        "validUntil": "2029-01-01",
+                        "referenceUnit": {
+                            "value": 1,
+                            "unit": "m³"
+                        },
+                        "standard": "EN 15804+A2:2019"
+                    }
+                },
+                {
+                    "id": "#methodology",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/methodology",
+                    "dpp:value": {
+                        "corePCR": "EN 15804:2012+A2:2019",
+                        "informationModulesReported": [
+                            "A1",
+                            "A2",
+                            "A3",
+                            "A4",
+                            "A5",
+                            "C2",
+                            "C3",
+                            "C4",
+                            "D"
+                        ],
+                        "allocationCompliesWithPCR": true,
+                        "genericLCASourceUsed": false
+                    }
+                },
+                {
+                    "id": "#scenariosA4",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/scenarios/A4",
+                    "dpp:value": {
+                        "transportDistance": {
+                            "value": 150,
+                            "unit": "km"
+                        },
+                        "vehicleType": "Euro6 16-32t",
+                        "payloadUtilization": 0.90
+                    }
+                },
+                {
+                    "id": "#lciaIndicators",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/indicators/lcia",
+                    "dpp:value": [
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A1-A3",
+                            "value": 1.23,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-fossil",
+                            "module": "A1-A3",
+                            "value": 1.15,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-biogenic",
+                            "module": "A1-A3",
+                            "value": 0.05,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-luluc",
+                            "module": "A1-A3",
+                            "value": 0.03,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "ODP",
+                            "module": "A1-A3",
+                            "value": 1.2e-8,
+                            "unit": "kg CFC-11e"
+                        },
+                        {
+                            "indicator": "AP",
+                            "module": "A1-A3",
+                            "value": 0.0045,
+                            "unit": "mol H+e"
+                        },
+                        {
+                            "indicator": "EP-freshwater",
+                            "module": "A1-A3",
+                            "value": 0.00012,
+                            "unit": "kg PO4e"
+                        },
+                        {
+                            "indicator": "EP-marine",
+                            "module": "A1-A3",
+                            "value": 0.0013,
+                            "unit": "kg Ne"
+                        },
+                        {
+                            "indicator": "EP-terrestrial",
+                            "module": "A1-A3",
+                            "value": 0.014,
+                            "unit": "mol Ne"
+                        },
+                        {
+                            "indicator": "POCP",
+                            "module": "A1-A3",
+                            "value": 0.0038,
+                            "unit": "kg NMVOCe"
+                        }
+                    ]
+                },
+                {
+                    "id": "#lciIndicators",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/indicators/lci",
+                    "dpp:value": [
+                        {
+                            "indicator": "PERE",
+                            "module": "A1-A3",
+                            "value": 12.5,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PERM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PERT",
+                            "module": "A1-A3",
+                            "value": 12.5,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRE",
+                            "module": "A1-A3",
+                            "value": 18.7,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRT",
+                            "module": "A1-A3",
+                            "value": 18.7,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "SM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "RSF",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "NRSF",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "FW",
+                            "module": "A1-A3",
+                            "value": 0.025,
+                            "unit": "m³"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "#documents",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Documents",
+            "dpp:elements": [
+                {
+                    "id": "#technicalDatasheet",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "Acoustic_Batt_Datasheet.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
+                    "dpp:language": "en"
+                },
+                {
+                    "id": "#epdDocument",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "EPD_Data.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/insul/Data.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "b2c3d4e5f67890123456789012345678901234567890123456789012345678901",
+                    "dpp:language": "en"
+                },
+                {
+                    "id": "#declarationOfPerformance",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "G4209LSCPR_EN.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "c3d4e5f67890123456789012345678901234567890123456789012345678902",
+                    "dpp:language": "en"
+                }
+            ]
+        },
+        {
+            "id": "#carrier",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Data Carrier",
+            "dpp:elements": [
+                {
+                    "id": "#qrLink",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "carrier/qr",
+                    "dpp:value": {
+                        "uri": "http://localhost:8000/id/01/04012345678901/21/KI-AB-2025-001?linkType=dpp",
+                        "resolverUri": "http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "#classification",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Classification",
+            "dpp:elements": [
+                {
+                    "id": "#productClass",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "classification/product",
+                    "dpp:value": {
+                        "scheme": "bSDD",
+                        "uri": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/class/glasswool-batt",
+                        "name": "Glass mineral wool batt"
+                    }
+                }
+            ]
+        }
+    ],
+    "dpp:changeLog": [
+        {
+            "type": "dpp:ChangeEvent",
+            "dpp:changeId": "urn:uuid:550e8400-e29b-41d4-a716-446655440001",
+            "dpp:timestamp": "2025-09-19T09:00:00Z",
+            "dpp:actor": {
+                "type": "dpp:Agent",
+                "schema:name": "Lignum DPP System"
+            },
+            "dpp:changeObject": "dpp:DigitalProductPassport",
+            "dpp:changedProperties": [
+                "initial creation"
+            ],
+            "dpp:changeType": "create"
+        }
+    ],
+    "prov:wasGeneratedBy": {
+        "type": "prov:Activity",
+        "prov:activityType": "manufacturing",
+        "prov:endedAtTime": "2025-09-19T09:00:00Z"
+    }
+}

@@ -1,0 +1,512 @@
+{
+    "@context": {
+        "schema": "https://schema.org/",
+        "dcterms": "http://purl.org/dc/terms/",
+        "prov": "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "dpp": "http://www.w3id.org/dpp#",
+        "bsdd": "https://identifier.buildingsmart.org/uri/",
+        "id": "@id",
+        "type": "@type"
+    },
+    "id": "did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001",
+    "type": "dpp:DigitalProductPassport",
+    "dcterms:conformsTo": [
+        "prEN 18223:2025 - System Interoperability and Data Model",
+        "prEN 18222:2025 - API",
+        "prEN 18216:2025 - Data Exchange Protocols",
+        "prEN 18220:2025 - Data Carrier",
+        "prEN 18219:2025 - Identifiers",
+        "ISO 22057:2022 - Data templates for EPD in BIM"
+    ],
+    "dpp:registry": {
+        "id": "urn:eu-dpp-reg:schilliger-001-2022",
+        "schema:url": "http://localhost:8000/registry/schilliger-001-2022"
+    },
+    "dpp:status": "active",
+    "dcterms:created": "2025-09-19T09:00:00Z",
+    "dcterms:modified": "2025-09-19T09:00:00Z",
+    "dcterms:language": "de-CH",
+    "dpp:dppSchemaVersion": "1.0.0",
+    "dpp:granularity": "batch",
+    "dpp:economicOperator": {
+        "type": "schema:Organization",
+        "id": "did:web:schilliger.ch",
+        "schema:name": "Schilliger Holz AG",
+        "dpp:lei": "506700SCHILLIGER123",
+        "dpp:gln": "7640123450001"
+    },
+    "dpp:backupOperator": {
+        "type": "schema:Organization",
+        "schema:name": "Swiss DPP Services AG",
+        "dpp:lei": "506700SWISSDPP1234"
+    },
+    "dpp:facilityId": {
+        "type": "dpp:Facility",
+        "dpp:gln": "7640123450018",
+        "schema:name": "Schilliger Küssnacht Production Site"
+    },
+    "dpp:productIdentifiers": [
+        {
+            "dpp:scheme": "gtin",
+            "dpp:value": "07640123456789"
+        },
+        {
+            "dpp:scheme": "mpn",
+            "dpp:value": "SCHILLIGER-BSH-GL24h-2022"
+        },
+        {
+            "dpp:scheme": "custom",
+            "dpp:namespace": "schilligerId",
+            "dpp:value": "BSH-SHI-01-01062022"
+        }
+    ],
+    "dpp:labels": [
+        "construction",
+        "timber",
+        "structural",
+        "glulam",
+        "engineered-wood"
+    ],
+    "dpp:dataElementCollections": [
+        {
+            "id": "#productProperties",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Product Properties",
+            "dpp:labelSet": [
+                "technical",
+                "structural",
+                "EN14080"
+            ],
+            "dpp:elements": [
+                {
+                    "id": "#strengthClass",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/structural/strengthClass",
+                    "dpp:name": "strengthClass_EN14080",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/strengthClass_EN14080",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "GL24h",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#density",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/physical/density",
+                    "dpp:name": "density",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/density_EN14080",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 410,
+                        "dpp:unit": "kg/m³"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "EPD Schilliger Glulam",
+                            "schema:url": "http://localhost:8000/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#moistureContent",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/physical/moistureContent",
+                    "dpp:name": "moistureContent",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/moistureContent",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 12,
+                        "dpp:unit": "%"
+                    }
+                },
+                {
+                    "id": "#adhesive",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/material/adhesive",
+                    "dpp:name": "adhesiveType",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/adhesiveType",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "MUF (Melamine-Urea-Formaldehyde)",
+                        "dpp:unit": "-"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "#epd",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Environmental Product Declaration",
+            "dpp:labelSet": [
+                "EPD",
+                "EN15804+A2",
+                "ISO22057"
+            ],
+            "dpp:elements": [
+                {
+                    "id": "#epdHeader",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/general",
+                    "dpp:value": {
+                        "programmeOperator": "IBU",
+                        "epdNumber": "EPD-SCH-20130123-IBC1-DE",
+                        "validFrom": "2013-01-23",
+                        "validUntil": "2018-01-23",
+                        "referenceUnit": {
+                            "value": 1,
+                            "unit": "m³"
+                        },
+                        "standard": "EN 15804:2012+A1:2013"
+                    }
+                },
+                {
+                    "id": "#methodology",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/methodology",
+                    "dpp:value": {
+                        "corePCR": "EN 15804:2012+A1:2013",
+                        "subCategoryPCR": "Solid wood products",
+                        "informationModulesReported": [
+                            "A1",
+                            "A2",
+                            "A3",
+                            "A4",
+                            "A5",
+                            "B1",
+                            "B2",
+                            "B3",
+                            "B4",
+                            "B5",
+                            "B6",
+                            "B7",
+                            "C1",
+                            "C2",
+                            "C3",
+                            "C4",
+                            "D"
+                        ],
+                        "allocationCompliesWithPCR": true,
+                        "genericLCASourceUsed": false,
+                        "biogenicCarbonContent": -825
+                    }
+                },
+                {
+                    "id": "#scenariosA4",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/scenarios/A4",
+                    "dpp:value": {
+                        "transportDistance": {
+                            "value": 250,
+                            "unit": "km"
+                        },
+                        "vehicleType": "Euro5 truck 27t",
+                        "payloadUtilization": 0.85,
+                        "fuelType": "diesel"
+                    }
+                },
+                {
+                    "id": "#scenariosA5",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/scenarios/A5",
+                    "dpp:value": {
+                        "installationWaste": {
+                            "value": 5,
+                            "unit": "%"
+                        },
+                        "wasteToLandfill": {
+                            "value": 0,
+                            "unit": "%"
+                        },
+                        "wasteToIncineration": {
+                            "value": 100,
+                            "unit": "%"
+                        }
+                    }
+                },
+                {
+                    "id": "#lciaIndicators",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/indicators/lcia",
+                    "dpp:value": [
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A1-A3",
+                            "value": -671,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-fossil",
+                            "module": "A1-A3",
+                            "value": 154,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-biogenic",
+                            "module": "A1-A3",
+                            "value": -825,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-luluc",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "ODP",
+                            "module": "A1-A3",
+                            "value": 2.14e-6,
+                            "unit": "kg CFC-11e"
+                        },
+                        {
+                            "indicator": "AP",
+                            "module": "A1-A3",
+                            "value": 0.581,
+                            "unit": "kg SO2e"
+                        },
+                        {
+                            "indicator": "EP",
+                            "module": "A1-A3",
+                            "value": 0.135,
+                            "unit": "kg PO4e"
+                        },
+                        {
+                            "indicator": "POCP",
+                            "module": "A1-A3",
+                            "value": 0.0684,
+                            "unit": "kg C2H4e"
+                        },
+                        {
+                            "indicator": "ADPE",
+                            "module": "A1-A3",
+                            "value": 0.00321,
+                            "unit": "kg Sbe"
+                        },
+                        {
+                            "indicator": "ADPF",
+                            "module": "A1-A3",
+                            "value": 2170,
+                            "unit": "MJ"
+                        }
+                    ]
+                },
+                {
+                    "id": "#lciIndicators",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/indicators/lci",
+                    "dpp:value": [
+                        {
+                            "indicator": "PERE",
+                            "module": "A1-A3",
+                            "value": 1810,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PERM",
+                            "module": "A1-A3",
+                            "value": 14900,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PERT",
+                            "module": "A1-A3",
+                            "value": 16700,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRE",
+                            "module": "A1-A3",
+                            "value": 2170,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRT",
+                            "module": "A1-A3",
+                            "value": 2170,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "SM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "RSF",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "NRSF",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "FW",
+                            "module": "A1-A3",
+                            "value": 19.4,
+                            "unit": "m³"
+                        },
+                        {
+                            "indicator": "HWD",
+                            "module": "A1-A3",
+                            "value": 0.000185,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "NHWD",
+                            "module": "A1-A3",
+                            "value": 10.8,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "RWD",
+                            "module": "A1-A3",
+                            "value": 0.000372,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "CRU",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "MFR",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "MER",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "EEE",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "EET",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "#documents",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Documents",
+            "dpp:elements": [
+                {
+                    "id": "#declarationOfPerformance",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "c3d4e5f678901234567890123456789012345678901234567890123456789012",
+                    "dpp:language": "de"
+                },
+                {
+                    "id": "#epdDocument",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "EPD_Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "d4e5f6789012345678901234567890123456789012345678901234567890123",
+                    "dpp:language": "en"
+                }
+            ]
+        },
+        {
+            "id": "#carrier",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Data Carrier",
+            "dpp:elements": [
+                {
+                    "id": "#qrLink",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "carrier/qr",
+                    "dpp:value": {
+                        "uri": "http://localhost:8000/id/01/07640123456789/10/BSH2022?linkType=dpp",
+                        "resolverUri": "http://localhost:8000/dpps/did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "#classification",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Classification",
+            "dpp:elements": [
+                {
+                    "id": "#productClass",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "classification/product",
+                    "dpp:value": {
+                        "scheme": "bSDD",
+                        "uri": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/class/glulam",
+                        "name": "Glued laminated timber"
+                    }
+                }
+            ]
+        }
+    ],
+    "dpp:changeLog": [
+        {
+            "type": "dpp:ChangeEvent",
+            "dpp:changeId": "urn:uuid:550e8400-e29b-41d4-a716-446655440002",
+            "dpp:timestamp": "2025-09-19T09:00:00Z",
+            "dpp:actor": {
+                "type": "dpp:Agent",
+                "schema:name": "Lignum DPP System"
+            },
+            "dpp:changeObject": "dpp:DigitalProductPassport",
+            "dpp:changedProperties": [
+                "initial creation"
+            ],
+            "dpp:changeType": "create"
+        }
+    ],
+    "prov:wasGeneratedBy": {
+        "type": "prov:Activity",
+        "prov:activityType": "manufacturing",
+        "prov:endedAtTime": "2025-09-19T09:00:00Z"
+    }
+}

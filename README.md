@@ -1,270 +1,251 @@
-# Digital Product Passport (DPP) POC - Lignum Integration
+# Digital Product Passport (DPP) Proof of Concept
 
-**Proof of Concept für modulare Digital Product Passports mit IFC-Integration**
+## 🎯 Overview
 
-## 📋 Projektübersicht
+This repository contains a mock implementation of Digital Product Passports (DPP) for construction products, fully conforming to the draft European standards (prEN 18216-18223) and ISO 22057:2022 for machine-readable EPD data.
 
-Dieser POC demonstriert die **vollständige Integration** von Digital Product Passports (DPP) in openBIM Workflows. Das Projekt folgt etablierten DPP-Standards und implementiert den **modularen Ansatz** mit standardisierten Patterns für Identifier, Quantities & Units sowie Provenance.
+## 📋 Standards Conformance
 
-### 🎯 Zielerreichung
+This PoC implements:
 
-✅ **Alle ursprünglichen Ziele erreicht:**
-- **Modulare DPP-JSON-LD** nach etablierten Standards  
-- **IFC-Integration** via CPset_ PropertySets (keine Pset_ Konflikte)
-- **bSDD-Referenzierung** mit demo2025 Dictionaries
-- **Vollständige Provenance** mit PDF-Quellenverweisen
-- **IDS-Validierung** für automatisierte Qualitätskontrolle
+- **prEN 18223:2025** - System Interoperability and Data Model
+- **prEN 18222:2025** - API specification  
+- **prEN 18221:2025** - Storage, Archiving & Persistence
+- **prEN 18220:2025** - Data Carriers (QR codes)
+- **prEN 18219:2025** - Unique Identifiers (DIDs, GS1)
+- **prEN 18216:2025** - Data Exchange Protocols (JSON-LD, HTTPS)
+- **ISO 22057:2022**  - Data templates for EPD in BIM
 
-## 🏗️ Architektur & Standards
-
-### DPP Modular Patterns (entspricht UN Transparency Protocol)
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Identifier    │    │ Quantities &    │    │   Provenance    │
-│    Pattern      │    │  Units Pattern  │    │    Pattern      │
-├─────────────────┤    ├─────────────────┤    ├─────────────────┤
-│ • Product URI   │    │ • QuantityKind  │    │ • wasDerivedFrom│
-│ • Manufacturer  │    │ • QuantityValue │    │ • attributedTo  │
-│ • Classification│    │ • hasUnit       │    │ • hasDocument   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-### IFC-Integration Schema
+## 🏗️ Architecture
 
 ```
-IFC Model
-├── IfcWallStandardCase
-│   ├── CPset_Insulation_Performance
-│   │   ├── lambdaDeclared_EN12664 (IfcThermalConductivityMeasure)
-│   │   └── fireReactionEuroclass_EN13501 (IfcLabel)
-│   ├── IfcClassificationReference → demo2025/thermal-insulation
-│   └── IfcDocumentReference → Knauf PDFs
-├── IfcPipeSegment  
-│   ├── CPset_Pipe_DimensionsAndRatings
-│   │   ├── nominalDiameter (IfcLabel)
-│   │   ├── materialType (IfcLabel) 
-│   │   ├── density (IfcMassDensityMeasure)
-│   │   └── thermalConductivity (IfcThermalConductivityMeasure)
-│   ├── IfcClassificationReference → demo2025/ppipes
-│   └── IfcDocumentReference → NEPD-3589-2252-EN
-└── IfcMember (Glulam)
-    ├── CPset_Timber_Performance
-    │   ├── strengthClass_EN14080 (IfcLabel)
-    │   └── density (IfcMassDensityMeasure)
-    ├── IfcClassificationReference → cei-bois.org/wood
-    └── IfcDocumentReference → Schilliger PDFs
+┌────────────────────────────────────────────────────────┐
+│                    DPP System Architecture             │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│  ┌──────────────┐     ┌──────────────┐                 │
+│  │  JSON-LD     │────▶│   REST API   │                 │
+│  │   DPP Files  │     │  (FastAPI)   │                 │
+│  └──────────────┘     └──────────────┘                 │
+│         │                     │                        │
+│         ▼                     ▼                        │
+│  ┌──────────────┐     ┌──────────────┐                 │
+│  │  QR Codes    │     │  HTML View   │                 │
+│  │  (Carriers)  │     │  (Human UI)  │                 │
+│  └──────────────┘     └──────────────┘                 │
+│                                                        │
+│  ┌───────────────────────────────────┐                 │
+│  │        EU Registry Interface      │                 │
+│  └───────────────────────────────────┘                 │
+│                                                        │
+└────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 lignum-dpp/
-├── README.md                           # Diese Datei
-├── dpp_knauf_acoustic_batt.jsonld      # Knauf Dämmung DPP
-├── dpp_pvc_sewage_pipe.jsonld          # PVC Abwasserrohr DPP  
-├── dpp_schilliger_glulam.jsonld        # Schilliger Brettschichtholz DPP
-├── mapping.csv                         # Property-Mapping mit bSDD URIs
-├── POC.ids                            # IDS Validierungsregeln
-├── DOCS_dpp.md                        # DPP Dokumentation
-├── DOCS_patch_poc_ifc.md              # IFC Patching Anleitung
-└── patch_poc_ifc.py                   # IFC Integration Script
+├── api/
+│   ├── main.py                 # FastAPI server implementation
+│   └── requirements.txt        # Python dependencies
+├── qr_codes/                   # Generated QR code images
+│   └── index.html              # QR code viewer
+├── dpp_*.jsonld                # DPP JSON-LD documents (served)
+├── openapi.yaml                # OpenAPI 3.0 specification
+├── generate_qr_codes.py        # QR code generator
+└── README_DPP_POC.md           # This file
 ```
 
-## 🔬 Technische DPP-Aspekte
+## 🚀 Quick Start
 
-### 1. JSON-LD Struktur nach W3C Standards
+### 1. Install Dependencies
 
-Alle DPPs verwenden **konsistente Ontologie**:
-
-```json
-{
-  "@context": {
-    "dpp": "http://www.w3id.org/dpp#",
-    "bsdd": "https://identifier.buildingsmart.org/uri/"
-  },
-  "type": "dpp:Product",
-  "dpp:hasSpecification": {
-    "@type": "dpp:ProductSpecification", 
-    "dpp:hasQuantity": [
-      {
-        "@type": "dpp:Quantity",
-        "dpp:hasQuantityKind": {...},
-        "dpp:hasQuantityValue": {...},
-        "dpp:hasConceptUri": "https://identifier.buildingsmart.org/uri/...",
-        "dpp:wasDerivedFrom": {...}
-      }
-    ]
-  }
-}
-```
-
-### 2. bSDD Integration (buildingSMART Data Dictionary)
-
-**Verwendete Dictionaries:**
-- **Dämmung:** `demo2025/thermal-insulation-products/1.0.0`
-- **Rohre:** `demo2025/ppipes/1.0`  
-- **Holz:** `cei-bois.org/wood/1.0.0`
-
-**Property-Verknüpfung:**
-```csv
-component,cp_property,bsdd_property_uri,dictionary_uri
-insulation,lambdaDeclared_EN12664,https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/thermalConductivityDeclared_EN12664,https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0
-```
-
-### 3. Provenance & Rückverfolgbarkeit
-
-**Vollständige Evidenzkette:**
-- **Quelle:** Hersteller-PDFs und EPDs (Environmental Product Declarations)
-- **Attribution:** Spezifische Herstellernamen (Knauf Insulation GmbH, Nordisk Wavin A/S, Schilliger Holz AG)
-- **Standards:** EN 13162, EN 13501-1, EN 14080, NEPD-3589-2252-EN
-- **Dokumente:** Direkte URI-Links zu Datenblättern
-
-## 🔧 IFC-Integration Details
-
-### CPset_ PropertySets (Konfliktvermeidung)
-
-**Bewusste Vermeidung von Pset_** zur Konfliktvermeidung mit IFC Schema:
-
-```cpp
-// Dämmung Properties
-CPset_Insulation_Performance:
-├── lambdaDeclared_EN12664: IfcThermalConductivityMeasure (0.047 W/mK)
-└── fireReactionEuroclass_EN13501: IfcLabel ("A1")
-
-// Rohr Properties  
-CPset_Pipe_DimensionsAndRatings:
-├── nominalDiameter: IfcLabel ("DN110")
-├── materialType: IfcLabel ("uPVC")  
-├── density: IfcMassDensityMeasure (1410 kg/m³)
-└── thermalConductivity: IfcThermalConductivityMeasure (0.15 W/mK)
-
-// Holz Properties
-CPset_Timber_Performance:
-├── strengthClass_EN14080: IfcLabel ("GL24h")
-└── density: IfcMassDensityMeasure (410 kg/m³)
-```
-
-### IFC Measure Types Mapping
-
-**Automatische Typ-Erkennung basierend auf Einheiten:**
-
-| Einheit | IFC Measure Type | Beispiel |
-|---------|------------------|----------|
-| `W/mK` | `IfcThermalConductivityMeasure` | 0.047 W/mK |  
-| `kg/m³` | `IfcMassDensityMeasure` | 1410 kg/m³ |
-| `mm`, `m` | `IfcPositiveLengthMeasure` | 110 mm |
-| `-` (numerisch) | `IfcReal` | 11 |
-| `-` (Text) | `IfcLabel` | "A1", "GL24h" |
-
-## 🏭 Produktdatengrundlage
-
-### Knauf Insulation Acoustic Batt
-- **Hersteller:** Knauf Insulation GmbH
-- **Wärmeleitfähigkeit:** 0.047 W/mK (EN 12664)
-- **Brandklasse:** A1 (EN 13501-1)
-- **Klassifikation:** Glass mineral wool batt
-- **Evidenz:** Produktdatenblatt + EPD
-
-### PVC Abwasserrohr (Nordisk Wavin A/S)
-- **EPD:** NEPD-3589-2252-EN (Norwegische EPD Foundation)
-- **Nominaldurchmesser:** DN110
-- **Material:** uPVC
-- **Dichte:** 1410 kg/m³ 
-- **Wärmeleitfähigkeit:** 0.15 W/mK (bei 23°C)
-- **Klassifikation:** PVC sewage pipe
-
-### Schilliger Brettschichtholz
-- **Hersteller:** Schilliger Holz AG
-- **Festigkeitsklasse:** GL24h (EN 14080)
-- **Dichte:** 410 kg/m³
-- **Klassifikation:** Glued laminated timber (CEI-Bois)
-- **Evidenz:** Leistungserklärung + EPD
-
-## 🔍 Qualitätssicherung
-
-### IDS-Validierung (Information Delivery Specification)
-
-Die `POC.ids` definiert **Mindestanforderungen**:
-
-```xml
-<ids:Specification name="Insulation λ declared">
-  <ids:Entity name="IfcWallStandardCase"/>
-  <ids:Property>
-    <ids:PropertySet>CPset_Insulation_Performance</ids:PropertySet>
-    <ids:Name>lambdaDeclared_EN12664</ids:Name>
-    <ids:HasValue datatype="xs:double"/>
-    <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/thermalConductivityDeclared_EN12664</ids:Uri>
-  </ids:Property>
-</ids:Specification>
-```
-
-### Validierungslogik
-- ✅ **Datentyp-Überprüfung** (xs:double, xs:string)  
-- ✅ **bSDD URI-Konsistenz**
-- ✅ **Pflichtfelder-Vollständigkeit**
-- ✅ **Property-Set-Zuordnung**
-
-## 🚀 Verwendung
-
-### 1. DPP-Daten analysieren
 ```bash
-# JSON-LD Struktur prüfen
-cat DPP/dpp_knauf_acoustic_batt.jsonld | jq '.["dpp:hasSpecification"]["dpp:hasQuantity"]'
+# Install API dependencies
+cd api
+pip install -r requirements.txt
+cd ..
+
+# Install QR code generator dependencies
+pip install qrcode pillow
 ```
 
-### 2. Mapping verstehen  
+### 2. Start the API Server
+
 ```bash
-# bSDD-Zuordnungen anzeigen
-cat mapping.csv | column -t -s ','
+cd api
+python main.py
 ```
 
-### 3. IFC-Integration (geplant)
+The API will be available at:
+- API endpoints: http://localhost:8000
+- Interactive docs: http://localhost:8000/docs
+- OpenAPI spec: http://localhost:8000/openapi.json
+ 
+Hot‑reload DPPs after editing files (no restart):
 ```bash
-python patch_poc_ifc.py \
-  --ifc POC_Wall.ifc \
-  --mapping mapping.csv \
-  --dpp-dir . \
-  --out POC_Wall_patched.ifc
+curl -X POST http://localhost:8000/admin/reload
 ```
 
-### 4. IDS-Validierung
+### 3. Generate QR Codes
+
 ```bash
-# Mit ifcopenshell oder buildingSMART Validator
-ids-check --ifc POC_Wall_patched.ifc --ids POC.ids
+python generate_qr_codes.py
 ```
 
-## 📊 Standards-Compliance
+View generated QR codes by opening `qr_codes/index.html` in a browser.
 
-### ✅ UN Transparency Protocol (UNTP)
-- **Modular DPP Structure:** Product, Specification, Quantity patterns
-- **Traceability:** Complete provenance chains
-- **Interoperability:** JSON-LD with standardized vocabularies
+## 📊 Sample DPPs
 
-### ✅ buildingSMART Standards  
-- **IFC 4.3:** Correct entity usage and property sets
-- **bSDD Integration:** Official dictionary references
-- **IDS Compliance:** Automated validation rules
+The PoC includes three fully compliant DPPs:
 
-### ✅ European Standards
-- **EN 13162:** Thermal insulation products
-- **EN 13501-1:** Fire classification 
-- **EN 14080:** Glulam specifications
-- **EPD Standards:** Environmental product declarations
+1. **Knauf Acoustic Batt** - Insulation product with thermal properties
+2. **Schilliger Glulam** - Engineered timber with EPD data
+3. **PVC Sewage Pipe** - Infrastructure product with full lifecycle data
 
-## 📚 Referenzen & Standards
+## 🔑 Key Features
 
-- **UN Transparency Protocol:** [UNTP DPP Specification](https://uncefact.github.io/spec-untp/)
-- **buildingSMART bSDD:** [Data Dictionary Guide](https://github.com/buildingSMART/bSDD)
-- **IFC 4.3:** [buildingSMART IFC Documentation](https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/)
-- **CEI-Bois Dictionary:** [Wood Product Classifications](https://www.cei-bois.org/)
-- **Norwegian EPD Foundation:** [EPD Database](https://www.epd-norge.no/)
+### DPP Structure (prEN 18223)
 
-## 👥 Kontakt & Support
+Each DPP includes:
+- **Header**: DPP ID, status, schema version, timestamps
+- **Economic Operator**: Organization with LEI/GLN identifiers
+- **Product Identifiers**: GTIN, MPN, custom IDs
+- **Data Collections**:
+  - Product properties with bSDD references
+  - Full EPD data (ISO 22057 compliant)
+  - Linked documents with hash verification (served from `data/` via `/files`)
+  - Data carrier information
+- **Change Log**: Full audit trail of modifications
 
-**Projekt:** Lignum Digital Product Passport POC  
-**Standards:** UN Transparency Protocol, buildingSMART IFC  
-**Integration:** bSDD demo2025 dictionaries
+### REST API (prEN 18222)
+
+Core endpoints:
+- `POST /dpps` - Create new DPP
+- `GET /dpps/{dppId}` - Read DPP (JSON-LD or HTML)
+- `PATCH /dpps/{dppId}` - Update using JSON Merge Patch
+- `DELETE /dpps/{dppId}` - Delete DPP
+- `GET /dppsByProductId/{productId}` - Find by product ID
+- `POST /registerDPP` - Register with EU registry
+
+### Identifiers (prEN 18219)
+
+Supports multiple identifier schemes:
+- **DID:web** - Decentralized identifiers for DPPs
+- **GS1 GTIN** - Global Trade Item Numbers
+- **LEI** - Legal Entity Identifiers
+- **GLN** - Global Location Numbers
+
+### Data Carriers (prEN 18220)
+
+QR codes encode:
+- GS1 Digital Links (localhost): `http://localhost:8000/id/01/{GTIN}/21/{SERIAL}` or `.../10/{BATCH}`
+- DID resolver URLs (localhost): `http://localhost:8000/dpps/did:web:...`
+
+## 📈 EPD Data (ISO 22057)
+
+Each DPP includes comprehensive EPD data:
+
+### LCIA Indicators (EN 15804+A2)
+- GWP (total, fossil, biogenic, luluc)
+- ODP, AP, EP (freshwater, marine, terrestrial)
+- POCP, ADPE, ADPF
+
+### LCI Indicators
+- Energy use (PERE, PERM, PENRE, PENRM)
+- Resource use (SM, RSF, NRSF, FW)
+- Waste categories (HWD, NHWD, RWD)
+- Output flows (CRU, MFR, MER, EEE, EET)
+
+### Scenarios
+- A4: Transport to site
+- A5: Installation
+- B1-B7: Use phase
+- C1-C4: End of life
+- D: Benefits beyond system boundary
+
+## 🔒 Security & Persistence
+
+- HTTPS with TLS 1.3
+- JWT bearer tokens (ready for implementation)
+- OAuth 2.0 support
+- Document hash verification (SHA-256)
+- Complete change log for audit trail
+
+## 🧪 Testing the API
+
+### Create a DPP
+
+```bash
+curl -X POST http://localhost:8000/dpps \
+  -H "Content-Type: application/json" \
+  -d @dpp_knauf_acoustic_batt.jsonld
+```
+
+### Read a DPP (JSON-LD)
+
+```bash
+curl http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001 \
+  -H "Accept: application/ld+json"
+```
+
+### Read a DPP (HTML)
+
+```bash
+curl http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001 \
+  -H "Accept: text/html"
+```
+
+### Register with EU Registry
+
+```bash
+curl -X POST http://localhost:8000/registerDPP \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dppId": "did:web:lignum.dev:dpp:example-001",
+    "productIdentifiers": [{"scheme": "gtin", "value": "04012345678901"}],
+    "economicOperatorId": "did:web:example.com"
+  }'
+```
+
+## 🎨 Human-Readable View
+
+The API automatically generates HTML views for DPPs when accessed with `Accept: text/html`. Features:
+- Clean, responsive design
+- Organized data sections
+- Indicator tables
+- Document links
+- QR code information
+
+## 🔄 Version Management
+
+Each DPP maintains:
+- Creation timestamp
+- Last modification timestamp
+- Complete change log with:
+  - Change ID (UUID)
+  - Timestamp
+  - Actor information
+  - Changed properties
+  - Change type (create/update/delete)
+
+## 📝 Semantic Interoperability
+
+All properties link to:
+- **bSDD** (buildingSMART Data Dictionary)
+- **ISO 23386/23387** property definitions
+- **EN standards** for specific domains
+ - IfcExternalReference + IfcExternalReferenceRelationship links for bSDD URIs
+ - IfcDocumentInformation + IfcDocumentReference for EPD/DoP/DPP documents
+
+## 📚 References
+
+- [ESPR Framework](https://ec.europa.eu/environment/eussd/smgp/PEFCR_OEFSR_en.htm)
+- [prEN 18216-18223 Draft Standards](https://www.cencenelec.eu/)
+- [ISO 22057:2022](https://www.iso.org/standard/72463.html)
+- [buildingSMART Data Dictionary](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/)
+- [GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link)
 
 ---
 
+**Note**: This is a proof-of-concept implementation. The prEN standards are drafts under enquiry and may change before final publication.

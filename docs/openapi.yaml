@@ -1,0 +1,693 @@
+openapi: 3.0.3
+info:
+  title: Mock DPP API
+  description: Digital Product Passport API conforming to prEN 18222:2025
+  version: 1.0.0
+  contact:
+    name: louistrue
+    email: info@lt.plus
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Local PoC server
+
+tags:
+  - name: DPP Lifecycle
+    description: Core DPP CRUD operations (prEN 18222)
+  - name: Registry
+    description: DPP Registry operations
+  - name: Data Elements
+    description: Fine-grained data element operations
+
+paths:
+  /dpps:
+    post:
+      tags:
+        - DPP Lifecycle
+      summary: CreateDPP
+      operationId: createDPP
+      description: Create a new Digital Product Passport
+      requestBody:
+        required: true
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/DigitalProductPassport'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DigitalProductPassport'
+      responses:
+        '201':
+          description: DPP created successfully
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+                example: https://api.lignum.dev/dpps/did:web:lignum.dev:dpp:example-001
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+    get:
+      tags:
+        - DPP Lifecycle
+      summary: List DPPs
+      operationId: listDPPs
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: operatorId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of DPPs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DPPSummary'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+  /dpps/{dppId}:
+    get:
+      tags:
+        - DPP Lifecycle
+      summary: ReadDPPById
+      operationId: readDPPById
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: did:web:lignum.dev:dpp:example-001
+      responses:
+        '200':
+          description: DPP retrieved successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+            text/html:
+              schema:
+                type: string
+                description: Human-readable HTML representation
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags:
+        - DPP Lifecycle
+      summary: UpdateDPPById
+      operationId: updateDPPById
+      description: Update DPP using JSON Merge Patch (RFC 7396)
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+              description: JSON Merge Patch document
+      responses:
+        '200':
+          description: DPP updated successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+    delete:
+      tags:
+        - DPP Lifecycle
+      summary: DeleteDPPById
+      operationId: deleteDPPById
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: DPP deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dppsByProductId/{productId}:
+    get:
+      tags:
+        - DPP Lifecycle
+      summary: ReadDPPByProductId
+      operationId: readDPPByProductId
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "04012345678901"
+      responses:
+        '200':
+          description: DPP retrieved successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dppsByProductId/{productId}/versions:
+    get:
+      tags:
+        - DPP Lifecycle
+      summary: ReadDPPVersionByProductIdAndDate
+      operationId: readDPPVersionByProductIdAndDate
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+            example: "2025-09-19T09:00:00Z"
+      responses:
+        '200':
+          description: DPP version retrieved successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /registerDPP:
+    post:
+      tags:
+        - Registry
+      summary: PostNewDPPToRegistry
+      operationId: postNewDPPToRegistry
+      description: Register a DPP with the EU registry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - dppId
+                - productIdentifiers
+                - economicOperatorId
+              properties:
+                dppId:
+                  type: string
+                productIdentifiers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      scheme:
+                        type: string
+                      value:
+                        type: string
+                economicOperatorId:
+                  type: string
+                backupOperatorId:
+                  type: string
+      responses:
+        '201':
+          description: DPP registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registryId:
+                    type: string
+                    example: urn:eu-dpp-reg:123e4567-e89b-12d3-a456-426614174000
+                  registryUrl:
+                    type: string
+                    format: uri
+                    example: http://localhost:8000/registry/123e4567-e89b-12d3-a456-426614174000
+
+  /id/01/{gtin}:
+    get:
+      tags:
+        - DPP Lifecycle
+      summary: Resolve GS1 Digital Link by GTIN
+      operationId: resolveByGtin
+      parameters:
+        - name: gtin
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "04012345678901"
+      responses:
+        '200':
+          description: DPP retrieved successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /id/01/{gtin}/21/{serial}:
+    get:
+      tags:
+        - DPP Lifecycle
+      summary: Resolve GS1 Digital Link by GTIN and serial
+      operationId: resolveByGtinSerial
+      parameters:
+        - name: gtin
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: serial
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: DPP retrieved successfully
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/DigitalProductPassport'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /dpps/{dppId}/dataElements/{collectionId}:
+    get:
+      tags:
+        - Data Elements
+      summary: ReadDataElementCollection
+      operationId: readDataElementCollection
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collectionId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: epd
+      responses:
+        '200':
+          description: Data element collection retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementCollection'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags:
+        - Data Elements
+      summary: UpdateDataElementCollection
+      operationId: updateDataElementCollection
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Collection updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementCollection'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /dpps/{dppId}/dataElements/{collectionId}/{elementId}:
+    get:
+      tags:
+        - Data Elements
+      summary: ReadDataElement
+      operationId: readDataElement
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collectionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: elementId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Data element retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElement'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags:
+        - Data Elements
+      summary: UpdateDataElement
+      operationId: updateDataElement
+      parameters:
+        - name: dppId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: collectionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: elementId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Element updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElement'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.lignum.dev/oauth/authorize
+          tokenUrl: https://auth.lignum.dev/oauth/token
+          scopes:
+            read:dpp: Read DPP data
+            write:dpp: Create and update DPPs
+            delete:dpp: Delete DPPs
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Conflict with existing resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    DigitalProductPassport:
+      type: object
+      required:
+        - id
+        - type
+        - dpp:status
+        - dpp:economicOperator
+        - dpp:productIdentifiers
+        - dpp:dataElementCollections
+      properties:
+        '@context':
+          type: object
+        id:
+          type: string
+          format: uri
+        type:
+          type: string
+          const: dpp:DigitalProductPassport
+        'dcterms:conformsTo':
+          type: array
+          items:
+            type: string
+        'dpp:registry':
+          type: object
+        'dpp:status':
+          type: string
+          enum: [active, inactive, archived]
+        'dcterms:created':
+          type: string
+          format: date-time
+        'dcterms:modified':
+          type: string
+          format: date-time
+        'dpp:dppSchemaVersion':
+          type: string
+        'dpp:granularity':
+          type: string
+          enum: [model, batch, item]
+        'dpp:economicOperator':
+          $ref: '#/components/schemas/Organization'
+        'dpp:backupOperator':
+          $ref: '#/components/schemas/Organization'
+        'dpp:productIdentifiers':
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductIdentifier'
+        'dpp:labels':
+          type: array
+          items:
+            type: string
+        'dpp:dataElementCollections':
+          type: array
+          items:
+            $ref: '#/components/schemas/DataElementCollection'
+        'dpp:changeLog':
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeEvent'
+
+    DPPSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        productIdentifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductIdentifier'
+        status:
+          type: string
+        modified:
+          type: string
+          format: date-time
+
+    Organization:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        'schema:name':
+          type: string
+        'dpp:lei':
+          type: string
+        'dpp:gln':
+          type: string
+
+    ProductIdentifier:
+      type: object
+      properties:
+        'dpp:scheme':
+          type: string
+        'dpp:value':
+          type: string
+        'dpp:namespace':
+          type: string
+
+    DataElementCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        'dcterms:title':
+          type: string
+        'dpp:labelSet':
+          type: array
+          items:
+            type: string
+        'dpp:elements':
+          type: array
+          items:
+            $ref: '#/components/schemas/DataElement'
+
+    DataElement:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        'dpp:path':
+          type: string
+        'dpp:name':
+          type: string
+        'dpp:dictionaryReference':
+          type: string
+        'dpp:value':
+          type: object
+        'dpp:valueElement':
+          $ref: '#/components/schemas/ValueElement'
+
+    ValueElement:
+      type: object
+      properties:
+        type:
+          type: string
+        'dpp:numericValue':
+          type: number
+        'dpp:textValue':
+          type: string
+        'dpp:unit':
+          type: string
+
+    ChangeEvent:
+      type: object
+      properties:
+        type:
+          type: string
+        'dpp:changeId':
+          type: string
+        'dpp:timestamp':
+          type: string
+          format: date-time
+        'dpp:actor':
+          type: object
+        'dpp:changeObject':
+          type: string
+        'dpp:changedProperties':
+          type: array
+          items:
+            type: string
+        'dpp:changeType':
+          type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+security:
+  - bearerAuth: []
+  - oauth2: [read:dpp]

@@ -1,0 +1,665 @@
+{
+    "@context": {
+        "schema": "https://schema.org/",
+        "dcterms": "http://purl.org/dc/terms/",
+        "prov": "http://www.w3.org/ns/prov#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "dpp": "http://www.w3id.org/dpp#",
+        "bsdd": "https://identifier.buildingsmart.org/uri/",
+        "id": "@id",
+        "type": "@type"
+    },
+    "id": "did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001",
+    "type": "dpp:DigitalProductPassport",
+    "dcterms:conformsTo": [
+        "prEN 18223:2025 - System Interoperability and Data Model",
+        "prEN 18222:2025 - API",
+        "prEN 18216:2025 - Data Exchange Protocols",
+        "prEN 18220:2025 - Data Carrier",
+        "prEN 18219:2025 - Identifiers",
+        "ISO 22057:2022 - Data templates for EPD in BIM"
+    ],
+    "dpp:registry": {
+        "id": "urn:eu-dpp-reg:wavin-001-2025",
+        "schema:url": "http://localhost:8000/registry/wavin-001-2025"
+    },
+    "dpp:status": "active",
+    "dcterms:created": "2025-09-19T09:00:00Z",
+    "dcterms:modified": "2025-09-19T09:00:00Z",
+    "dcterms:language": "en",
+    "dpp:dppSchemaVersion": "1.0.0",
+    "dpp:granularity": "item",
+    "dpp:economicOperator": {
+        "type": "schema:Organization",
+        "id": "did:web:wavin.com",
+        "schema:name": "Nordisk Wavin A/S",
+        "dpp:lei": "549300WAVIN1234567",
+        "dpp:gln": "5790001234567"
+    },
+    "dpp:backupOperator": {
+        "type": "schema:Organization",
+        "schema:name": "Nordic DPP Services AS",
+        "dpp:lei": "549300NORDIC123456"
+    },
+    "dpp:productIdentifiers": [
+        {
+            "dpp:scheme": "gtin",
+            "dpp:value": "05790001234561"
+        },
+        {
+            "dpp:scheme": "mpn",
+            "dpp:value": "WAVIN-PVC-DN110"
+        },
+        {
+            "dpp:scheme": "epd",
+            "dpp:value": "NEPD-3589-2252-EN"
+        },
+        {
+            "dpp:scheme": "custom",
+            "dpp:namespace": "wavinId",
+            "dpp:value": "WV-DN110-2025-001"
+        }
+    ],
+    "dpp:labels": [
+        "construction",
+        "piping",
+        "sewage",
+        "pvc",
+        "infrastructure"
+    ],
+    "dpp:dataElementCollections": [
+        {
+            "id": "#productProperties",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Product Properties",
+            "dpp:labelSet": [
+                "technical",
+                "performance",
+                "EN1401"
+            ],
+            "dpp:elements": [
+                {
+                    "id": "#nominalDiameter",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/dimensions/nominalDiameter",
+                    "dpp:name": "nominalDiameter",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/nominalDiameter",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "DN110",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#materialType",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/material/type",
+                    "dpp:name": "materialType",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/bs-agri.org/plastic/1.0.0/prop/material",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "uPVC",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#density",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/physical/density",
+                    "dpp:name": "density",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/bs-agri.org/plastic/1.0.0/prop/density",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 1410,
+                        "dpp:unit": "kg/m³"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#thermalConductivity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/thermal/conductivity",
+                    "dpp:name": "thermalConductivity",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/bs-agri.org/plastic/1.0.0/prop/thermalConductivity",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 0.15,
+                        "dpp:unit": "W/mK"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#ringStiffness",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/mechanical/ringStiffness",
+                    "dpp:name": "ringStiffness",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/bs-agri.org/plastic/1.0.0/prop/ringStiffness",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "SN4",
+                        "dpp:unit": "kN/m²"
+                    }
+                },
+                {
+                    "id": "#applicationArea",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/application/area",
+                    "dpp:name": "applicationArea",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/bs-agri.org/plastic/1.0.0/prop/applicationArea",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "UD (underground drainage)",
+                        "dpp:unit": "-"
+                    }
+                },
+                {
+                    "id": "#colour",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/identification/colour",
+                    "dpp:name": "COLOUR",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "Black with blue stripes"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Product Datasheet",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#pipeType",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/construction/pipeType",
+                    "dpp:name": "PIPE_TYPE",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "co-extruded"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Product Datasheet",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#vacuumStiff",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "properties/mechanical/vacuumStiffness",
+                    "dpp:name": "VACUUM_STIFF",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 4,
+                        "dpp:unit": "kN/m²"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Product Datasheet",
+                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "#epd",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Environmental Product Declaration",
+            "dpp:labelSet": [
+                "EPD",
+                "EN15804+A2",
+                "ISO22057"
+            ],
+            "dpp:elements": [
+                {
+                    "id": "#epdHeader",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/general",
+                    "dpp:value": {
+                        "programmeOperator": "EPD Norge",
+                        "epdNumber": "NEPD-3589-2252-EN",
+                        "validFrom": "2022-08-26",
+                        "validUntil": "2027-08-26",
+                        "referenceUnit": {
+                            "value": 1,
+                            "unit": "meter"
+                        },
+                        "standard": "EN 15804:2012+A2:2019",
+                        "productCategory": "PVC sewage pipe DN110 SN4"
+                    }
+                },
+                {
+                    "id": "#methodology",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/methodology",
+                    "dpp:value": {
+                        "corePCR": "EN 15804:2012+A2:2019",
+                        "subCategoryPCR": "c-PCR-012 Wastewater pipes",
+                        "informationModulesReported": [
+                            "A1",
+                            "A2",
+                            "A3",
+                            "A4",
+                            "A5",
+                            "B1",
+                            "B2",
+                            "B3",
+                            "B4",
+                            "B5",
+                            "B6",
+                            "B7",
+                            "C1",
+                            "C2",
+                            "C3",
+                            "C4",
+                            "D"
+                        ],
+                        "allocationCompliesWithPCR": true,
+                        "genericLCASourceUsed": false,
+                        "serviceLife": {
+                            "value": 100,
+                            "unit": "years"
+                        }
+                    }
+                },
+                {
+                    "id": "#scenariosA4",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/scenarios/A4",
+                    "dpp:value": {
+                        "transportDistance": {
+                            "value": 500,
+                            "unit": "km"
+                        },
+                        "vehicleType": "Euro6 truck 40t",
+                        "payloadUtilization": 0.75,
+                        "fuelType": "diesel"
+                    }
+                },
+                {
+                    "id": "#scenariosA5",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/scenarios/A5",
+                    "dpp:value": {
+                        "installationWaste": {
+                            "value": 2,
+                            "unit": "%"
+                        },
+                        "wasteToRecycling": {
+                            "value": 90,
+                            "unit": "%"
+                        },
+                        "wasteToIncineration": {
+                            "value": 10,
+                            "unit": "%"
+                        }
+                    }
+                },
+                {
+                    "id": "#scenariosC",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/scenarios/C",
+                    "dpp:value": {
+                        "collectionRate": {
+                            "value": 95,
+                            "unit": "%"
+                        },
+                        "recyclingRate": {
+                            "value": 85,
+                            "unit": "%"
+                        },
+                        "energyRecoveryRate": {
+                            "value": 10,
+                            "unit": "%"
+                        },
+                        "landfillRate": {
+                            "value": 5,
+                            "unit": "%"
+                        }
+                    }
+                },
+                {
+                    "id": "#lciaIndicators",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/indicators/lcia",
+                    "dpp:value": [
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A1-A3",
+                            "value": 2.35,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-fossil",
+                            "module": "A1-A3",
+                            "value": 2.34,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-biogenic",
+                            "module": "A1-A3",
+                            "value": 0.00523,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-luluc",
+                            "module": "A1-A3",
+                            "value": 0.00477,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "ODP",
+                            "module": "A1-A3",
+                            "value": 4.89e-8,
+                            "unit": "kg CFC-11e"
+                        },
+                        {
+                            "indicator": "AP",
+                            "module": "A1-A3",
+                            "value": 0.00593,
+                            "unit": "mol H+e"
+                        },
+                        {
+                            "indicator": "EP-freshwater",
+                            "module": "A1-A3",
+                            "value": 0.000129,
+                            "unit": "kg Pe"
+                        },
+                        {
+                            "indicator": "EP-marine",
+                            "module": "A1-A3",
+                            "value": 0.00167,
+                            "unit": "kg Ne"
+                        },
+                        {
+                            "indicator": "EP-terrestrial",
+                            "module": "A1-A3",
+                            "value": 0.0184,
+                            "unit": "mol Ne"
+                        },
+                        {
+                            "indicator": "POCP",
+                            "module": "A1-A3",
+                            "value": 0.00481,
+                            "unit": "kg NMVOCe"
+                        },
+                        {
+                            "indicator": "ADPE",
+                            "module": "A1-A3",
+                            "value": 0.0000131,
+                            "unit": "kg Sbe"
+                        },
+                        {
+                            "indicator": "ADPF",
+                            "module": "A1-A3",
+                            "value": 42.8,
+                            "unit": "MJ"
+                        }
+                    ]
+                },
+                {
+                    "id": "#lciIndicators",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "epd/indicators/lci",
+                    "dpp:value": [
+                        {
+                            "indicator": "PERE",
+                            "module": "A1-A3",
+                            "value": 1.48,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PERM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PERT",
+                            "module": "A1-A3",
+                            "value": 1.48,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRE",
+                            "module": "A1-A3",
+                            "value": 42.8,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRM",
+                            "module": "A1-A3",
+                            "value": 20.9,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "PENRT",
+                            "module": "A1-A3",
+                            "value": 63.7,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "SM",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "RSF",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "NRSF",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "FW",
+                            "module": "A1-A3",
+                            "value": 0.0193,
+                            "unit": "m³"
+                        },
+                        {
+                            "indicator": "HWD",
+                            "module": "A1-A3",
+                            "value": 0.0000181,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "NHWD",
+                            "module": "A1-A3",
+                            "value": 0.0344,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "RWD",
+                            "module": "A1-A3",
+                            "value": 0.0000116,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "CRU",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "MFR",
+                            "module": "A1-A3",
+                            "value": 0.000574,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "MER",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "EEE",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "EET",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "#documents",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Documents",
+            "dpp:elements": [
+                {
+                    "id": "#epdDocument",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
+                    "dpp:language": "en"
+                }
+            ]
+        },
+        {
+            "id": "#carrier",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Data Carrier",
+            "dpp:elements": [
+                {
+                    "id": "#qrLink",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "carrier/qr",
+                    "dpp:value": {
+                        "uri": "http://localhost:8000/id/01/05790001234561/21/WV-DN110-2025-001?linkType=dpp",
+                        "resolverUri": "http://localhost:8000/dpps/did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "#classification",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Classification",
+            "dpp:elements": [
+                {
+                    "id": "#productClass",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "classification/product",
+                    "dpp:value": {
+                        "scheme": "bSDD",
+                        "uri": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/class/pvc-sewage",
+                        "name": "PVC sewage pipe"
+                    }
+                },
+                {
+                    "id": "#uniclass",
+                    "type": "dpp:DataElement",
+                    "dpp:path": "classification/uniclass",
+                    "dpp:value": {
+                        "scheme": "Uniclass2015",
+                        "code": "Pr_65_52_63_73",
+                        "name": "Plastic drainage pipes"
+                    }
+                }
+            ]
+        }
+    ],
+    "dpp:changeLog": [
+        {
+            "type": "dpp:ChangeEvent",
+            "dpp:changeId": "urn:uuid:550e8400-e29b-41d4-a716-446655440003",
+            "dpp:timestamp": "2025-09-19T09:00:00Z",
+            "dpp:actor": {
+                "type": "dpp:Agent",
+                "schema:name": "Lignum DPP System"
+            },
+            "dpp:changeObject": "dpp:DigitalProductPassport",
+            "dpp:changedProperties": [
+                "initial creation"
+            ],
+            "dpp:changeType": "create"
+        }
+    ],
+    "prov:wasGeneratedBy": {
+        "type": "prov:Activity",
+        "prov:activityType": "manufacturing",
+        "prov:endedAtTime": "2025-09-19T09:00:00Z"
+    }
+}
