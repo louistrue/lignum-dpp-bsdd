@@ -1,62 +1,225 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ids:IDS xmlns:ids="http://standards.buildingsmart.org/IDS">
-  <ids:Specification name="Insulation λ declared">
-    <ids:Entity name="IfcWallStandardCase"/>
-    <ids:Property>
-      <ids:PropertySet>CPset_Insulation_Performance</ids:PropertySet>
-      <ids:Name>lambdaDeclared_EN12664</ids:Name>
-      <ids:HasValue datatype="xs:double"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/thermalConductivityDeclared_EN12664</ids:Uri>
-    </ids:Property>
-    <ids:Property>
-      <ids:PropertySet>CPset_Insulation_Performance</ids:PropertySet>
-      <ids:Name>fireReactionEuroclass_EN13501</ids:Name>
-      <ids:HasValue datatype="xs:string"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/fireReactionEuroclass_EN13501</ids:Uri>
-    </ids:Property>
-  </ids:Specification>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ids xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+  <info>
+    <title>POC – Demo product checks</title>
+    <author>info@lt.plus</author>
+    <date>2025-09-19</date>
+  </info>
+  <specifications>
+    <specification name="Insulation Performance" ifcVersion="IFC4">
+      <applicability>
+        <entity>
+          <name>
+            <simpleValue>IfcWall</simpleValue>
+          </name>
+        </entity>
+        <attribute>
+          <name>
+            <simpleValue>Name</simpleValue>
+          </name>
+          <value>
+            <xs:restriction base="xs:string">
+              <xs:pattern value=".*[Ii]nsulation.*"></xs:pattern>
+            </xs:restriction>
+          </value>
+        </attribute>
+      </applicability>
+      <requirements>
+        <property dataType="IFCTHERMALCONDUCTIVITYMEASURE" uri="https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ThermalConductivity">
+          <propertySet>
+            <simpleValue>CPset_InsulationPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>LAMBDA_DECLARED_EN12664</simpleValue>
+          </baseName>
+          <value>
+            <xs:restriction base="xs:decimal">
+              <xs:minInclusive value="0.041"></xs:minInclusive>
+              <xs:maxInclusive value="0.050"></xs:maxInclusive>
+            </xs:restriction>
+          </value>
+        </property>
+        <property dataType="IFCLABEL" uri="https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ReactionToFire">
+          <propertySet>
+            <simpleValue>CPset_InsulationPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>REACTION_TO_FIRE</simpleValue>
+          </baseName>
+          <value>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="A1"></xs:enumeration>
+              <xs:enumeration value="A2-s1d0"></xs:enumeration>
+              <xs:enumeration value="A2-s2d0"></xs:enumeration>
+            </xs:restriction>
+          </value>
+        </property>
+        <property dataType="IFCMASSDENSITYMEASURE" uri="https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/Density">
+          <propertySet>
+            <simpleValue>CPset_InsulationPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>DENSITY</simpleValue>
+          </baseName>
+          <value>
+            <xs:restriction base="xs:decimal">
+              <xs:minInclusive value="72.25"></xs:minInclusive>
+              <xs:maxInclusive value="97.75"></xs:maxInclusive>
+            </xs:restriction>
+          </value>
+        </property>
+        <property dataType="IFCLABEL">
+          <propertySet>
+            <simpleValue>CPset_InsulationPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>WATER_VAPOUR_RESISTIVITY</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>5.00</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCLABEL">
+          <propertySet>
+            <simpleValue>CPset_InsulationPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>COMPRESSIVE_STRENGTH</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>10</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCREAL" uri="https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total">
+          <propertySet>
+            <simpleValue>CPset_EpdIndicators</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>EPD_GWP_TOTAL_A1A3</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>7.2</simpleValue>
+          </value>
+        </property>
+      </requirements>
+    </specification>
 
-  <ids:Specification name="PVC Pipe Properties">
-    <ids:Entity name="IfcPipeSegment"/>
-    <ids:Property>
-      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
-      <ids:Name>nominalDiameter</ids:Name>
-      <ids:HasValue datatype="xs:string"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/nominalDiameter</ids:Uri>
-    </ids:Property>
-    <ids:Property>
-      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
-      <ids:Name>materialType</ids:Name>
-      <ids:HasValue datatype="xs:string"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/material</ids:Uri>
-    </ids:Property>
-    <ids:Property>
-      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
-      <ids:Name>density</ids:Name>
-      <ids:HasValue datatype="xs:double"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/density</ids:Uri>
-    </ids:Property>
-    <ids:Property>
-      <ids:PropertySet>CPset_Pipe_DimensionsAndRatings</ids:PropertySet>
-      <ids:Name>thermalConductivity</ids:Name>
-      <ids:HasValue datatype="xs:double"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0/prop/thermalConductivity</ids:Uri>
-    </ids:Property>
-  </ids:Specification>
+    <specification name="PVC Pipe Properties" ifcVersion="IFC4">
+      <applicability>
+        <entity>
+          <name>
+            <simpleValue>IfcPipeSegment</simpleValue>
+          </name>
+        </entity>
+      </applicability>
+      <requirements>
+        <property dataType="IFCMASSDENSITYMEASURE" uri="https://identifier.buildingsmart.org/uri/etim/etim/8.0/prop/EF020000">
+          <propertySet>
+            <simpleValue>CPset_PipePerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>DENSITY</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>1410</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCLABEL">
+          <propertySet>
+            <simpleValue>CPset_PipePerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>COLOUR</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>Black with blue stripes</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCLABEL">
+          <propertySet>
+            <simpleValue>CPset_PipePerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>PIPE_TYPE</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>co-extruded</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCLABEL">
+          <propertySet>
+            <simpleValue>CPset_PipePerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>VACUUM_STIFF</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>4</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCREAL" uri="https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total">
+          <propertySet>
+            <simpleValue>CPset_EpdIndicators</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>EPD_GWP_TOTAL_A1A3</simpleValue>
+          </baseName>
+          <value>
+            <xs:restriction base="xs:decimal">
+              <xs:minInclusive value="2.5"></xs:minInclusive>
+              <xs:maxInclusive value="3.2"></xs:maxInclusive>
+            </xs:restriction>
+          </value>
+        </property>
+      </requirements>
+    </specification>
 
-  <ids:Specification name="Glulam Properties">
-    <ids:Entity name="IfcMember"/>
-    <ids:Property>
-      <ids:PropertySet>CPset_Timber_Performance</ids:PropertySet>
-      <ids:Name>strengthClass_EN14080</ids:Name>
-      <ids:HasValue datatype="xs:string"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0/prop/strengthClass_EN14080</ids:Uri>
-    </ids:Property>
-    <ids:Property>
-      <ids:PropertySet>CPset_Timber_Performance</ids:PropertySet>
-      <ids:Name>density</ids:Name>
-      <ids:HasValue datatype="xs:double"/>
-      <ids:Uri>https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0/prop/density_EN14080</ids:Uri>
-    </ids:Property>
-  </ids:Specification>
-</ids:IDS>
+    <specification name="Timber Elements Properties" ifcVersion="IFC4">
+      <applicability>
+        <entity>
+          <name>
+            <simpleValue>IfcColumn</simpleValue>
+          </name>
+        </entity>
+      </applicability>
+      <requirements>
+        <property dataType="IFCLABEL">
+          <propertySet>
+            <simpleValue>CPset_TimberPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>STRENGTHCLASS_EN14080</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>GL24h</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCMASSDENSITYMEASURE">
+          <propertySet>
+            <simpleValue>CPset_TimberPerformance</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>DENSITY</simpleValue>
+          </baseName>
+          <value>
+            <simpleValue>410</simpleValue>
+          </value>
+        </property>
+        <property dataType="IFCREAL" uri="https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total">
+          <propertySet>
+            <simpleValue>CPset_EpdIndicators</simpleValue>
+          </propertySet>
+          <baseName>
+            <simpleValue>EPD_GWP_TOTAL_A1A3</simpleValue>
+          </baseName>
+          <value>
+            <xs:restriction base="xs:decimal">
+              <xs:minInclusive value="-400.0"></xs:minInclusive>
+              <xs:maxInclusive value="-300.0"></xs:maxInclusive>
+            </xs:restriction>
+          </value>
+        </property>
+      </requirements>
+    </specification>
+  </specifications>
+</ids>

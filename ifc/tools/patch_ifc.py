@@ -378,7 +378,12 @@ def find_target_elements(ifc, component: str) -> List:
     if comp == "pipe":
         return list(ifc.by_type("IfcPipeSegment"))
     if comp == "timber":
-        elems = list(ifc.by_type("IfcColumn")) + list(ifc.by_type("IfcBeam")) + list(ifc.by_type("IfcMember"))
+        # For POC, target all columns directly (wood material detection may not work)
+        elems = list(ifc.by_type("IfcColumn"))
+        if elems:
+            return elems
+        # Fallback to beams and members with wood material check
+        elems = list(ifc.by_type("IfcBeam")) + list(ifc.by_type("IfcMember"))
         wood_elems = []
         for e in elems:
             mats = _element_materials(ifc, e)
@@ -394,15 +399,15 @@ def guess_pset_name(component: str, cp_property: Optional[str] = None, standard:
                   (note and "epd" in note.lower())
     
     if is_epd_prop:
-        return "CPset_EPD_Indicators"
+        return "CPset_EpdIndicators"
     
     if component == "insulation":
-        return "CPset_Insulation_Performance"
+        return "CPset_InsulationPerformance"
     if component == "pipe":
-        return "CPset_Pipe_Performance"
+        return "CPset_PipePerformance"
     if component == "timber":
-        return "CPset_Timber_Performance"
-    return f"CPset_{component}"
+        return "CPset_TimberPerformance"
+    return f"CPset_{component.title()}"
 
 def find_target_element(ifc, component: str):
     if component == "insulation":
