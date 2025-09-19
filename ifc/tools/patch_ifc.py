@@ -272,6 +272,210 @@ def link_external_to_material(ifc, material, ext_ref):
             return
     ifc.create_entity("IfcExternalReferenceRelationship", RelatingReference=ext_ref, RelatedResourceObjects=[material])
 
+# ----------------------- classification helpers -----------------------
+
+def _parse_dictionary_root_from_uri(uri: str) -> Optional[str]:
+    try:
+        # Expecting https://identifier.buildingsmart.org/uri/<scheme>/<dictionary>/<version>/...
+        parts = urlparse(uri)
+        segs = [s for s in parts.path.split("/") if s]
+        # segs: ['uri', scheme, dictionary, version, ...]
+        idx = segs.index("uri") if "uri" in segs else -1
+        if idx >= 0 and len(segs) >= idx + 4:
+            scheme = segs[idx + 1]
+            dictionary = segs[idx + 2]
+            version = segs[idx + 3]
+            return f"{parts.scheme}://{parts.netloc}/uri/{scheme}/{dictionary}/{version}"
+        return None
+    except Exception:
+        return None
+
+def get_or_create_classification(ifc, dict_root_uri: str, scheme: Optional[str] = None, dictionary_name: Optional[str] = None, edition: Optional[str] = None):
+    # Try to reuse by Location if present
+    for cls in ifc.by_type("IfcClassification"):
+        try:
+            if (getattr(cls, "Location", None) or "").strip() == (dict_root_uri or "").strip():
+                return cls
+        except Exception:
+            pass
+    # Best-effort metadata extraction
+    try:
+        parts = urlparse(dict_root_uri)
+        segs = [s for s in parts.path.split("/") if s]
+        idx = segs.index("uri") if "uri" in segs else -1
+        if idx >= 0 and len(segs) >= idx + 4:
+            scheme = scheme or segs[idx + 1]
+            dictionary_name = dictionary_name or segs[idx + 2]
+            edition = edition or segs[idx + 3]
+    except Exception:
+        pass
+    # Create minimal IfcClassification; most attributes are optional in IFC4
+    return ifc.create_entity(
+        "IfcClassification",
+        Source=scheme or None,
+        Edition=edition or None,
+        Name=dictionary_name or (dict_root_uri or "bSDD"),
+        Location=dict_root_uri or None,
+    )
+
+def get_or_create_classification_reference(ifc, class_uri: str, label: Optional[str] = None):
+    # Reuse by Location
+    for ref in ifc.by_type("IfcClassificationReference"):
+        try:
+            if (getattr(ref, "Location", None) or "").strip() == (class_uri or "").strip():
+                return ref
+        except Exception:
+            pass
+    dict_root = _parse_dictionary_root_from_uri(class_uri) or class_uri
+    cls = get_or_create_classification(ifc, dict_root)
+    # Derive an identification token from the class URI (last path segment)
+    ident = None
+    try:
+        segs = [s for s in urlparse(class_uri).path.split("/") if s]
+        if "class" in segs:
+            idx = segs.index("class")
+            if idx + 1 < len(segs):
+                ident = segs[idx + 1]
+    except Exception:
+        pass
+    description = f"Classification concept: {label}" if label else None
+    return ifc.create_entity(
+        "IfcClassificationReference",
+        Identification=ident,
+        Name=label or None,
+        Description=description,
+        Location=class_uri,
+        ReferencedSource=cls,
+    )
+
+def associate_classification_to_element(ifc, element, class_ref):
+    for rel in ifc.by_type("IfcRelAssociatesClassification"):
+        try:
+            if rel.RelatingClassification == class_ref and element in (rel.RelatedObjects or []):
+                return
+        except Exception:
+            pass
+    ifc.create_entity(
+        "IfcRelAssociatesClassification",
+        GlobalId=ifc_guid.new() if ifc_guid else None,
+        RelatedObjects=[element],
+        RelatingClassification=class_ref,
+    )
+
+def _ensure_api_classification(ifc, dict_root_uri: str):
+    """Create/reuse IfcClassification using IfcOpenShell API and fill metadata."""
+    for cls in ifc.by_type("IfcClassification"):
+        if (getattr(cls, "Location", None) or "").strip() == (dict_root_uri or "").strip():
+            return cls
+    # Derive attributes
+    scheme = None
+    dictionary_name = None
+    edition = None
+    try:
+        parts = urlparse(dict_root_uri)
+        segs = [s for s in parts.path.split("/") if s]
+        idx = segs.index("uri") if "uri" in segs else -1
+        if idx >= 0 and len(segs) >= idx + 4:
+            scheme = segs[idx + 1]
+            dictionary_name = segs[idx + 2]
+            edition = segs[idx + 3]
+    except Exception:
+        pass
+    classification_name = dictionary_name or (dict_root_uri or "Classification")
+    api = getattr(ifcopenshell, "api", None)
+    if api and hasattr(api, "classification") and hasattr(api.classification, "add_classification"):
+        cls = api.classification.add_classification(ifc, classification=classification_name)
+        try:
+            api.classification.edit_classification(
+                ifc,
+                classification=cls,
+                attributes={
+                    "Name": classification_name,
+                    "Source": scheme or None,
+                    "Edition": edition or None,
+                    "Location": dict_root_uri or None,
+                },
+            )
+        except Exception:
+            pass
+        return cls
+    return get_or_create_classification(ifc, dict_root_uri, scheme=scheme, dictionary_name=classification_name, edition=edition)
+
+def _add_api_reference(ifc, element, class_uri: str, label: Optional[str]):
+    """Add IfcClassificationReference via IfcOpenShell API and link to element; set Location and Description."""
+    ident = None
+    try:
+        segs = [s for s in urlparse(class_uri).path.split("/") if s]
+        if "class" in segs:
+            idx = segs.index("class")
+            if idx + 1 < len(segs):
+                ident = segs[idx + 1]
+    except Exception:
+        pass
+    dict_root = _parse_dictionary_root_from_uri(class_uri) or class_uri
+    # Skip if already associated
+    try:
+        for rel in getattr(element, "HasAssociations", []) or []:
+            if rel.is_a("IfcRelAssociatesClassification"):
+                ref = getattr(rel, "RelatingClassification", None)
+                if not ref:
+                    continue
+                if (getattr(ref, "Location", None) or "").strip() == (class_uri or "").strip():
+                    return ref
+                if ident and (getattr(ref, "Identification", None) or "").strip() == ident:
+                    return ref
+    except Exception:
+        pass
+    cls = _ensure_api_classification(ifc, dict_root)
+    api = getattr(ifcopenshell, "api", None)
+    if api and hasattr(api, "classification") and hasattr(api.classification, "add_reference"):
+        ref = api.classification.add_reference(
+            ifc,
+            products=[element],
+            identification=ident,
+            name=label or ident,
+            classification=cls,
+            is_lightweight=True,
+        )
+        try:
+            api.classification.edit_reference(
+                ifc,
+                reference=ref,
+                attributes={
+                    "Location": class_uri,
+                    "Description": f"Classification concept: {label}" if label else None,
+                },
+            )
+        except Exception:
+            pass
+        return ref
+    class_ref = get_or_create_classification_reference(ifc, class_uri=class_uri, label=label)
+    associate_classification_to_element(ifc, element, class_ref)
+    return class_ref
+
+def _remove_reference_from_element(ifc, element, match_fn):
+    """Remove an existing classification reference from an element using API if matches predicate."""
+    api = getattr(ifcopenshell, "api", None)
+    try:
+        for rel in list(getattr(element, "HasAssociations", []) or []):
+            if not rel.is_a("IfcRelAssociatesClassification"):
+                continue
+            ref = getattr(rel, "RelatingClassification", None)
+            if not ref:
+                continue
+            try:
+                if not match_fn(ref):
+                    continue
+            except Exception:
+                continue
+            if api and hasattr(api, "classification") and hasattr(api.classification, "remove_reference"):
+                try:
+                    api.classification.remove_reference(ifc, reference=ref, products=[element])
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
 def element_or_material_for_timber(ifc):
     cand = first(ifc.by_type("IfcMember")) or first(ifc.by_type("IfcBeam"))
     if cand:
@@ -419,8 +623,11 @@ def find_target_element(ifc, component: str):
         return obj
     return None
 
+# ----------------------- DPP helpers (classes, docs, links, identifiers) -----------------------
+
 def load_dpp_classes(dpp_dir: Optional[str]) -> Dict[str, Dict[str, Any]]:
-    classes = {}
+    """Extract product class concept URIs from DPP files (prefer explicit '#classification')."""
+    classes: Dict[str, Dict[str, Any]] = {}
     if not dpp_dir or not os.path.isdir(dpp_dir):
         return classes
     for fn in os.listdir(dpp_dir):
@@ -430,20 +637,39 @@ def load_dpp_classes(dpp_dir: Optional[str]) -> Dict[str, Dict[str, Any]]:
             data = json.load(open(os.path.join(dpp_dir, fn), "r", encoding="utf-8"))
         except Exception:
             continue
+        # infer component key
+        did = (data.get("id") or "").lower()
         name = (data.get("product", {}).get("name") or data.get("dpp:hasName") or "").lower()
-        if "knauf" in name or "insulation" in name:
+        if "knauf" in did or "insulation" in name:
             key = "insulation"
-        elif "wavin" in name or "pex" in name or "pipe" in name:
+        elif "pvc" in did or "sewage" in did or "pipe" in name:
             key = "pipe"
-        elif "schilliger" in name or "glulam" in name or "brettschichtholz" in name:
+        elif "schilliger" in did or "glulam" in did or "gl24" in did or "brettschichtholz" in name:
             key = "timber"
         else:
             key = None
-        cls = data.get("product", {}).get("class") or data.get("dpp:hasClassification") or {}
-        uri = cls.get("uri") or cls.get("dpp:hasConceptUri")
-        label = cls.get("label") or cls.get("dpp:hasName")
-        if key and uri:
-            classes[key] = {"uri": uri, "label": label}
+        if not key:
+            continue
+        # Prefer explicit classification collection
+        class_uri = None
+        class_label = None
+        for coll in data.get("dpp:dataElementCollections", []):
+            if coll.get("id") == "#classification":
+                for el in coll.get("dpp:elements", []):
+                    if el.get("id") == "#productClass":
+                        val = el.get("dpp:value", {})
+                        u = (val.get("uri") or "").strip()
+                        if u:
+                            class_uri = u
+                            class_label = val.get("name")
+                            break
+        # Fallbacks (legacy locations)
+        if not class_uri:
+            cls = data.get("product", {}).get("class") or data.get("dpp:hasClassification") or {}
+            class_uri = (cls.get("uri") or cls.get("dpp:hasConceptUri") or "").strip() or None
+            class_label = cls.get("label") or cls.get("dpp:hasName")
+        if class_uri:
+            classes[key] = {"uri": class_uri, "label": class_label}
     return classes
 
 def load_dpp_docs(dpp_dir: Optional[str]) -> Dict[str, List[str]]:
@@ -526,6 +752,75 @@ def load_dpp_links(dpp_dir: Optional[str]) -> Dict[str, List[str]]:
                                 links.setdefault(key, []).append(u)
     return links
 
+def _parse_gs1_from_dl(uri: str) -> Dict[str, Optional[str]]:
+    try:
+        # Example: http://.../id/01/05790001234561/21/WV-DN110-2025-001?linkType=dpp
+        path = urlparse(uri).path
+        segs = [s for s in path.split("/") if s]
+        # find 'id' segment
+        if "id" in segs:
+            idx = segs.index("id") + 1
+            ai_map: Dict[str, Optional[str]] = {}
+            while idx < len(segs):
+                ai = segs[idx]
+                val = segs[idx + 1] if idx + 1 < len(segs) else None
+                if ai in {"01", "10", "21"}:
+                    ai_map[ai] = val
+                idx += 2
+            # also include entire DL
+            ai_map["dl"] = uri
+            return ai_map
+    except Exception:
+        pass
+    return {}
+
+def load_dpp_identifiers(dpp_dir: Optional[str]) -> Dict[str, Dict[str, Optional[str]]]:
+    ids: Dict[str, Dict[str, Optional[str]]] = {"insulation": {}, "pipe": {}, "timber": {}}
+    if not dpp_dir or not os.path.isdir(dpp_dir):
+        return ids
+    for fn in os.listdir(dpp_dir):
+        if not fn.lower().endswith((".json", ".jsonld")):
+            continue
+        try:
+            data = json.load(open(os.path.join(dpp_dir, fn), "r", encoding="utf-8"))
+        except Exception:
+            continue
+        did = (data.get("id") or "").lower()
+        name = (data.get("product", {}).get("name") or data.get("dpp:hasName") or "").lower()
+        if "knauf" in did or "insulation" in name:
+            key = "insulation"
+        elif "pvc" in did or "sewage" in did or "pipe" in name:
+            key = "pipe"
+        elif "schilliger" in did or "glulam" in did or "gl24" in did or "brettschichtholz" in name:
+            key = "timber"
+        else:
+            key = None
+        if not key:
+            continue
+        # productIdentifiers
+        for pid in data.get("dpp:productIdentifiers", []):
+            scheme = (pid.get("dpp:scheme") or "").lower()
+            val = pid.get("dpp:value")
+            if scheme == "gtin" and val:
+                ids.setdefault(key, {})["01"] = val
+        # carrier GS1 DL (uri may include AI(01), AI(21), AI(10))
+        for coll in data.get("dpp:dataElementCollections", []):
+            if coll.get("id") == "#carrier":
+                for el in coll.get("dpp:elements", []):
+                    if el.get("id") == "#qrLink":
+                        v = el.get("dpp:value", {})
+                        dl = (v.get("uri") or "").strip()
+                        if dl and dl.startswith("http"):
+                            parsed = _parse_gs1_from_dl(dl)
+                            ids.setdefault(key, {}).update(parsed)
+        # sometimes batch/lot may appear in identifiers list too
+        for pid in data.get("dpp:productIdentifiers", []):
+            scheme = (pid.get("dpp:scheme") or "").lower()
+            val = pid.get("dpp:value")
+            if scheme in {"lot", "batch"} and val:
+                ids.setdefault(key, {})["10"] = val
+    return ids
+
 def read_mapping(mapping_csv: str):
     rows = []
     with open(mapping_csv, "r", encoding="utf-8") as f:
@@ -560,6 +855,7 @@ def main():
     dpp_classes = load_dpp_classes(args.dpp_dir)
     dpp_docs_by_comp = load_dpp_docs(args.dpp_dir)
     dpp_links_by_comp = load_dpp_links(args.dpp_dir)
+    dpp_ids_by_comp = load_dpp_identifiers(args.dpp_dir)
 
     # Demo fallbacks for localhost /files if no DPP docs were found
     demo_fallback_docs: Dict[str, List[str]] = {
@@ -637,6 +933,34 @@ def main():
         for target in targets:
             if target:
                 associate_external_to_element(ifc, target, ext_ref)
+                # Also add a formal classification link for IDS/viewers expecting IfcRelAssociatesClassification
+                try:
+                    # Use IfcOpenShell API helpers to create references and relationships
+                    if "/class/" in (ref_uri or ""):
+                        # Replace glasswool-batt with Mineral Wool Insulation per request
+                        use_uri = ref_uri
+                        use_name = ref_name
+                        try:
+                            if "thermal-insulation-products/1.0.0/class/glasswool-batt" in (ref_uri or ""):
+                                use_uri = "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/class/Mineral Wool Insulation"
+                                use_name = "Mineral Wool Insulation"
+                                _remove_reference_from_element(
+                                    ifc,
+                                    target,
+                                    lambda r: (getattr(r, "Location", "") or "").endswith("/class/glasswool-batt")
+                                )
+                        except Exception:
+                            pass
+                        _add_api_reference(ifc, target, use_uri, use_name)
+                    else:
+                        # If we only have dictionary root here but DPP provided a class, prefer the DPP class
+                        dpp_class = dpp_classes.get(comp, {})
+                        dpp_uri = (dpp_class.get("uri") or "").strip()
+                        dpp_label = dpp_class.get("label")
+                        if "/class/" in dpp_uri:
+                            _add_api_reference(ifc, target, dpp_uri, dpp_label)
+                except Exception:
+                    pass
                 # Also expose the classification as a document link for viewers
                 try:
                     info = get_or_create_doc_info(
@@ -679,6 +1003,30 @@ def main():
                         link_external_to_material(ifc, m, ext_ref)
                 else:
                     associate_external_to_element(ifc, pipe_elem, ext_ref)
+
+    # Add GS1 identifiers to pipe, insulation, and timber (from DPP ids and Digital Link)
+    try:
+        for comp in ["pipe", "insulation", "timber"]:
+            elems = find_target_elements(ifc, comp)
+            gs1 = dpp_ids_by_comp.get(comp, {})
+            if not elems or not gs1:
+                continue
+            for el in elems:
+                pset_ids = find_or_create_pset(ifc, el, "CPset_GS1_Identifiers")
+                ai01 = gs1.get("01")  # GTIN
+                ai10 = gs1.get("10")  # Batch/Lot
+                ai21 = gs1.get("21")  # Serial
+                dl_url = gs1.get("dl")
+                if ai01:
+                    upsert_single_value(ifc, pset_ids, "GS1_AI_01_GTIN", ifc_measure(ifc, "-", str(ai01)))
+                if ai10:
+                    upsert_single_value(ifc, pset_ids, "GS1_AI_10_BATCH", ifc_measure(ifc, "-", str(ai10)))
+                if ai21:
+                    upsert_single_value(ifc, pset_ids, "GS1_AI_21_SERIAL", ifc_measure(ifc, "-", str(ai21)))
+                if dl_url:
+                    upsert_single_value(ifc, pset_ids, "GS1_DigitalLink", ifc_measure(ifc, "-", dl_url))
+    except Exception:
+        pass
 
     # Attach evidence documents with proper localhost HTTP URLs.
     for comp, paths in docs_by_comp.items():
