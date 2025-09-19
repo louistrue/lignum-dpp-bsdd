@@ -63,7 +63,9 @@ def extract_carrier_uri(dpp_file: Path) -> Optional[Dict[str, str]]:
 def main():
     """Generate exactly three QR codes (one per product) and an HTML viewer with links."""
 
-    output_dir = Path("qr_codes")
+    # Output to the qr_codes directory at project root
+    project_root = Path(__file__).parent.parent.parent
+    output_dir = project_root / "qr_codes"
     output_dir.mkdir(exist_ok=True)
 
     # Clean old QR codes to avoid confusion
@@ -86,7 +88,9 @@ def main():
     cards: List[Dict[str, str]] = []
 
     for dpp_filename, slug, label in dpp_files:
-        dpp_path = Path(dpp_filename)
+        # Look for DPP files in the products directory relative to project root
+        project_root = Path(__file__).parent.parent.parent
+        dpp_path = project_root / "dpp" / "products" / dpp_filename
 
         if not dpp_path.exists():
             print(f"⚠️  Skipping {dpp_filename} - file not found")
