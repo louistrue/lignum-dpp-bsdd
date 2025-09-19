@@ -46,14 +46,26 @@ This PoC implements:
 ```
 lignum-dpp/
 ├── api/
-│   ├── main.py                 # FastAPI server implementation
-│   └── requirements.txt        # Python dependencies
-├── qr_codes/                   # Generated QR code images
-│   └── index.html              # QR code viewer
-├── dpp_*.jsonld                # DPP JSON-LD documents (served)
-├── openapi.yaml                # OpenAPI 3.0 specification
-├── generate_qr_codes.py        # QR code generator
-└── README_DPP_POC.md           # This file
+│   ├── main.py                      # FastAPI server
+│   └── requirements.txt             # Python dependencies
+├── data/                            # Documents served via /files (EPD/DoP/etc.)
+├── docs/
+│   ├── README_DEMO.md               # Demo walkthrough (localhost)
+│   └── openapi.yaml                 # OpenAPI 3.0 specification
+├── dpp/
+│   └── products/                    # DPP JSON-LD documents (served)
+├── ifc/
+│   ├── samples/                     # Input IFCs
+│   ├── outputs/                     # Patched IFCs
+│   ├── ids/                         # IDS definitions
+│   └── tools/                       # IFC utilities (patch_ifc.py)
+├── mapping/
+│   └── mapping.csv                  # Property → IFC mapping with bSDD URIs
+├── qr_codes/                        # Generated QR images + index.html
+│   └── tools/
+│       └── generate_qr_codes.py     # QR code generator
+├── run_demo.sh                      # One‑command demo runner
+└── README.md                        # This file
 ```
 
 ## 🚀 Quick Start
@@ -90,7 +102,7 @@ curl -X POST http://localhost:8000/admin/reload
 ### 3. Generate QR Codes
 
 ```bash
-python generate_qr_codes.py
+python qr_codes/tools/generate_qr_codes.py
 ```
 
 View generated QR codes by opening `qr_codes/index.html` in a browser.
@@ -179,7 +191,7 @@ Each DPP includes comprehensive EPD data:
 ```bash
 curl -X POST http://localhost:8000/dpps \
   -H "Content-Type: application/json" \
-  -d @dpp_knauf_acoustic_batt.jsonld
+  -d @dpp/products/dpp_knauf_acoustic_batt.jsonld
 ```
 
 ### Read a DPP (JSON-LD)

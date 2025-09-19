@@ -48,7 +48,7 @@ curl -I "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf" |
 curl -I "http://localhost:8000/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf" | sed -n '1,3p'
 
 echo "\n=== 7) Generate QR codes & open viewer ==="
-python3 "$ROOT_DIR/tools/generate_qr_codes.py" >/dev/null
+python3 "$ROOT_DIR/qr_codes/tools/generate_qr_codes.py" >/dev/null
 open "$ROOT_DIR/qr_codes/index.html" >/dev/null 2>&1 || true
 
 echo "\n=== 8) Create a new DPP (server generates ID) ==="

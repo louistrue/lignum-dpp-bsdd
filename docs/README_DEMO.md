@@ -65,7 +65,7 @@ curl -I "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf" | 
 
 6) QR codes (one per product)
 ```bash
-python3 ./tools/generate_qr_codes.py
+python3 ./qr_codes/tools/generate_qr_codes.py
 open ./qr_codes/index.html
 ```
 Each card shows:
@@ -136,7 +136,7 @@ Use the official IDS validator or tools like BlenderBIM / BIMcollab to validate 
   pkill -f "python3 main.py" || true
   ```
 - Python deps: run `pip3 install -r api/requirements.txt`, and for IFC step: `pip3 install ifcopenshell`.
-- No QR images: run `python3 generate_qr_codes.py`.
+- No QR images: run `python3 ./qr_codes/tools/generate_qr_codes.py`.
 - No IFC step: add a sample IFC as `./POC.ifc`.
 - DPP edits not visible: call `POST /admin/reload` to refresh in‑memory DPPs without restarting.
 
