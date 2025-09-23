@@ -582,6 +582,26 @@ def _extract_modules_from_text(*texts: Optional[str]) -> List[str]:
             normalized.add(m)
     return sorted(normalized)
 
+def _should_include_epd_modules(modules: List[str]) -> bool:
+    """Decide whether a single EPD row should be included in aggregation.
+
+    Rules:
+    - Exclude module D (benefits beyond the system boundary)
+    - Include A1-A3, A4, A5, any B1..B7, and C1..C4
+    - If modules are not specified, include by default
+    """
+    if not modules:
+        return True
+    mods = {m.upper() for m in modules}
+    # If the row is only D, exclude
+    if mods == {"D"}:
+        return False
+    # Include if there is any A/B/C module
+    if any(m.startswith("A") or m.startswith("B") or m.startswith("C") for m in mods):
+        return True
+    # Otherwise (e.g., ambiguous), include unless it's D-only
+    return "D" not in mods
+
 def pick_epd_doc_url_for_component(comp: str, dpp_docs_by_comp: Dict[str, List[str]], demo_fallback_docs: Dict[str, List[str]]) -> Optional[str]:
     def is_epd(u: str) -> bool:
         ul = u.lower()
@@ -614,18 +634,13 @@ def find_target_elements(ifc, component: str) -> List:
     if comp == "pipe":
         return list(ifc.by_type("IfcPipeSegment"))
     if comp == "timber":
-        # For POC, target all columns directly (wood material detection may not work)
-        elems = list(ifc.by_type("IfcColumn"))
-        if elems:
-            return elems
-        # Fallback to beams and members with wood material check
-        elems = list(ifc.by_type("IfcBeam")) + list(ifc.by_type("IfcMember"))
-        wood_elems = []
-        for e in elems:
-            mats = _element_materials(ifc, e)
-            if any(_is_wood_material(m) for m in mats):
-                wood_elems.append(e)
-        return wood_elems or elems
+        # Target both columns and beams
+        columns = list(ifc.by_type("IfcColumn"))
+        beams = list(ifc.by_type("IfcBeam"))
+        targets = columns + beams
+        if targets:
+            return targets
+        return []
     return []
 
 def guess_pset_name(component: str, cp_property: Optional[str] = None, standard: Optional[str] = None, note: Optional[str] = None) -> str:
@@ -928,20 +943,37 @@ def main():
         # pick EPD doc url for property-to-EPD referencing
         epd_doc_url = pick_epd_doc_url_for_component(comp, dpp_docs_by_comp, demo_fallback_docs)
 
+        # Evaluate once per CSV row for aggregation
+        is_epd = is_epd_row(r)
+        row_name = r.get("cp_property")
+        row_val = str(r.get("value", "")).strip()
+        row_unit = (r.get("unit") or "").strip()
+        row_bsdd_uri = (r.get("bsdd_property_uri") or "").strip()
+        row_modules = _extract_modules_from_text(r.get("cp_property"), r.get("note"), r.get("standard"))
+        if args.mode == "values_and_refs":
+            try:
+                if is_epd and row_bsdd_uri and row_val not in {"", None} and _should_include_epd_modules(row_modules):
+                    v = float(row_val)
+                    comp_bucket = agg.setdefault(comp, {})
+                    info = comp_bucket.setdefault(row_bsdd_uri, {"sum": 0.0, "unit": row_unit, "modules": set()})
+                    info["sum"] += v
+                    if not info.get("unit"):
+                        info["unit"] = row_unit
+                    for m in row_modules:
+                        info["modules"].add(m)
+            except Exception:
+                pass
+
+        # Now write values and references per element
         for element in elements:
             # Determine Pset name (route EPD indicators to dedicated set)
-            prop_name_lower = (r["cp_property"] or "").strip().lower()
-            is_epd = is_epd_row(r)
             pset_name = guess_pset_name(comp, r.get("cp_property"), r.get("standard"), r.get("note"))
             pset = find_or_create_pset(ifc, element, pset_name)
 
             if args.mode == "values_and_refs":
-                name = r["cp_property"].strip()
-                val = str(r["value"]).strip()
-                unit = (r.get("unit") or "").strip()
-                bsdd_uri = (r.get("bsdd_property_uri") or "").strip()
-                measure = ifc_measure(ifc, unit, val)
-                description = bsdd_uri if bsdd_uri else None
+                name = (row_name or "").strip()
+                measure = ifc_measure(ifc, row_unit, row_val)
+                description = row_bsdd_uri if row_bsdd_uri else None
                 prop = upsert_single_value(ifc, pset, name, measure, description=description)
                 # Optionally link epd property to EPD document
                 if is_epd and epd_doc_url:
@@ -949,19 +981,6 @@ def main():
                         link_property_to_doc(ifc, prop, epd_doc_url)
                     except Exception:
                         pass
-                # Collect for bSDD aggregation by property URI across modules
-                try:
-                    if is_epd and bsdd_uri and val not in {"", None}:
-                        v = float(val)
-                        comp_bucket = agg.setdefault(comp, {})
-                        info = comp_bucket.setdefault(bsdd_uri, {"sum": 0.0, "unit": unit, "modules": set()})
-                        info["sum"] += v
-                        if not info.get("unit"):
-                            info["unit"] = unit
-                        for m in _extract_modules_from_text(r.get("cp_property"), r.get("note"), r.get("standard")):
-                            info["modules"].add(m)
-                except Exception:
-                    pass
             else:
                 # refs_only: do not write values. Ensure the Pset exists for IDS compliance.
                 _ = pset
