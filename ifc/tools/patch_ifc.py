@@ -36,6 +36,7 @@ import csv
 import json
 import os
 import sys
+import re
 from typing import Dict, Any, Optional, List
 from urllib.parse import urlparse, unquote
 
@@ -550,6 +551,37 @@ def is_epd_row(r: Dict[str, Any]) -> bool:
     except Exception:
         return False
 
+def _bsdd_code_from_uri(uri: str) -> str:
+    try:
+        path = urlparse(uri).path
+        segs = [s for s in path.split("/") if s]
+        if "prop" in segs:
+            idx = segs.index("prop")
+            if idx + 1 < len(segs):
+                return segs[idx + 1]
+        return segs[-1] if segs else uri
+    except Exception:
+        return uri
+
+def _extract_modules_from_text(*texts: Optional[str]) -> List[str]:
+    """Find EN 15804 information modules like A1-A3, A4, A5, B1..B7, C1..C4, D in provided texts.
+    Normalizes 'A1A3' and 'A1–A3' into 'A1-A3'.
+    """
+    joined = " ".join([t or "" for t in texts]).lower()
+    joined = joined.replace("\u2013", "-")  # normalize en-dash
+    # normalize concatenated ranges like A1A3 → A1-A3
+    joined = re.sub(r"\b(a)(\d)(a)(\d)\b", r"\1\2-\3\4", joined)
+    pattern = re.compile(r"\b(a\d(?:-a?\d)?|b\d|c\d|d)\b")
+    mods = set(m.upper() for m in pattern.findall(joined))
+    # unify 'A1-A3' variants
+    normalized = set()
+    for m in mods:
+        if m.startswith("A") and "-A" in m:
+            normalized.add(m.replace("-A", "-"))
+        else:
+            normalized.add(m)
+    return sorted(normalized)
+
 def pick_epd_doc_url_for_component(comp: str, dpp_docs_by_comp: Dict[str, List[str]], demo_fallback_docs: Dict[str, List[str]]) -> Optional[str]:
     def is_epd(u: str) -> bool:
         ul = u.lower()
@@ -877,6 +909,8 @@ def main():
     rows = read_mapping(args.mapping)
     dict_by_comp: Dict[str, str] = {}
     docs_by_comp = {}
+    # Aggregation bucket: comp -> bsdd_uri -> {sum, unit, modules:set}
+    agg: Dict[str, Dict[str, Dict[str, Any]]] = {}
     for r in rows:
         comp = r["component"].strip().lower()
         dict_by_comp.setdefault(comp, r.get("dictionary_uri", ""))
@@ -915,9 +949,44 @@ def main():
                         link_property_to_doc(ifc, prop, epd_doc_url)
                     except Exception:
                         pass
+                # Collect for bSDD aggregation by property URI across modules
+                try:
+                    if is_epd and bsdd_uri and val not in {"", None}:
+                        v = float(val)
+                        comp_bucket = agg.setdefault(comp, {})
+                        info = comp_bucket.setdefault(bsdd_uri, {"sum": 0.0, "unit": unit, "modules": set()})
+                        info["sum"] += v
+                        if not info.get("unit"):
+                            info["unit"] = unit
+                        for m in _extract_modules_from_text(r.get("cp_property"), r.get("note"), r.get("standard")):
+                            info["modules"].add(m)
+                except Exception:
+                    pass
             else:
                 # refs_only: do not write values. Ensure the Pset exists for IDS compliance.
                 _ = pset
+
+    # Write aggregated bSDD-aligned indicators per component
+    for comp, by_prop in agg.items():
+        epd_doc_url = pick_epd_doc_url_for_component(comp, dpp_docs_by_comp, demo_fallback_docs)
+        elements = find_target_elements(ifc, comp)
+        if not elements:
+            continue
+        for element in elements:
+            pset_bsd = find_or_create_pset(ifc, element, "CPset_LCAIndicators_bSDD")
+            for bsdd_uri, info in by_prop.items():
+                prop_name = _bsdd_code_from_uri(bsdd_uri)
+                value_text = f"{info.get('sum', 0.0)}"
+                unit = info.get("unit")
+                measure = ifc_measure(ifc, unit, value_text)
+                # Keep description as pure URI to enable external reference linking
+                prop = upsert_single_value(ifc, pset_bsd, prop_name, measure, description=bsdd_uri)
+                # Link aggregated value to EPD document as provenance
+                if epd_doc_url:
+                    try:
+                        link_property_to_doc(ifc, prop, epd_doc_url)
+                    except Exception:
+                        pass
 
     for comp, dict_uri in dict_by_comp.items():
         if not dict_uri:
