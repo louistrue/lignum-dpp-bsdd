@@ -464,6 +464,265 @@
             ]
         },
         {
+            "id": "#dopc",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Declaration of Performance and Conformity",
+            "dpp:labelSet": ["DoPC", "CPR", "EN13162"],
+            "dpp:dopcMetadata": {
+                "type": "dpp:DeclarationOfPerformance",
+                "dpp:declarationCode": "KI-AB-DoP-2025-001",
+                "dpp:dateOfIssue": "2025-01-15",
+                "dpp:harmonisedStandard": "EN 13162:2012+A1:2015",
+                "dpp:avcpSystem": "3",
+                "dpp:notifiedBody": "N/A (System 3)",
+                "dpp:intendedUse": "Thermal and acoustic insulation in buildings",
+                "dpp:declaredUnit": "1 m³",
+                "dpp:documentReference": "#declarationOfPerformance"
+            },
+            "dpp:elements": [
+                {
+                    "id": "#dopcThermalConductivity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/thermal/conductivity",
+                    "dpp:name": "DOPC_THERMAL_CONDUCTIVITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ThermalConductivity",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 0.047,
+                        "dpp:unit": "W/mK"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcThermalResistance",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/thermal/resistance",
+                    "dpp:name": "DOPC_THERMAL_RESISTANCE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ThermalResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 2.55,
+                        "dpp:unit": "m²K/W"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcReactionToFire",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/fire/reaction",
+                    "dpp:name": "DOPC_REACTION_TO_FIRE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ReactionToFire",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "A1",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcWaterVapourResistance",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/hygrothermal/waterVapourResistance",
+                    "dpp:name": "DOPC_WATER_VAPOUR_RESISTANCE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/WaterVapourResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 5.00,
+                        "dpp:unit": "MNs/g.m"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcCompressiveStrength",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/compressiveStrength",
+                    "dpp:name": "DOPC_COMPRESSIVE_STRENGTH",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/CompressiveStrength",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 10,
+                        "dpp:unit": "kPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcDimensionalStability",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/dimensionalStability",
+                    "dpp:name": "DOPC_DIMENSIONAL_STABILITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/DimensionalStability",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 1,
+                        "dpp:unit": "%"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcWaterAbsorptionLT",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/hygrothermal/waterAbsorptionLongTerm",
+                    "dpp:name": "DOPC_WATER_ABSORPTION_LT",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/LongTermWaterAbsorptionTotal",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 10,
+                        "dpp:unit": "%"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcSoundAbsorption",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/acoustic/soundAbsorption",
+                    "dpp:name": "DOPC_SOUND_ABSORPTION",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/SoundAbsorption",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 0.95,
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcTensileStrengthPerp",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/tensileStrengthPerpendicular",
+                    "dpp:name": "DOPC_TENSILE_STRENGTH_PERP",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/TensileStrengthPerpendicular",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 5,
+                        "dpp:unit": "kPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcThicknessTolerance",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/dimensional/thicknessTolerance",
+                    "dpp:name": "DOPC_THICKNESS_TOLERANCE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ThicknessTolerance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "T5",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Knauf Insulation GmbH"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "id": "#documents",
             "type": "dpp:DataElementCollection",
             "dcterms:title": "Documents",

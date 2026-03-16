@@ -51,7 +51,8 @@ lignum-dpp/
 ├── data/                            # Documents served via /files (EPD/DoP/etc.)
 ├── docs/
 │   ├── README_DEMO.md               # Demo walkthrough (localhost)
-│   └── openapi.yaml                 # OpenAPI 3.0 specification
+│   ├── openapi.yaml                 # OpenAPI 3.0 specification
+│   └── comparison-dpp-keystone.md   # Schema comparison with DPP Keystone
 ├── dpp/
 │   └── products/                    # DPP JSON-LD documents (served)
 ├── ifc/
@@ -61,6 +62,9 @@ lignum-dpp/
 │   └── tools/                       # IFC utilities (patch_ifc.py)
 ├── mapping/
 │   └── mapping.csv                  # Property → IFC mapping with bSDD URIs
+├── ontology/
+│   ├── dpp-ontology.jsonld          # Formal OWL ontology (JSON-LD)
+│   └── dpp-shacl.jsonld             # SHACL validation shapes
 ├── qr_codes/                        # Generated QR images + index.html
 │   └── tools/
 │       └── generate_qr_codes.py     # QR code generator

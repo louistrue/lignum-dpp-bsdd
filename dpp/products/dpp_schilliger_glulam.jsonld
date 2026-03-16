@@ -428,6 +428,341 @@
             ]
         },
         {
+            "id": "#dopc",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Declaration of Performance and Conformity",
+            "dpp:labelSet": [
+                "DoPC",
+                "CPR",
+                "EN14080"
+            ],
+            "dpp:dopcMetadata": {
+                "type": "dpp:DeclarationOfPerformance",
+                "dpp:declarationCode": "BSH-SHI-01-01062022",
+                "dpp:dateOfIssue": "2022-06-01",
+                "dpp:harmonisedStandard": "EN 14080:2013",
+                "dpp:avcpSystem": "1",
+                "dpp:notifiedBody": "Holzforschung Austria (NB 1391)",
+                "dpp:intendedUse": "Load-bearing structural timber elements",
+                "dpp:declaredUnit": "1 m³",
+                "dpp:documentReference": "#declarationOfPerformance"
+            },
+            "dpp:elements": [
+                {
+                    "id": "#dopcStrengthClass",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/strengthClass",
+                    "dpp:name": "DOPC_STRENGTH_CLASS",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/strengthClass_EN14080",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "GL24h",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcBendingStrength",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/bendingStrength",
+                    "dpp:name": "DOPC_BENDING_STRENGTH",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/bendingStrength",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 24.0,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcTensionParallel",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/tensionStrengthParallel",
+                    "dpp:name": "DOPC_TENSION_PARALLEL",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/tensionStrengthParallel",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 19.2,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcTensionPerpendicular",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/tensionStrengthPerpendicular",
+                    "dpp:name": "DOPC_TENSION_PERPENDICULAR",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/tensionStrengthPerpendicular",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 0.5,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcShearStrength",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/shearStrength",
+                    "dpp:name": "DOPC_SHEAR_STRENGTH",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/shearStrength",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 3.5,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcCompressionParallel",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/compressionStrengthParallel",
+                    "dpp:name": "DOPC_COMPRESSION_PARALLEL",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/compressionStrengthParallel",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 24.0,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcCompressionPerpendicular",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/compressionStrengthPerpendicular",
+                    "dpp:name": "DOPC_COMPRESSION_PERPENDICULAR",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/compressionStrengthPerpendicular",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 2.5,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcModulusOfElasticity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/structural/modulusOfElasticity",
+                    "dpp:name": "DOPC_MOE_PARALLEL",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/modulusOfElasticity",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 11500,
+                        "dpp:unit": "MPa"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcDensity",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/physical/density",
+                    "dpp:name": "DOPC_DENSITY",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/density_EN14080",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 385,
+                        "dpp:unit": "kg/m³"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcReactionToFire",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/fire/reaction",
+                    "dpp:name": "DOPC_REACTION_TO_FIRE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/reactionToFire",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "D-s2,d0",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcFormaldehydeEmission",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/emissions/formaldehyde",
+                    "dpp:name": "DOPC_FORMALDEHYDE_EMISSION",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/formaldehydeEmission",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "E1",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcMoistureContent",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/physical/moistureContent",
+                    "dpp:name": "DOPC_MOISTURE_CONTENT",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/moistureContent",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 12,
+                        "dpp:unit": "%"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcDelamination",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/durability/delaminationResistance",
+                    "dpp:name": "DOPC_DELAMINATION",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/delaminationResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "Pass",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Schilliger Holz AG"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "Leistungserklärung BSH-SHI-01",
+                            "schema:url": "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "id": "#documents",
             "type": "dpp:DataElementCollection",
             "dcterms:title": "Documents",

@@ -208,6 +208,19 @@ def render_dpp_as_html(dpp: Dict) -> str:
             title = collection.get('dcterms:title', 'Untitled Collection')
             html += f"<div class='collection'><h3>{title}</h3>"
             
+            # Render DoPC metadata header if present
+            if 'dpp:dopcMetadata' in collection:
+                meta = collection['dpp:dopcMetadata']
+                html += "<div class='element' style='background:#e8f4fd;border-left:4px solid #2980b9;padding:15px;margin-bottom:15px;'>"
+                html += "<strong>Declaration of Performance</strong><br>"
+                for mk, ml in [('dpp:declarationCode','Code'), ('dpp:dateOfIssue','Issued'),
+                               ('dpp:harmonisedStandard','Standard'), ('dpp:avcpSystem','AVCP System'),
+                               ('dpp:notifiedBody','Notified Body'), ('dpp:intendedUse','Intended Use'),
+                               ('dpp:declaredUnit','Declared Unit')]:
+                    if mk in meta:
+                        html += f"<span class='label'>{ml}:</span> <span class='value'>{meta[mk]}</span><br>"
+                html += "</div>"
+
             if 'dpp:elements' in collection:
                 for element in collection['dpp:elements']:
                     if element.get('type') == 'dpp:Document':
@@ -653,6 +666,28 @@ async def read_data_element(dpp_id: str, collection_id: str, element_id: str):
                     return element
     
     raise HTTPException(status_code=404, detail="Element not found")
+
+@app.get("/ontology")
+async def get_ontology():
+    """Serve the DPP OWL ontology for linked-data dereferencing"""
+    base_path = Path(__file__).parent.parent
+    ontology_path = base_path / "ontology" / "dpp-ontology.jsonld"
+    if not ontology_path.exists():
+        raise HTTPException(status_code=404, detail="Ontology file not found")
+    with open(ontology_path, 'r') as f:
+        ontology = json.load(f)
+    return JSONResponse(content=ontology, media_type="application/ld+json")
+
+@app.get("/ontology/shacl")
+async def get_shacl_shapes():
+    """Serve the SHACL validation shapes"""
+    base_path = Path(__file__).parent.parent
+    shacl_path = base_path / "ontology" / "dpp-shacl.jsonld"
+    if not shacl_path.exists():
+        raise HTTPException(status_code=404, detail="SHACL shapes file not found")
+    with open(shacl_path, 'r') as f:
+        shapes = json.load(f)
+    return JSONResponse(content=shapes, media_type="application/ld+json")
 
 @app.get("/health")
 async def health_check():

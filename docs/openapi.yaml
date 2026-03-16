@@ -622,10 +622,51 @@ components:
           type: array
           items:
             type: string
+        'dpp:dopcMetadata':
+          $ref: '#/components/schemas/DoPCMetadata'
         'dpp:elements':
           type: array
           items:
             $ref: '#/components/schemas/DataElement'
+
+    DoPCMetadata:
+      type: object
+      description: Declaration of Performance and Conformity metadata (EU CPR)
+      properties:
+        type:
+          type: string
+          const: 'dpp:DeclarationOfPerformance'
+        'dpp:declarationCode':
+          type: string
+          description: Unique declaration identifier
+          example: KI-AB-DoP-2025-001
+        'dpp:dateOfIssue':
+          type: string
+          format: date
+          description: Date the declaration was issued
+        'dpp:harmonisedStandard':
+          type: string
+          description: Reference to applicable harmonised European standard
+          example: 'EN 13162:2012+A1:2015'
+        'dpp:avcpSystem':
+          type: string
+          enum: ['1', '1+', '2', '2+', '3', '4']
+          description: Assessment and Verification of Constancy of Performance system
+        'dpp:notifiedBody':
+          type: string
+          description: EU-recognised body verifying product conformance
+        'dpp:intendedUse':
+          type: string
+          description: Intended use of the construction product
+        'dpp:declaredUnit':
+          type: string
+          description: Reference unit for declared performance values
+        'dpp:functionalUnit':
+          type: string
+          description: Performance reference unit
+        'dpp:documentReference':
+          type: string
+          description: Fragment reference to the DoP document in the documents collection
 
     DataElement:
       type: object
