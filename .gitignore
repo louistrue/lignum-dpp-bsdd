@@ -1,3 +1,4 @@
+__pycache__/
+*.pyc
 .api_pid
-*.DS_Store
 tmp_new_dpp.json
