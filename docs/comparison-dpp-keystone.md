@@ -321,7 +321,65 @@ DigitalProductPassport
 
 ---
 
-## 16. Summary of Key Differences
+## 16. Sector-Specific Modules (Keystone-only)
+
+DPP Keystone defines four sector modules with no equivalent in lignum-dpp-bsdd:
+
+### 16.1 Battery Sector (~90+ properties)
+
+| Class | Description |
+|-------|-------------|
+| `dppk:BatteryProduct` | Battery product (EU Battery Regulation 2023/1542) |
+| `dppk:BatteryPerformance` | Performance data container |
+| `dppk:CapacityInfo` | ratedCapacity, remainingCapacity, capacityFade, capacityThroughput |
+| `dppk:EfficiencyInfo` | roundTripEfficiencyInitial, at50Cycles, fade, remaining |
+| `dppk:InternalResistanceInfo` | initial, increase |
+| `dppk:PowerInfo` | original, remaining, fade, maximumPermitted, energyRatio |
+| `dppk:LifetimeInfo` | expectedLifetimeCycles, expectedLifetimeYears, cycleCountFull, energyThroughput |
+| `dppk:TemperatureInfo` | idle/charging/extreme temperature lower/upper bounds |
+| `dppk:NegativeEventsInfo` | accidents, deepDischarge, overcharge event counts |
+
+**Key battery properties**: batteryCategory, batteryChemistry, batteryMass, batteryStatus, manufacturingDate/Place, voltageNominal/Min/Max, stateOfCharge, carbonFootprintAbsolute/Class/Label, materialComposition, criticalRawMaterials, hazardousSubstances, recycled content (pre/post consumer), dismantlingInformation, safetyMeasures, extinguishingAgent, warrantyPeriod, dueDiligenceReport, supplyChainAssurances.
+
+### 16.2 Textile Sector (~13 properties)
+
+| Class | Description |
+|-------|-------------|
+| `dppk:TextileProduct` | subClassOf Product (EU Reg 1007/2011) |
+| `dppk:FibreComposition` | fibreType + fibrePercentage |
+
+**Properties**: fibreComposition, animalOriginNonTextile, tearStrength (ISO 13937-2), abrasionResistance (ISO 12947), dimensionalStability (ISO 5077), colorfastnessToWashing (ISO 105-C06), microplasticRelease (ISO 4484-1), careInstructions (ISO 3758), repairabilityInformation, apparelSize, apparelSizeSystem.
+
+### 16.3 Electronics Sector (~11 properties)
+
+| Class | Description |
+|-------|-------------|
+| `dppk:ElectronicDevice` | subClassOf Product (WEEE 2012/19/EU) |
+| `dppk:PowerTool` | subClassOf ElectronicDevice |
+
+**Properties**: voltage, ratedPower, energyEfficiencyClass, ipRating, sparePartsAvailable, serviceManualAvailable, softwareUpdatePolicy, weeeCategory, disassemblyInstructions, torque (PowerTool), maximumRatedSpeed (PowerTool).
+
+### 16.4 Packaging Sector
+
+Integrated into core compliance module (see Section 8). Properties: packagingMaterialType, packagingMaterialCompositionQuantity, packagingRecyclingProcessType, packagingRecycledContent, packagingSubstanceOfConcern.
+
+**None of these sector modules exist in lignum-dpp-bsdd, which focuses exclusively on construction products.**
+
+---
+
+## 17. Annotation & Metadata Properties
+
+| Feature | lignum-dpp-bsdd | DPP Keystone |
+|---------|----------------|--------------|
+| `governedBy` annotation | Not present | `dppk:governedBy` — links properties to governing standards |
+| `unit` annotation | Inline in ValueElement | `dppk:unit` — annotation property on ontology terms |
+| `unitInherited` flag | Not present | `dppk:unitInherited` — boolean: unit inherited from parent indicator |
+| Custom datatypes | Not present | `dppk:KgWeightLiteral`, `dppk:MetersLengthLiteral` (subClassOf xsd:double) |
+| SKOS annotations | Not used | SKOS referenced in namespace |
+
+---
+
+## 18. Summary of Key Differences
 
 ### What lignum-dpp-bsdd has that Keystone lacks:
 1. **bSDD integration** — deep linking to buildingSMART Data Dictionary
@@ -341,27 +399,34 @@ DigitalProductPassport
 
 ### What DPP Keystone has that lignum lacks:
 1. **Formal OWL ontology** with class hierarchy and reasoning support
-2. **Multi-sector coverage** — Battery, Textile, Electronics, Packaging (not just Construction)
+2. **Multi-sector coverage** — Battery (~90+ properties), Textile (~13 properties), Electronics (~11 properties), Packaging
 3. **SHACL validation shapes** — semantic constraint checking
-4. **DoPC (Declaration of Performance and Conformity)** — ~30+ material test properties
-5. **Substances of Concern** — SVHC/dangerous substance tracking with CAS numbers
-6. **Packaging model** — material type, recycled content, recycling process
-7. **Production steps** — type and location tracking
+4. **DoPC (Declaration of Performance and Conformity)** — ~30+ material test properties (bond strength, chloride content, elastic recovery, carbonation resistance, flow resistance, fire reaction AVCP systems 1-4, slip/skid resistance, thermal compatibility, etc.)
+5. **Substances of Concern** — SVHC/dangerous substance tracking with CAS numbers, concentration, min/max values
+6. **Packaging model** — material type, recycled content, recycling process, packaging substance of concern
+7. **Production steps** — type and location tracking (ISO 3166-1 alpha-3)
 8. **Certification model** — formal class with body name, ID, start date
 9. **Component/BOM model** — components with percentages, recycled content
-10. **Rich Organization model** — postal address, contact details, trading name, EORI/VAT
+10. **Rich Organization model** — postal address (street, postal code, locality, country), contact details (email, telephone, website), trading name, EORI/VAT
 11. **Role-based organization** — EconomicOperator, Manufacturer, Facility, ConformityAssessmentBody roles
 12. **Multilingual support** — 24 EU languages on ontology labels, `@language` containers on instance data
 13. **HS Code** — customs tariff classification
 14. **Content Specification IDs** — delegated act references
 15. **Version management** — versionNumber + versionDate fields
-16. **Formal Product class** — dedicated properties for brand, model, image, color, dimensions, country of origin
+16. **Formal Product class** — dedicated properties for brand, model, image, color, dimensions (length/width/height/depth), netWeight, grossWeight, countryOfOrigin
 17. **GS1/UNECE/EUDPP alignment** — equivalence mappings to multiple international vocabularies
 18. **Water Depletion Potential** (WDP) indicator
 19. **GWP-LULUC and GWP-GHG** sub-indicators
 20. **Wizard/validator/explorer tools** for DPP creation and validation
 21. **Instructions for Use** and **Safety Data Sheet** as dedicated link types
-22. **QUDT unit references**
+22. **QUDT unit references** for measurement units
 23. **Notified Body** and **Technical Assessment Body** references
 24. **European Assessment Document** references
 25. **Harmonised Standard Reference** as formal property
+26. **Battery sector** — full EU Battery Regulation coverage: capacity, efficiency, internal resistance, power, lifetime, temperature ranges, negative events, voltage specs, state of charge, carbon footprint, material composition, critical raw materials, dismantling info, safety measures
+27. **Textile sector** — fibre composition, tear strength, abrasion resistance, dimensional stability, colorfastness, microplastic release, care instructions, repairability, apparel sizing
+28. **Electronics sector** — voltage, rated power, energy efficiency class, IP rating, spare parts availability, WEEE category, disassembly instructions, software update policy, power tool properties (torque, max speed)
+29. **Custom datatypes** — `KgWeightLiteral`, `MetersLengthLiteral` for type-safe measurements
+30. **`governedBy` annotation** — links properties to their governing standards directly in the ontology
+31. **9 JSON-LD context files** — sector-specific contexts for clean instance data
+32. **13 JSON Schema files** — per-module validation schemas with conditional application (e.g., construction schema triggers when `contentSpecificationIds` contains `draft_construction_specification_id`)
