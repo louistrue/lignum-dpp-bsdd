@@ -9,10 +9,10 @@
 
 | Aspect | lignum-dpp-bsdd | DPP Keystone |
 |--------|----------------|--------------|
-| **Format** | JSON-LD documents + OpenAPI 3.0 YAML | OWL/RDFS ontology in JSON-LD + JSON Schema + SHACL shapes |
+| **Format** | JSON-LD documents + OpenAPI 3.0 YAML + OWL ontology + SHACL shapes | OWL/RDFS ontology in JSON-LD + JSON Schema + SHACL shapes |
 | **Namespace** | `dpp: http://www.w3id.org/dpp#` | `dppk: https://dpp-keystone.org/spec/v1/terms#` |
 | **Vocabulary approach** | Reuses dcterms, schema.org, prov, bSDD URIs directly | Defines own `dppk:` terms with `owl:equivalentProperty`/`owl:equivalentClass` mappings to schema.org, GS1, UNECE |
-| **Validation** | OpenAPI 3.0 + Pydantic (Python) + IDS (XML) | JSON Schema + SHACL shapes (dual validation) |
+| **Validation** | OpenAPI 3.0 + SHACL shapes + Pydantic (Python) + IDS (XML) | JSON Schema + SHACL shapes (dual validation) |
 | **Modularity** | Flat: single OpenAPI spec + product JSON-LD files | Modular ontology: core modules (Header, Product, Organization, Compliance, EPD, Identifier, RelatedResource, DoPC) + sector modules (Battery, Textile, Construction, Electronics) |
 | **Sector scope** | Construction-only (insulation, pipe, timber) | Multi-sector (Construction, Battery, Textile, Electronics, General Product, Packaging) |
 | **Standards cited** | prEN 18216–18223, ISO 22057, EN 15804 | ESPR (Ecodesign for Sustainable Products Regulation), EN 15804, CPR |
@@ -187,18 +187,18 @@ DigitalProductPassport
 | Feature | lignum-dpp-bsdd | DPP Keystone | Difference |
 |---------|----------------|--------------|------------|
 | **Construction class** | No formal class (uses bSDD classification) | `dppk:ConstructionProduct` (formal OWL class) | **Keystone has dedicated class** |
-| **DoP** | Referenced as document link | `dppk:DeclarationOfPerformance` class + `dppk:DoPCBlock` with extensive properties | **Keystone is much richer** |
-| **DoP identifier** | Not present | `dopIdentifier` | **Missing in lignum** |
-| **Harmonised standard** | In EPD methodology reference | `harmonisedStandardReference` (URI) | **Different structure** |
-| **AVCP system** | Not present | `avsSystem` | **Missing in lignum** |
-| **Notified body** | Not present | `notifiedBody` → Organization | **Missing in lignum** |
+| **DoP** | `dpp:DeclarationOfPerformance` OWL class + `#dopc` DataElementCollection with `dpp:dopcMetadata` | `dppk:DeclarationOfPerformance` class + `dppk:DoPCBlock` with extensive properties | **Both have DoPC support; different structure** |
+| **DoP identifier** | `dpp:declarationCode` in dopcMetadata | `dopIdentifier` | **Both present, different property name** |
+| **Harmonised standard** | `dpp:harmonisedStandard` in dopcMetadata | `harmonisedStandardReference` (URI) | **Both present, different property name** |
+| **AVCP system** | `dpp:avcpSystem` enum ["1","1+","2","2+","3","4"] in dopcMetadata | `avsSystem` | **Both present** |
+| **Notified body** | `dpp:notifiedBody` in dopcMetadata (string) | `notifiedBody` → Organization | **Both present; Keystone links to Organization object** |
 | **Technical assessment body** | Not present | `technicalAssessmentBody` → Organization | **Missing in lignum** |
 | **Validation reports** | Not present | `validationReports` → array of RelatedResource | **Missing in lignum** |
 | **European Assessment Document** | Not present | `europeanAssessmentDocument` → RelatedResource | **Missing in lignum** |
-| **Reaction to fire** | `fireReaction` (text value in data elements) | `reactionToFire` (linked to QuantitativeValue) + detailed AVCP system 1-4 | **Keystone more granular** |
-| **Thermal conductivity** | Data element with bSDD URI | `thermalConductivity` → QuantitativeValue | **Both have it, different structure** |
-| **Compressive strength** | Data element with bSDD URI | `compressiveStrength` → QuantitativeValue | **Both have it, different structure** |
-| **DoPC material testing** | Not present | Extensive: chloride content, bond strength, thermal compatibility, elastic recovery, carbonation resistance, flow resistance, slip/skid resistance, shrinkage/expansion, modulus of elasticity | **Keystone has ~30+ DoPC test properties missing from lignum** |
+| **Reaction to fire** | DoPC data element with bSDD URI + AVCP system in metadata | `reactionToFire` (linked to QuantitativeValue) + detailed AVCP system 1-4 | **Both have it, different structure** |
+| **Thermal conductivity** | DoPC + product properties data elements with bSDD URI | `thermalConductivity` → QuantitativeValue | **Both have it, different structure** |
+| **Compressive strength** | DoPC data element with bSDD URI | `compressiveStrength` → QuantitativeValue | **Both have it, different structure** |
+| **DoPC material testing** | 33 DoPC properties across 3 product types (insulation: 10, timber: 13, pipe: 10) with bSDD URIs | Extensive: chloride content, bond strength, thermal compatibility, elastic recovery, carbonation resistance, flow resistance, slip/skid resistance, shrinkage/expansion, modulus of elasticity | **Both have extensive DoPC properties; different coverage areas** |
 | **Steel/rail properties** | Not present | `steelGrade`, `railProfile` | **Missing in lignum** (different product scope) |
 | **Timber properties** | `strengthClass`, `density`, `moistureContent`, `adhesiveType` | Not present | **Missing in Keystone** |
 | **Pipe properties** | `nominalDiameter`, `materialType`, `ringStiffness`, `vacuumStiffness`, `pipeType`, `applicationArea` | Not present | **Missing in Keystone** |
@@ -398,10 +398,10 @@ Integrated into core compliance module (see Section 8). Properties: packagingMat
 14. **DPP labels/tags** system
 
 ### What DPP Keystone has that lignum lacks:
-1. **Formal OWL ontology** with class hierarchy and reasoning support
+1. ~~**Formal OWL ontology**~~ — ✅ **Now implemented**: `ontology/dpp-ontology.jsonld` with 21 classes, 16 object properties, 30 datatype properties
 2. **Multi-sector coverage** — Battery (~90+ properties), Textile (~13 properties), Electronics (~11 properties), Packaging
-3. **SHACL validation shapes** — semantic constraint checking
-4. **DoPC (Declaration of Performance and Conformity)** — ~30+ material test properties (bond strength, chloride content, elastic recovery, carbonation resistance, flow resistance, fire reaction AVCP systems 1-4, slip/skid resistance, thermal compatibility, etc.)
+3. ~~**SHACL validation shapes**~~ — ✅ **Now implemented**: `ontology/dpp-shacl.jsonld` with 9 node shapes including DeclarationOfPerformance validation
+4. ~~**DoPC (Declaration of Performance and Conformity)**~~ — ✅ **Now implemented**: 33 DoPC test properties across 3 product types (insulation: 10 EN 13162, timber: 13 EN 14080, pipe: 10 EN 1401-1) with bSDD URIs and provenance
 5. **Substances of Concern** — SVHC/dangerous substance tracking with CAS numbers, concentration, min/max values
 6. **Packaging model** — material type, recycled content, recycling process, packaging substance of concern
 7. **Production steps** — type and location tracking (ISO 3166-1 alpha-3)
@@ -420,9 +420,9 @@ Integrated into core compliance module (see Section 8). Properties: packagingMat
 20. **Wizard/validator/explorer tools** for DPP creation and validation
 21. **Instructions for Use** and **Safety Data Sheet** as dedicated link types
 22. **QUDT unit references** for measurement units
-23. **Notified Body** and **Technical Assessment Body** references
+23. ~~**Notified Body**~~ ✅ **Now implemented** and **Technical Assessment Body** references
 24. **European Assessment Document** references
-25. **Harmonised Standard Reference** as formal property
+25. ~~**Harmonised Standard Reference**~~ ✅ **Now implemented** as `dpp:harmonisedStandard` in dopcMetadata
 26. **Battery sector** — full EU Battery Regulation coverage: capacity, efficiency, internal resistance, power, lifetime, temperature ranges, negative events, voltage specs, state of charge, carbon footprint, material composition, critical raw materials, dismantling info, safety measures
 27. **Textile sector** — fibre composition, tear strength, abrasion resistance, dimensional stability, colorfastness, microplastic release, care instructions, repairability, apparel sizing
 28. **Electronics sector** — voltage, rated power, energy efficiency class, IP rating, spare parts availability, WEEE category, disassembly instructions, software update policy, power tool properties (torque, max speed)
