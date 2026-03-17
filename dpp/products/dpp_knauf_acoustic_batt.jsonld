@@ -21,7 +21,7 @@
     ],
     "dpp:registry": {
         "id": "urn:eu-dpp-reg:knauf-001-2025",
-        "schema:url": "http://localhost:8000/registry/knauf-001-2025"
+        "schema:url": "https://lignum-dpp-bsdd.vercel.app/registry/knauf-001-2025"
     },
     "dpp:status": "active",
     "dcterms:created": "2025-09-19T09:00:00Z",
@@ -93,7 +93,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Data.pdf",
-                            "schema:url": "http://localhost:8000/files/insul/Data.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/Data.pdf"
                         }
                     }
                 },
@@ -117,7 +117,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Acoustic Batt Datasheet",
-                            "schema:url": "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/Acoustic%20Batt%20Datasheet%20.pdf"
                         }
                     }
                 },
@@ -141,7 +141,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -165,7 +165,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -189,7 +189,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -212,7 +212,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "http://localhost:8000/files/insul/Acoustic Batt Datasheet .pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/Acoustic Batt Datasheet .pdf"
                         }
                     }
                 },
@@ -235,7 +235,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -259,7 +259,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Acoustic Batt Datasheet",
-                            "schema:url": "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/Acoustic%20Batt%20Datasheet%20.pdf"
                         }
                     }
                 }
@@ -502,7 +502,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -525,7 +525,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -549,7 +549,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -573,7 +573,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -597,7 +597,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -621,7 +621,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -644,7 +644,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -667,7 +667,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -691,7 +691,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 },
@@ -714,7 +714,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf"
                         }
                     }
                 }
@@ -730,7 +730,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "Acoustic_Batt_Datasheet.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf",
+                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/Acoustic%20Batt%20Datasheet%20.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
                     "dpp:language": "en"
@@ -740,7 +740,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "EPD_Data.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "http://localhost:8000/files/insul/Data.pdf",
+                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/Data.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "b2c3d4e5f67890123456789012345678901234567890123456789012345678901",
                     "dpp:language": "en"
@@ -750,7 +750,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "G4209LSCPR_EN.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "http://localhost:8000/files/insul/G4209LSCPR_EN.pdf",
+                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/insul/G4209LSCPR_EN.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "c3d4e5f67890123456789012345678901234567890123456789012345678902",
                     "dpp:language": "en"
@@ -767,8 +767,8 @@
                     "type": "dpp:DataElement",
                     "dpp:path": "carrier/qr",
                     "dpp:value": {
-                        "uri": "http://localhost:8000/id/01/04012345678901/21/KI-AB-2025-001?linkType=dpp",
-                        "resolverUri": "http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001"
+                        "uri": "https://lignum-dpp-bsdd.vercel.app/id/01/04012345678901/21/KI-AB-2025-001?linkType=dpp",
+                        "resolverUri": "https://lignum-dpp-bsdd.vercel.app/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001"
                     }
                 }
             ]

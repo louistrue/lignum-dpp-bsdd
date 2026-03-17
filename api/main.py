@@ -1460,12 +1460,14 @@ async def reload_dpps():
 # Mount static files AFTER all routes (mount is a catch-all)
 _api_path = Path(__file__).parent
 _base_path = _api_path.parent
-# Check api/data first (Vercel), then project root data/
-_data_dir = _api_path / "data" if (_api_path / "data").exists() else _base_path / "data"
-_legacy_dir = _base_path / "vLignum"
-_mount_dir = _data_dir if _data_dir.exists() else _legacy_dir if _legacy_dir.exists() else None
-if _mount_dir is not None:
-    app.mount("/files", StaticFiles(directory=str(_mount_dir)), name="files")
+# Serve PDFs: check api/data/files (Vercel), then project root data/, then legacy vLignum/
+_files_dir = _api_path / "data" / "files"
+if not _files_dir.exists():
+    _files_dir = _base_path / "data"
+if not _files_dir.exists():
+    _files_dir = _base_path / "vLignum"
+if _files_dir.exists():
+    app.mount("/files", StaticFiles(directory=str(_files_dir)), name="files")
 
 # Load sample DPPs
 load_sample_dpps()

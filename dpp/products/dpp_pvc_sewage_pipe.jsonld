@@ -21,7 +21,7 @@
     ],
     "dpp:registry": {
         "id": "urn:eu-dpp-reg:wavin-001-2025",
-        "schema:url": "http://localhost:8000/registry/wavin-001-2025"
+        "schema:url": "https://lignum-dpp-bsdd.vercel.app/registry/wavin-001-2025"
     },
     "dpp:status": "active",
     "dcterms:created": "2025-09-19T09:00:00Z",
@@ -98,7 +98,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -121,7 +121,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -144,7 +144,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -167,7 +167,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -211,7 +211,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -233,7 +233,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -256,7 +256,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 }
@@ -615,7 +615,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -638,7 +638,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -662,7 +662,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -685,7 +685,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -708,7 +708,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -731,7 +731,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -754,7 +754,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -778,7 +778,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -801,7 +801,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -824,7 +824,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 }
@@ -840,7 +840,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
+                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
                     "dpp:language": "en"
@@ -850,7 +850,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "WV-DN110-DoP-2025-001.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf",
+                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/WV-DN110-DoP-2025-001.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
                     "dpp:language": "en"
@@ -867,8 +867,8 @@
                     "type": "dpp:DataElement",
                     "dpp:path": "carrier/qr",
                     "dpp:value": {
-                        "uri": "http://localhost:8000/id/01/05790001234561/21/WV-DN110-2025-001?linkType=dpp",
-                        "resolverUri": "http://localhost:8000/dpps/did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001"
+                        "uri": "https://lignum-dpp-bsdd.vercel.app/id/01/05790001234561/21/WV-DN110-2025-001?linkType=dpp",
+                        "resolverUri": "https://lignum-dpp-bsdd.vercel.app/dpps/did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001"
                     }
                 }
             ]
