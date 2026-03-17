@@ -11,8 +11,10 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
+  - url: https://lignum-dpp-bsdd.vercel.app
+    description: Deployed demo (Vercel)
   - url: http://localhost:8000
-    description: Local PoC server
+    description: Local development
 
 tags:
   - name: DPP Lifecycle
@@ -322,7 +324,7 @@ paths:
                   registryUrl:
                     type: string
                     format: uri
-                    example: http://localhost:8000/registry/123e4567-e89b-12d3-a456-426614174000
+                    example: https://lignum-dpp-bsdd.vercel.app/registry/123e4567-e89b-12d3-a456-426614174000
 
   /id/01/{gtin}:
     get:

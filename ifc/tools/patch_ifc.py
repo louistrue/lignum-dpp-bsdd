@@ -672,6 +672,18 @@ def find_target_element(ifc, component: str):
 
 # ----------------------- DPP helpers (classes, docs, links, identifiers) -----------------------
 
+# Base URL for the DPP API — replaces localhost references in source files
+_DPP_BASE_URL = os.environ.get("DPP_API_URL", "https://lignum-dpp-bsdd.vercel.app").rstrip("/")
+
+def _load_dpp_json(filepath: str) -> Optional[Dict]:
+    """Load a DPP JSON-LD file, replacing localhost URLs with the configured base URL."""
+    try:
+        raw = open(filepath, "r", encoding="utf-8").read()
+        raw = raw.replace("http://localhost:8000", _DPP_BASE_URL)
+        return json.loads(raw)
+    except Exception:
+        return None
+
 def load_dpp_classes(dpp_dir: Optional[str]) -> Dict[str, Dict[str, Any]]:
     """Extract product class concept URIs from DPP files (prefer explicit '#classification')."""
     classes: Dict[str, Dict[str, Any]] = {}
@@ -680,9 +692,8 @@ def load_dpp_classes(dpp_dir: Optional[str]) -> Dict[str, Dict[str, Any]]:
     for fn in os.listdir(dpp_dir):
         if not fn.lower().endswith((".json", ".jsonld")):
             continue
-        try:
-            data = json.load(open(os.path.join(dpp_dir, fn), "r", encoding="utf-8"))
-        except Exception:
+        data = _load_dpp_json(os.path.join(dpp_dir, fn))
+        if data is None:
             continue
         # infer component key
         did = (data.get("id") or "").lower()
@@ -727,9 +738,8 @@ def load_dpp_docs(dpp_dir: Optional[str]) -> Dict[str, List[str]]:
     for fn in os.listdir(dpp_dir):
         if not fn.lower().endswith((".json", ".jsonld")):
             continue
-        try:
-            data = json.load(open(os.path.join(dpp_dir, fn), "r", encoding="utf-8"))
-        except Exception:
+        data = _load_dpp_json(os.path.join(dpp_dir, fn))
+        if data is None:
             continue
         name = (data.get("product", {}).get("name") or data.get("dpp:hasName") or "").lower()
         if "knauf" in name or "insulation" in name:
@@ -768,9 +778,8 @@ def load_dpp_links(dpp_dir: Optional[str]) -> Dict[str, List[str]]:
     for fn in os.listdir(dpp_dir):
         if not fn.lower().endswith((".json", ".jsonld")):
             continue
-        try:
-            data = json.load(open(os.path.join(dpp_dir, fn), "r", encoding="utf-8"))
-        except Exception:
+        data = _load_dpp_json(os.path.join(dpp_dir, fn))
+        if data is None:
             continue
         # infer component key
         did = (data.get("id") or "").lower()
@@ -828,9 +837,8 @@ def load_dpp_identifiers(dpp_dir: Optional[str]) -> Dict[str, Dict[str, Optional
     for fn in os.listdir(dpp_dir):
         if not fn.lower().endswith((".json", ".jsonld")):
             continue
-        try:
-            data = json.load(open(os.path.join(dpp_dir, fn), "r", encoding="utf-8"))
-        except Exception:
+        data = _load_dpp_json(os.path.join(dpp_dir, fn))
+        if data is None:
             continue
         did = (data.get("id") or "").lower()
         name = (data.get("product", {}).get("name") or data.get("dpp:hasName") or "").lower()
@@ -904,18 +912,21 @@ def main():
     dpp_links_by_comp = load_dpp_links(args.dpp_dir)
     dpp_ids_by_comp = load_dpp_identifiers(args.dpp_dir)
 
-    # Demo fallbacks for localhost /files if no DPP docs were found
+    # Base URL for document links — uses deployed API by default, override with DPP_API_URL env var
+    files_base = os.environ.get("DPP_API_URL", "https://lignum-dpp-bsdd.vercel.app").rstrip("/")
+
+    # Demo fallbacks for /files if no DPP docs were found
     demo_fallback_docs: Dict[str, List[str]] = {
         "insulation": [
-            "http://localhost:8000/files/insul/Acoustic%20Batt%20Datasheet%20.pdf",
-            "http://localhost:8000/files/insul/Data.pdf",
+            f"{files_base}/files/insul/Acoustic%20Batt%20Datasheet%20.pdf",
+            f"{files_base}/files/insul/Data.pdf",
         ],
         "pipe": [
-            "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
+            f"{files_base}/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
         ],
         "timber": [
-            "http://localhost:8000/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
-            "http://localhost:8000/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
+            f"{files_base}/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
+            f"{files_base}/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
         ],
     }
 

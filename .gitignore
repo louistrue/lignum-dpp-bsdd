@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .api_pid
 tmp_new_dpp.json
+.vercel
+.DS_Store
