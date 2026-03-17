@@ -10,7 +10,7 @@
 | Aspect | lignum-dpp-bsdd | DPP Keystone |
 |--------|----------------|--------------|
 | **Format** | JSON-LD documents + OpenAPI 3.0 YAML + OWL ontology + SHACL shapes | OWL/RDFS ontology in JSON-LD + JSON Schema + SHACL shapes |
-| **Namespace** | `dpp: http://www.w3id.org/dpp#` | `dppk: https://dpp-keystone.org/spec/v1/terms#` |
+| **Namespace** | `dpp: https://w3id.org/dpp#` | `dppk: https://dpp-keystone.org/spec/v1/terms#` |
 | **Vocabulary approach** | Reuses dcterms, schema.org, prov, bSDD URIs directly | Defines own `dppk:` terms with `owl:equivalentProperty`/`owl:equivalentClass` mappings to schema.org, GS1, UNECE |
 | **Validation** | OpenAPI 3.0 + SHACL shapes + Pydantic (Python) + IDS (XML) | JSON Schema + SHACL shapes (dual validation) |
 | **Modularity** | Flat: single OpenAPI spec + product JSON-LD files | Modular ontology: core modules (Header, Product, Organization, Compliance, EPD, Identifier, RelatedResource, DoPC) + sector modules (Battery, Textile, Construction, Electronics) |
@@ -102,7 +102,7 @@ This is the **most significant structural difference** between the two schemas.
 
 ### lignum-dpp-bsdd: Generic Data Element Model
 
-```
+```text
 DigitalProductPassport
   └── dpp:dataElementCollections[]
         ├── id (fragment ID)
@@ -121,7 +121,7 @@ DigitalProductPassport
 
 ### DPP Keystone: Typed Property Model
 
-```
+```text
 DigitalProductPassport
   ├── Product (formal class)
   │     ├── productName, description, gtin, brand, model...

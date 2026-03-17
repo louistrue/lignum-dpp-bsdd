@@ -5,6 +5,7 @@ Conforming to prEN 18222:2025 - API specification
 
 import json
 import hashlib
+import html as html_module
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -160,19 +161,19 @@ def render_dpp_as_html(dpp: Dict) -> str:
             <div class="info-grid">
                 <div class="info-card">
                     <span class="label">DPP ID:</span>
-                    <span class="value">{dpp.get('id', 'N/A')}</span>
+                    <span class="value">{html_module.escape(str(dpp.get('id', 'N/A')))}</span>
                 </div>
                 <div class="info-card">
                     <span class="label">Status:</span>
-                    <span class="status-badge">{dpp.get('dpp:status', 'N/A')}</span>
+                    <span class="status-badge">{html_module.escape(str(dpp.get('dpp:status', 'N/A')))}</span>
                 </div>
                 <div class="info-card">
                     <span class="label">Schema Version:</span>
-                    <span class="value">{dpp.get('dpp:dppSchemaVersion', 'N/A')}</span>
+                    <span class="value">{html_module.escape(str(dpp.get('dpp:dppSchemaVersion', 'N/A')))}</span>
                 </div>
                 <div class="info-card">
                     <span class="label">Last Modified:</span>
-                    <span class="value">{dpp.get('dcterms:modified', 'N/A')}</span>
+                    <span class="value">{html_module.escape(str(dpp.get('dcterms:modified', 'N/A')))}</span>
                 </div>
             </div>
     """
@@ -183,9 +184,9 @@ def render_dpp_as_html(dpp: Dict) -> str:
         html += f"""
             <h2>📦 Economic Operator</h2>
             <div class="info-card">
-                <div><span class="label">Name:</span> <span class="value">{op.get('schema:name', 'N/A')}</span></div>
-                <div><span class="label">LEI:</span> <span class="value">{op.get('dpp:lei', 'N/A')}</span></div>
-                <div><span class="label">GLN:</span> <span class="value">{op.get('dpp:gln', 'N/A')}</span></div>
+                <div><span class="label">Name:</span> <span class="value">{html_module.escape(str(op.get('schema:name', 'N/A')))}</span></div>
+                <div><span class="label">LEI:</span> <span class="value">{html_module.escape(str(op.get('dpp:lei', 'N/A')))}</span></div>
+                <div><span class="label">GLN:</span> <span class="value">{html_module.escape(str(op.get('dpp:gln', 'N/A')))}</span></div>
             </div>
         """
     
@@ -195,8 +196,8 @@ def render_dpp_as_html(dpp: Dict) -> str:
         for pid in dpp['dpp:productIdentifiers']:
             html += f"""
                 <div class="info-card">
-                    <span class="label">{pid.get('dpp:scheme', 'Unknown')}:</span>
-                    <span class="value">{pid.get('dpp:value', 'N/A')}</span>
+                    <span class="label">{html_module.escape(str(pid.get('dpp:scheme', 'Unknown')))}:</span>
+                    <span class="value">{html_module.escape(str(pid.get('dpp:value', 'N/A')))}</span>
                 </div>
             """
         html += "</div>"
@@ -205,7 +206,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
     if 'dpp:dataElementCollections' in dpp:
         html += "<h2>📊 Data Collections</h2>"
         for collection in dpp['dpp:dataElementCollections']:
-            title = collection.get('dcterms:title', 'Untitled Collection')
+            title = html_module.escape(str(collection.get('dcterms:title', 'Untitled Collection')))
             html += f"<div class='collection'><h3>{title}</h3>"
             
             # Render DoPC metadata header if present
@@ -218,7 +219,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                                ('dpp:notifiedBody','Notified Body'), ('dpp:intendedUse','Intended Use'),
                                ('dpp:declaredUnit','Declared Unit')]:
                     if mk in meta:
-                        html += f"<span class='label'>{ml}:</span> <span class='value'>{meta[mk]}</span><br>"
+                        html += f"<span class='label'>{html_module.escape(ml)}:</span> <span class='value'>{html_module.escape(str(meta[mk]))}</span><br>"
                 html += "</div>"
 
             if 'dpp:elements' in collection:
@@ -227,8 +228,8 @@ def render_dpp_as_html(dpp: Dict) -> str:
                         # Render document
                         html += f"""
                             <div class="element">
-                                📄 <a href="{element.get('schema:url', '#')}" class="document-link" target="_blank">
-                                    {element.get('dpp:fileName', 'Document')}
+                                📄 <a href="{html_module.escape(str(element.get('schema:url', '#')))}" class="document-link" target="_blank">
+                                    {html_module.escape(str(element.get('dpp:fileName', 'Document')))}
                                 </a>
                             </div>
                         """
@@ -240,19 +241,19 @@ def render_dpp_as_html(dpp: Dict) -> str:
                             for ind in element['dpp:value']:
                                 html += f"""
                                     <tr>
-                                        <td>{ind.get('indicator', 'N/A')}</td>
-                                        <td>{ind.get('module', 'N/A')}</td>
-                                        <td>{ind.get('value', 'N/A')}</td>
-                                        <td>{ind.get('unit', 'N/A')}</td>
+                                        <td>{html_module.escape(str(ind.get('indicator', 'N/A')))}</td>
+                                        <td>{html_module.escape(str(ind.get('module', 'N/A')))}</td>
+                                        <td>{html_module.escape(str(ind.get('value', 'N/A')))}</td>
+                                        <td>{html_module.escape(str(ind.get('unit', 'N/A')))}</td>
                                     </tr>
                                 """
                             html += "</tbody></table>"
                     elif 'dpp:valueElement' in element:
                         # Render single value
                         ve = element['dpp:valueElement']
-                        name = element.get('dpp:name', 'Property')
-                        value = ve.get('dpp:numericValue') or ve.get('dpp:textValue', 'N/A')
-                        unit = ve.get('dpp:unit', '')
+                        name = html_module.escape(str(element.get('dpp:name', 'Property')))
+                        value = html_module.escape(str(ve.get('dpp:numericValue') or ve.get('dpp:textValue', 'N/A')))
+                        unit = html_module.escape(str(ve.get('dpp:unit', '')))
                         html += f"""
                             <div class="element">
                                 <span class="label">{name}:</span>
@@ -272,7 +273,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                             <div class="qr-section">
                                 <h3>📱 Data Carrier QR Code</h3>
                                 <p>Scan to access this DPP:</p>
-                                <code>{qr_uri}</code>
+                                <code>{html_module.escape(str(qr_uri))}</code>
                             </div>
                         """
     

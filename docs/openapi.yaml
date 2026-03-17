@@ -21,8 +21,52 @@ tags:
     description: DPP Registry operations
   - name: Data Elements
     description: Fine-grained data element operations
+  - name: Ontology
+    description: Linked-data ontology and validation shapes
 
 paths:
+  /ontology:
+    get:
+      tags:
+        - Ontology
+      summary: Get DPP OWL ontology
+      description: Serve the DPP OWL ontology for linked-data dereferencing
+      operationId: getOntology
+      responses:
+        '200':
+          description: OWL ontology in JSON-LD format
+          content:
+            application/ld+json:
+              schema:
+                type: object
+        '404':
+          description: Ontology file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ontology/shacl:
+    get:
+      tags:
+        - Ontology
+      summary: Get SHACL validation shapes
+      description: Serve the SHACL validation shapes for DPP data validation
+      operationId: getShaclShapes
+      responses:
+        '200':
+          description: SHACL shapes in JSON-LD format
+          content:
+            application/ld+json:
+              schema:
+                type: object
+        '404':
+          description: SHACL shapes file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /dpps:
     post:
       tags:
@@ -632,10 +676,15 @@ components:
     DoPCMetadata:
       type: object
       description: Declaration of Performance and Conformity metadata (EU CPR)
+      required:
+        - type
+        - 'dpp:declarationCode'
+        - 'dpp:dateOfIssue'
       properties:
         type:
           type: string
-          const: 'dpp:DeclarationOfPerformance'
+          enum:
+            - 'dpp:DeclarationOfPerformance'
         'dpp:declarationCode':
           type: string
           description: Unique declaration identifier

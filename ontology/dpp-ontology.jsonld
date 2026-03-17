@@ -9,11 +9,11 @@
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "prov": "http://www.w3.org/ns/prov#",
     "bsdd": "https://identifier.buildingsmart.org/uri/",
-    "dpp": "http://www.w3id.org/dpp#"
+    "dpp": "https://w3id.org/dpp#"
   },
   "@graph": [
     {
-      "@id": "http://www.w3id.org/dpp#",
+      "@id": "https://w3id.org/dpp#",
       "@type": "owl:Ontology",
       "dcterms:title": "DPP Ontology for Construction Products",
       "dcterms:description": "Formal OWL ontology for the Digital Product Passport data model conforming to prEN 18216-18223:2025, with bSDD integration for construction products.",
@@ -26,6 +26,8 @@
       "@id": "dpp:DigitalProductPassport",
       "@type": "owl:Class",
       "rdfs:label": "DigitalProductPassport",
+      "skos:prefLabel": "Digital Product Passport",
+      "skos:definition": "A structured digital record containing product data, provenance, and lifecycle information conforming to prEN 18216-18223:2025.",
       "rdfs:comment": "A Digital Product Passport instance containing product data, provenance, and lifecycle information."
     },
     {
@@ -143,13 +145,15 @@
       "@id": "dpp:Agent",
       "@type": "owl:Class",
       "rdfs:label": "Agent",
-      "rdfs:comment": "An agent (person or system) that acts upon DPP data."
+      "rdfs:comment": "An agent (person or system) that acts upon DPP data.",
+      "rdfs:subClassOf": { "@id": "prov:Agent" }
     },
     {
       "@id": "dpp:EntityWithProvenance",
       "@type": "owl:Class",
       "rdfs:label": "EntityWithProvenance",
-      "rdfs:comment": "An entity with provenance tracking information."
+      "rdfs:comment": "An entity with provenance tracking information.",
+      "rdfs:subClassOf": { "@id": "prov:Entity" }
     },
     {
       "@id": "dpp:ProductIdentifier",
@@ -225,6 +229,7 @@
       "@type": "owl:ObjectProperty",
       "rdfs:label": "wasDerivedFrom",
       "rdfs:comment": "Links a data element to the entity it was derived from.",
+      "rdfs:subPropertyOf": { "@id": "prov:wasDerivedFrom" },
       "rdfs:domain": { "@id": "dpp:DataElement" },
       "rdfs:range": { "@id": "dpp:EntityWithProvenance" }
     },
@@ -233,6 +238,7 @@
       "@type": "owl:ObjectProperty",
       "rdfs:label": "attributedTo",
       "rdfs:comment": "Links an entity with provenance to the agent responsible.",
+      "rdfs:subPropertyOf": { "@id": "prov:wasAttributedTo" },
       "rdfs:domain": { "@id": "dpp:EntityWithProvenance" },
       "rdfs:range": { "@id": "dpp:Agent" }
     },
@@ -282,7 +288,7 @@
       "rdfs:label": "notifiedBody",
       "rdfs:comment": "Links a Declaration of Performance to the notified body.",
       "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
-      "rdfs:range": { "@id": "dpp:Organization" }
+      "rdfs:range": { "@id": "dpp:NotifiedBody" }
     },
     {
       "@id": "dpp:technicalAssessmentBody",
@@ -290,7 +296,7 @@
       "rdfs:label": "technicalAssessmentBody",
       "rdfs:comment": "Links a Declaration of Performance to the technical assessment body.",
       "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
-      "rdfs:range": { "@id": "dpp:Organization" }
+      "rdfs:range": { "@id": "dpp:TechnicalAssessmentBody" }
     },
 
     {
@@ -338,6 +344,7 @@
       "@type": "owl:DatatypeProperty",
       "rdfs:label": "dictionaryReference",
       "rdfs:comment": "A URI reference to a data dictionary entry (e.g., bSDD).",
+      "skos:example": "bsdd:buildingsmart/ifc/4.3/prop/ThermalTransmittance",
       "rdfs:domain": { "@id": "dpp:DataElement" },
       "rdfs:range": { "@id": "xsd:anyURI" }
     },

@@ -258,7 +258,7 @@ All properties link to:
 
 ### Formal Ontology (`ontology/dpp-ontology.jsonld`)
 
-A complete OWL 2 ontology under the `dpp:` namespace (`http://www.w3id.org/dpp#`) defining:
+A complete OWL 2 ontology under the `dpp:` namespace (`https://w3id.org/dpp#`) defining:
 
 - **21 classes**: DigitalProductPassport, Product (→ ConstructionProduct → InsulationProduct / TimberProduct / PipeProduct), Organization (→ EconomicOperator / NotifiedBody / TechnicalAssessmentBody), DataElementCollection, DataElement, ValueElement, DeclarationOfPerformance, Document, ChangeEvent, Agent, ProductIdentifier, Facility
 - **16 object properties**: hasDataElementCollection, hasElement, hasValueElement, hasProductIdentifier, hasEconomicOperator, hasChangeLog, hasDoPC, etc.

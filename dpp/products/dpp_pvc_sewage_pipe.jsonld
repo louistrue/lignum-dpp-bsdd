@@ -4,7 +4,7 @@
         "dcterms": "http://purl.org/dc/terms/",
         "prov": "http://www.w3.org/ns/prov#",
         "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "dpp": "http://www.w3id.org/dpp#",
+        "dpp": "https://w3id.org/dpp#",
         "bsdd": "https://identifier.buildingsmart.org/uri/",
         "id": "@id",
         "type": "@type"
@@ -416,7 +416,7 @@
                         {
                             "indicator": "ODP",
                             "module": "A1-A3",
-                            "value": 4.89e-8,
+                            "value": 4.89e-08,
                             "unit": "kg CFC-11e"
                         },
                         {
@@ -452,7 +452,7 @@
                         {
                             "indicator": "ADPE",
                             "module": "A1-A3",
-                            "value": 0.0000131,
+                            "value": 1.31e-05,
                             "unit": "kg Sbe"
                         },
                         {
@@ -531,7 +531,7 @@
                         {
                             "indicator": "HWD",
                             "module": "A1-A3",
-                            "value": 0.0000181,
+                            "value": 1.81e-05,
                             "unit": "kg"
                         },
                         {
@@ -543,7 +543,7 @@
                         {
                             "indicator": "RWD",
                             "module": "A1-A3",
-                            "value": 0.0000116,
+                            "value": 1.16e-05,
                             "unit": "kg"
                         },
                         {
@@ -598,7 +598,7 @@
                 "dpp:notifiedBody": "N/A (System 3)",
                 "dpp:intendedUse": "Underground non-pressure drainage and sewerage",
                 "dpp:declaredUnit": "1 meter",
-                "dpp:documentReference": "#epdDocument"
+                "dpp:documentReference": "#declarationOfPerformance"
             },
             "dpp:elements": [
                 {
@@ -620,8 +620,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -644,8 +644,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -668,8 +668,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -692,8 +692,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -716,8 +716,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -740,8 +740,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -764,8 +764,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -788,8 +788,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -812,8 +812,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 },
@@ -836,8 +836,8 @@
                         },
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
-                            "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
                         }
                     }
                 }
@@ -856,6 +856,16 @@
                     "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
+                    "dpp:language": "en"
+                },
+                {
+                    "id": "#declarationOfPerformance",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "WV-DN110-DoP-2025-001.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
                     "dpp:language": "en"
                 }
             ]

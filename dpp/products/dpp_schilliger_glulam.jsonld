@@ -4,7 +4,7 @@
         "dcterms": "http://purl.org/dc/terms/",
         "prov": "http://www.w3.org/ns/prov#",
         "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "dpp": "http://www.w3id.org/dpp#",
+        "dpp": "https://w3id.org/dpp#",
         "bsdd": "https://identifier.buildingsmart.org/uri/",
         "id": "@id",
         "type": "@type"

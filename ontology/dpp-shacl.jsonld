@@ -1,7 +1,7 @@
 {
   "@context": {
     "sh": "http://www.w3.org/ns/shacl#",
-    "dpp": "http://www.w3id.org/dpp#",
+    "dpp": "https://w3id.org/dpp#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "dcterms": "http://purl.org/dc/terms/",
@@ -129,7 +129,12 @@
         },
         {
           "sh:path": "dpp:elements",
-          "sh:node": "dpp:DataElementShape"
+          "sh:or": {
+            "@list": [
+              { "sh:node": "dpp:DataElementShape" },
+              { "sh:node": "dpp:DocumentShape" }
+            ]
+          }
         },
         {
           "sh:path": "dpp:dopcMetadata",
@@ -168,7 +173,7 @@
       "@id": "dpp:ValueElementShape",
       "@type": "sh:NodeShape",
       "sh:targetClass": "dpp:ValueElement",
-      "sh:or": {
+      "sh:xone": {
         "@list": [
           {
             "sh:property": [
