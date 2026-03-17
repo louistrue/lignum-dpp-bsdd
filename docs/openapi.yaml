@@ -21,8 +21,52 @@ tags:
     description: DPP Registry operations
   - name: Data Elements
     description: Fine-grained data element operations
+  - name: Ontology
+    description: Linked-data ontology and validation shapes
 
 paths:
+  /ontology:
+    get:
+      tags:
+        - Ontology
+      summary: Get DPP OWL ontology
+      description: Serve the DPP OWL ontology for linked-data dereferencing
+      operationId: getOntology
+      responses:
+        '200':
+          description: OWL ontology in JSON-LD format
+          content:
+            application/ld+json:
+              schema:
+                type: object
+        '404':
+          description: Ontology file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ontology/shacl:
+    get:
+      tags:
+        - Ontology
+      summary: Get SHACL validation shapes
+      description: Serve the SHACL validation shapes for DPP data validation
+      operationId: getShaclShapes
+      responses:
+        '200':
+          description: SHACL shapes in JSON-LD format
+          content:
+            application/ld+json:
+              schema:
+                type: object
+        '404':
+          description: SHACL shapes file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /dpps:
     post:
       tags:
@@ -622,10 +666,56 @@ components:
           type: array
           items:
             type: string
+        'dpp:dopcMetadata':
+          $ref: '#/components/schemas/DoPCMetadata'
         'dpp:elements':
           type: array
           items:
             $ref: '#/components/schemas/DataElement'
+
+    DoPCMetadata:
+      type: object
+      description: Declaration of Performance and Conformity metadata (EU CPR)
+      required:
+        - type
+        - 'dpp:declarationCode'
+        - 'dpp:dateOfIssue'
+      properties:
+        type:
+          type: string
+          enum:
+            - 'dpp:DeclarationOfPerformance'
+        'dpp:declarationCode':
+          type: string
+          description: Unique declaration identifier
+          example: KI-AB-DoP-2025-001
+        'dpp:dateOfIssue':
+          type: string
+          format: date
+          description: Date the declaration was issued
+        'dpp:harmonisedStandard':
+          type: string
+          description: Reference to applicable harmonised European standard
+          example: 'EN 13162:2012+A1:2015'
+        'dpp:avcpSystem':
+          type: string
+          enum: ['1', '1+', '2', '2+', '3', '4']
+          description: Assessment and Verification of Constancy of Performance system
+        'dpp:notifiedBody':
+          type: string
+          description: EU-recognised body verifying product conformance
+        'dpp:intendedUse':
+          type: string
+          description: Intended use of the construction product
+        'dpp:declaredUnit':
+          type: string
+          description: Reference unit for declared performance values
+        'dpp:functionalUnit':
+          type: string
+          description: Performance reference unit
+        'dpp:documentReference':
+          type: string
+          description: Fragment reference to the DoP document in the documents collection
 
     DataElement:
       type: object

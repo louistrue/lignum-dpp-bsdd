@@ -1,0 +1,584 @@
+{
+  "@context": {
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "schema": "https://schema.org/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "bsdd": "https://identifier.buildingsmart.org/uri/",
+    "dpp": "https://w3id.org/dpp#"
+  },
+  "@graph": [
+    {
+      "@id": "https://w3id.org/dpp#",
+      "@type": "owl:Ontology",
+      "dcterms:title": "DPP Ontology for Construction Products",
+      "dcterms:description": "Formal OWL ontology for the Digital Product Passport data model conforming to prEN 18216-18223:2025, with bSDD integration for construction products.",
+      "owl:versionInfo": "1.0.0",
+      "dcterms:creator": "Lignum DPP Project",
+      "dcterms:license": "MIT"
+    },
+
+    {
+      "@id": "dpp:DigitalProductPassport",
+      "@type": "owl:Class",
+      "rdfs:label": "DigitalProductPassport",
+      "skos:prefLabel": "Digital Product Passport",
+      "skos:definition": "A structured digital record containing product data, provenance, and lifecycle information conforming to prEN 18216-18223:2025.",
+      "rdfs:comment": "A Digital Product Passport instance containing product data, provenance, and lifecycle information."
+    },
+    {
+      "@id": "dpp:Product",
+      "@type": "owl:Class",
+      "rdfs:label": "Product",
+      "rdfs:comment": "A product described by a Digital Product Passport.",
+      "owl:equivalentClass": {
+        "@id": "schema:Product"
+      }
+    },
+    {
+      "@id": "dpp:ConstructionProduct",
+      "@type": "owl:Class",
+      "rdfs:label": "ConstructionProduct",
+      "rdfs:comment": "A construction product governed by EU CPR 305/2011.",
+      "rdfs:subClassOf": { "@id": "dpp:Product" },
+      "dpp:governedBy": "EU CPR 305/2011"
+    },
+    {
+      "@id": "dpp:InsulationProduct",
+      "@type": "owl:Class",
+      "rdfs:label": "InsulationProduct",
+      "rdfs:comment": "An insulation construction product.",
+      "rdfs:subClassOf": { "@id": "dpp:ConstructionProduct" }
+    },
+    {
+      "@id": "dpp:TimberProduct",
+      "@type": "owl:Class",
+      "rdfs:label": "TimberProduct",
+      "rdfs:comment": "A timber construction product.",
+      "rdfs:subClassOf": { "@id": "dpp:ConstructionProduct" }
+    },
+    {
+      "@id": "dpp:PipeProduct",
+      "@type": "owl:Class",
+      "rdfs:label": "PipeProduct",
+      "rdfs:comment": "A pipe construction product.",
+      "rdfs:subClassOf": { "@id": "dpp:ConstructionProduct" }
+    },
+    {
+      "@id": "dpp:Organization",
+      "@type": "owl:Class",
+      "rdfs:label": "Organization",
+      "rdfs:comment": "An organization involved in the product lifecycle.",
+      "owl:equivalentClass": {
+        "@id": "schema:Organization"
+      }
+    },
+    {
+      "@id": "dpp:EconomicOperator",
+      "@type": "owl:Class",
+      "rdfs:label": "EconomicOperator",
+      "rdfs:comment": "An economic operator responsible for a product on the market.",
+      "rdfs:subClassOf": { "@id": "dpp:Organization" }
+    },
+    {
+      "@id": "dpp:NotifiedBody",
+      "@type": "owl:Class",
+      "rdfs:label": "NotifiedBody",
+      "rdfs:comment": "A body notified under the CPR to perform conformity assessment tasks.",
+      "rdfs:subClassOf": { "@id": "dpp:Organization" }
+    },
+    {
+      "@id": "dpp:TechnicalAssessmentBody",
+      "@type": "owl:Class",
+      "rdfs:label": "TechnicalAssessmentBody",
+      "rdfs:comment": "A body designated to issue European Technical Assessments.",
+      "rdfs:subClassOf": { "@id": "dpp:Organization" }
+    },
+    {
+      "@id": "dpp:DataElementCollection",
+      "@type": "owl:Class",
+      "rdfs:label": "DataElementCollection",
+      "rdfs:comment": "A named collection of data elements within a DPP."
+    },
+    {
+      "@id": "dpp:DataElement",
+      "@type": "owl:Class",
+      "rdfs:label": "DataElement",
+      "rdfs:comment": "A single data element carrying product information."
+    },
+    {
+      "@id": "dpp:SingleDataElement",
+      "@type": "owl:Class",
+      "rdfs:label": "SingleDataElement",
+      "rdfs:comment": "A data element holding a single value.",
+      "rdfs:subClassOf": { "@id": "dpp:DataElement" }
+    },
+    {
+      "@id": "dpp:ValueElement",
+      "@type": "owl:Class",
+      "rdfs:label": "ValueElement",
+      "rdfs:comment": "A typed value associated with a data element."
+    },
+    {
+      "@id": "dpp:DeclarationOfPerformance",
+      "@type": "owl:Class",
+      "rdfs:label": "DeclarationOfPerformance",
+      "rdfs:comment": "A Declaration of Performance (DoP) under the EU Construction Products Regulation."
+    },
+    {
+      "@id": "dpp:Document",
+      "@type": "owl:Class",
+      "rdfs:label": "Document",
+      "rdfs:comment": "A document referenced by or attached to a DPP."
+    },
+    {
+      "@id": "dpp:ChangeEvent",
+      "@type": "owl:Class",
+      "rdfs:label": "ChangeEvent",
+      "rdfs:comment": "An event recording a change in DPP data."
+    },
+    {
+      "@id": "dpp:Agent",
+      "@type": "owl:Class",
+      "rdfs:label": "Agent",
+      "rdfs:comment": "An agent (person or system) that acts upon DPP data.",
+      "rdfs:subClassOf": { "@id": "prov:Agent" }
+    },
+    {
+      "@id": "dpp:EntityWithProvenance",
+      "@type": "owl:Class",
+      "rdfs:label": "EntityWithProvenance",
+      "rdfs:comment": "An entity with provenance tracking information.",
+      "rdfs:subClassOf": { "@id": "prov:Entity" }
+    },
+    {
+      "@id": "dpp:ProductIdentifier",
+      "@type": "owl:Class",
+      "rdfs:label": "ProductIdentifier",
+      "rdfs:comment": "An identifier for a product within a given scheme."
+    },
+    {
+      "@id": "dpp:Facility",
+      "@type": "owl:Class",
+      "rdfs:label": "Facility",
+      "rdfs:comment": "A manufacturing or production facility."
+    },
+
+    {
+      "@id": "dpp:dataElementCollections",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "dataElementCollections",
+      "rdfs:comment": "Links a DPP to its data element collections.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "dpp:DataElementCollection" }
+    },
+    {
+      "@id": "dpp:elements",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "elements",
+      "rdfs:comment": "Links a data element collection to its constituent data elements.",
+      "rdfs:domain": { "@id": "dpp:DataElementCollection" },
+      "rdfs:range": { "@id": "dpp:DataElement" }
+    },
+    {
+      "@id": "dpp:valueElement",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "valueElement",
+      "rdfs:comment": "Links a data element to its value element.",
+      "rdfs:domain": { "@id": "dpp:DataElement" },
+      "rdfs:range": { "@id": "dpp:ValueElement" }
+    },
+    {
+      "@id": "dpp:economicOperator",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "economicOperator",
+      "rdfs:comment": "Links a DPP to the responsible economic operator.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "dpp:Organization" }
+    },
+    {
+      "@id": "dpp:backupOperator",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "backupOperator",
+      "rdfs:comment": "Links a DPP to a backup economic operator.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "dpp:Organization" }
+    },
+    {
+      "@id": "dpp:productIdentifiers",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "productIdentifiers",
+      "rdfs:comment": "Links a DPP to product identifiers.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "dpp:ProductIdentifier" }
+    },
+    {
+      "@id": "dpp:facilityId",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "facilityId",
+      "rdfs:comment": "Links a DPP to the manufacturing facility.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "dpp:Facility" }
+    },
+    {
+      "@id": "dpp:wasDerivedFrom",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "wasDerivedFrom",
+      "rdfs:comment": "Links a data element to the entity it was derived from.",
+      "rdfs:subPropertyOf": { "@id": "prov:wasDerivedFrom" },
+      "rdfs:domain": { "@id": "dpp:DataElement" },
+      "rdfs:range": { "@id": "dpp:EntityWithProvenance" }
+    },
+    {
+      "@id": "dpp:attributedTo",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "attributedTo",
+      "rdfs:comment": "Links an entity with provenance to the agent responsible.",
+      "rdfs:subPropertyOf": { "@id": "prov:wasAttributedTo" },
+      "rdfs:domain": { "@id": "dpp:EntityWithProvenance" },
+      "rdfs:range": { "@id": "dpp:Agent" }
+    },
+    {
+      "@id": "dpp:hasDocument",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "hasDocument",
+      "rdfs:comment": "Links an entity with provenance to a supporting document.",
+      "rdfs:domain": { "@id": "dpp:EntityWithProvenance" },
+      "rdfs:range": { "@id": "dpp:Document" }
+    },
+    {
+      "@id": "dpp:changeLog",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "changeLog",
+      "rdfs:comment": "Links a DPP to its change events.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "dpp:ChangeEvent" }
+    },
+    {
+      "@id": "dpp:actor",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "actor",
+      "rdfs:comment": "Links a change event to the agent that performed the change.",
+      "rdfs:domain": { "@id": "dpp:ChangeEvent" },
+      "rdfs:range": { "@id": "dpp:Agent" }
+    },
+    {
+      "@id": "dpp:registry",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "registry",
+      "rdfs:comment": "Links a DPP to its registry entry.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "owl:Thing" }
+    },
+    {
+      "@id": "dpp:dopcMetadata",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "dopcMetadata",
+      "rdfs:comment": "Links a data element collection to a Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DataElementCollection" },
+      "rdfs:range": { "@id": "dpp:DeclarationOfPerformance" }
+    },
+    {
+      "@id": "dpp:notifiedBody",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "notifiedBody",
+      "rdfs:comment": "Links a Declaration of Performance to the notified body.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "dpp:NotifiedBody" }
+    },
+    {
+      "@id": "dpp:technicalAssessmentBody",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "technicalAssessmentBody",
+      "rdfs:comment": "Links a Declaration of Performance to the technical assessment body.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "dpp:TechnicalAssessmentBody" }
+    },
+
+    {
+      "@id": "dpp:numericValue",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "numericValue",
+      "rdfs:comment": "The numeric value of a value element.",
+      "rdfs:domain": { "@id": "dpp:ValueElement" },
+      "rdfs:range": { "@id": "xsd:double" }
+    },
+    {
+      "@id": "dpp:textValue",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "textValue",
+      "rdfs:comment": "The text value of a value element.",
+      "rdfs:domain": { "@id": "dpp:ValueElement" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:unit",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "unit",
+      "rdfs:comment": "The unit of measurement for a value element.",
+      "rdfs:domain": { "@id": "dpp:ValueElement" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:path",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "path",
+      "rdfs:comment": "The path of a data element within the DPP structure.",
+      "rdfs:domain": { "@id": "dpp:DataElement" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:name",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "name",
+      "rdfs:comment": "The name of a data element.",
+      "rdfs:domain": { "@id": "dpp:DataElement" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:dictionaryReference",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "dictionaryReference",
+      "rdfs:comment": "A URI reference to a data dictionary entry (e.g., bSDD).",
+      "skos:example": "bsdd:buildingsmart/ifc/4.3/prop/ThermalTransmittance",
+      "rdfs:domain": { "@id": "dpp:DataElement" },
+      "rdfs:range": { "@id": "xsd:anyURI" }
+    },
+    {
+      "@id": "dpp:labelSet",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "labelSet",
+      "rdfs:comment": "A label set associated with a data element collection.",
+      "rdfs:domain": { "@id": "dpp:DataElementCollection" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:status",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "status",
+      "rdfs:comment": "The status of the Digital Product Passport.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:dppSchemaVersion",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "dppSchemaVersion",
+      "rdfs:comment": "The schema version of the DPP.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:granularity",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "granularity",
+      "rdfs:comment": "The granularity level of the DPP (e.g., model, batch, item).",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:labels",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "labels",
+      "rdfs:comment": "Labels associated with the DPP.",
+      "rdfs:domain": { "@id": "dpp:DigitalProductPassport" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:lei",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "lei",
+      "rdfs:comment": "Legal Entity Identifier of an organization.",
+      "rdfs:domain": { "@id": "dpp:Organization" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:gln",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "gln",
+      "rdfs:comment": "Global Location Number of an organization.",
+      "rdfs:domain": { "@id": "dpp:Organization" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:scheme",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "scheme",
+      "rdfs:comment": "The identifier scheme of a product identifier.",
+      "rdfs:domain": { "@id": "dpp:ProductIdentifier" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:value",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "value",
+      "rdfs:comment": "The value of a product identifier.",
+      "rdfs:domain": { "@id": "dpp:ProductIdentifier" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:namespace",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "namespace",
+      "rdfs:comment": "The namespace of a product identifier.",
+      "rdfs:domain": { "@id": "dpp:ProductIdentifier" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:fileName",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "fileName",
+      "rdfs:comment": "The file name of a document.",
+      "rdfs:domain": { "@id": "dpp:Document" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:mediaType",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "mediaType",
+      "rdfs:comment": "The MIME type of a document.",
+      "rdfs:domain": { "@id": "dpp:Document" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:hashAlgorithm",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "hashAlgorithm",
+      "rdfs:comment": "The hash algorithm used to verify document integrity.",
+      "rdfs:domain": { "@id": "dpp:Document" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:hashValue",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "hashValue",
+      "rdfs:comment": "The hash digest of the document.",
+      "rdfs:domain": { "@id": "dpp:Document" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:language",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "language",
+      "rdfs:comment": "The language of a document.",
+      "rdfs:domain": { "@id": "dpp:Document" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:changeId",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "changeId",
+      "rdfs:comment": "The identifier of a change event.",
+      "rdfs:domain": { "@id": "dpp:ChangeEvent" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:changeObject",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "changeObject",
+      "rdfs:comment": "The object affected by the change event.",
+      "rdfs:domain": { "@id": "dpp:ChangeEvent" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:changedProperties",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "changedProperties",
+      "rdfs:comment": "The properties changed in a change event.",
+      "rdfs:domain": { "@id": "dpp:ChangeEvent" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:changeType",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "changeType",
+      "rdfs:comment": "The type of change (e.g., create, update, delete).",
+      "rdfs:domain": { "@id": "dpp:ChangeEvent" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:timestamp",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "timestamp",
+      "rdfs:comment": "The timestamp of a change event.",
+      "rdfs:domain": { "@id": "dpp:ChangeEvent" },
+      "rdfs:range": { "@id": "xsd:dateTime" }
+    },
+    {
+      "@id": "dpp:declarationCode",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "declarationCode",
+      "rdfs:comment": "The unique code of a Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:dateOfIssue",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "dateOfIssue",
+      "rdfs:comment": "The date of issue of a Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:date" }
+    },
+    {
+      "@id": "dpp:declaredUnit",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "declaredUnit",
+      "rdfs:comment": "The declared unit in a Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:functionalUnit",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "functionalUnit",
+      "rdfs:comment": "The functional unit in a Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:harmonisedStandard",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "harmonisedStandard",
+      "rdfs:comment": "The harmonised standard referenced by the Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:avcpSystem",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "avcpSystem",
+      "rdfs:comment": "The AVCP system level for conformity assessment.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:intendedUse",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "intendedUse",
+      "rdfs:comment": "The intended use of the product as stated in the Declaration of Performance.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+    {
+      "@id": "dpp:documentReference",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "documentReference",
+      "rdfs:comment": "A reference to the DoP document.",
+      "rdfs:domain": { "@id": "dpp:DeclarationOfPerformance" },
+      "rdfs:range": { "@id": "xsd:string" }
+    },
+
+    {
+      "@id": "dpp:governedBy",
+      "@type": "owl:AnnotationProperty",
+      "rdfs:label": "governedBy",
+      "rdfs:comment": "Links a class or property to the governing standard or regulation.",
+      "rdfs:range": { "@id": "xsd:string" }
+    }
+  ]
+}

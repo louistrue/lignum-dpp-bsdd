@@ -4,7 +4,7 @@
         "dcterms": "http://purl.org/dc/terms/",
         "prov": "http://www.w3.org/ns/prov#",
         "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "dpp": "http://www.w3id.org/dpp#",
+        "dpp": "https://w3id.org/dpp#",
         "bsdd": "https://identifier.buildingsmart.org/uri/",
         "id": "@id",
         "type": "@type"
@@ -416,7 +416,7 @@
                         {
                             "indicator": "ODP",
                             "module": "A1-A3",
-                            "value": 4.89e-8,
+                            "value": 4.89e-08,
                             "unit": "kg CFC-11e"
                         },
                         {
@@ -452,7 +452,7 @@
                         {
                             "indicator": "ADPE",
                             "module": "A1-A3",
-                            "value": 0.0000131,
+                            "value": 1.31e-05,
                             "unit": "kg Sbe"
                         },
                         {
@@ -531,7 +531,7 @@
                         {
                             "indicator": "HWD",
                             "module": "A1-A3",
-                            "value": 0.0000181,
+                            "value": 1.81e-05,
                             "unit": "kg"
                         },
                         {
@@ -543,7 +543,7 @@
                         {
                             "indicator": "RWD",
                             "module": "A1-A3",
-                            "value": 0.0000116,
+                            "value": 1.16e-05,
                             "unit": "kg"
                         },
                         {
@@ -581,6 +581,269 @@
             ]
         },
         {
+            "id": "#dopc",
+            "type": "dpp:DataElementCollection",
+            "dcterms:title": "Declaration of Performance and Conformity",
+            "dpp:labelSet": [
+                "DoPC",
+                "CPR",
+                "EN1401-1"
+            ],
+            "dpp:dopcMetadata": {
+                "type": "dpp:DeclarationOfPerformance",
+                "dpp:declarationCode": "WV-DN110-DoP-2025-001",
+                "dpp:dateOfIssue": "2025-03-01",
+                "dpp:harmonisedStandard": "EN 1401-1:2019",
+                "dpp:avcpSystem": "3",
+                "dpp:notifiedBody": "N/A (System 3)",
+                "dpp:intendedUse": "Underground non-pressure drainage and sewerage",
+                "dpp:declaredUnit": "1 meter",
+                "dpp:documentReference": "#declarationOfPerformance"
+            },
+            "dpp:elements": [
+                {
+                    "id": "#dopcRingStiffness",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/ringStiffness",
+                    "dpp:name": "DOPC_RING_STIFFNESS",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/bs-agri.org/plastic/1.0.0/prop/ringStiffness",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "SN4",
+                        "dpp:unit": "kN/m²"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcImpactResistance",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/impactResistance",
+                    "dpp:name": "DOPC_IMPACT_RESISTANCE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/impactResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "Pass",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcWallThickness",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/dimensional/wallThickness",
+                    "dpp:name": "DOPC_WALL_THICKNESS",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/wallThickness",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 3.2,
+                        "dpp:unit": "mm"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcChemicalResistance",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/durability/chemicalResistance",
+                    "dpp:name": "DOPC_CHEMICAL_RESISTANCE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/chemicalResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "Pass (EN ISO 12099)",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcPressureRating",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/pressureRating",
+                    "dpp:name": "DOPC_PRESSURE_RATING",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/pressureRating",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "PN4",
+                        "dpp:unit": "bar"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcWatertightness",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/durability/watertightness",
+                    "dpp:name": "DOPC_WATERTIGHTNESS",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/watertightness",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "Pass",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcLongitudinalReversion",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/dimensional/longitudinalReversion",
+                    "dpp:name": "DOPC_LONGITUDINAL_REVERSION",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/longitudinalReversion",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 5,
+                        "dpp:unit": "%"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcReactionToFire",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/fire/reaction",
+                    "dpp:name": "DOPC_REACTION_TO_FIRE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/reactionToFire",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "E",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcInternalPressure",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/internalPressureResistance",
+                    "dpp:name": "DOPC_INTERNAL_PRESSURE",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/internalPressureResistance",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:textValue": "Pass",
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                },
+                {
+                    "id": "#dopcCreepRatio",
+                    "type": "dpp:SingleDataElement",
+                    "dpp:path": "dopc/mechanical/creepRatio",
+                    "dpp:name": "DOPC_CREEP_RATIO",
+                    "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/creepRatio",
+                    "dpp:valueElement": {
+                        "type": "dpp:ValueElement",
+                        "dpp:numericValue": 2.0,
+                        "dpp:unit": "-"
+                    },
+                    "dpp:wasDerivedFrom": {
+                        "type": "dpp:EntityWithProvenance",
+                        "dpp:attributedTo": {
+                            "type": "dpp:Agent",
+                            "schema:name": "Nordisk Wavin A/S"
+                        },
+                        "dpp:hasDocument": {
+                            "type": "dpp:Document",
+                            "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
+                            "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf"
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "id": "#documents",
             "type": "dpp:DataElementCollection",
             "dcterms:title": "Documents",
@@ -593,6 +856,16 @@
                     "schema:url": "http://localhost:8000/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
+                    "dpp:language": "en"
+                },
+                {
+                    "id": "#declarationOfPerformance",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "WV-DN110-DoP-2025-001.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "http://localhost:8000/files/pipe/WV-DN110-DoP-2025-001.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
                     "dpp:language": "en"
                 }
             ]

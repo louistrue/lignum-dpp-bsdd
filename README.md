@@ -51,7 +51,8 @@ lignum-dpp/
 ├── data/                            # Documents served via /files (EPD/DoP/etc.)
 ├── docs/
 │   ├── README_DEMO.md               # Demo walkthrough (localhost)
-│   └── openapi.yaml                 # OpenAPI 3.0 specification
+│   ├── openapi.yaml                 # OpenAPI 3.0 specification
+│   └── comparison-dpp-keystone.md   # Schema comparison with DPP Keystone
 ├── dpp/
 │   └── products/                    # DPP JSON-LD documents (served)
 ├── ifc/
@@ -61,6 +62,9 @@ lignum-dpp/
 │   └── tools/                       # IFC utilities (patch_ifc.py)
 ├── mapping/
 │   └── mapping.csv                  # Property → IFC mapping with bSDD URIs
+├── ontology/
+│   ├── dpp-ontology.jsonld          # Formal OWL ontology (JSON-LD)
+│   └── dpp-shacl.jsonld             # SHACL validation shapes
 ├── qr_codes/                        # Generated QR images + index.html
 │   └── tools/
 │       └── generate_qr_codes.py     # QR code generator
@@ -249,6 +253,44 @@ All properties link to:
 - **EN standards** for specific domains
  - IfcExternalReference + IfcExternalReferenceRelationship links for bSDD URIs
  - IfcDocumentInformation + IfcDocumentReference for EPD/DoP/DPP documents
+
+## 🧬 OWL Ontology & SHACL Validation
+
+### Formal Ontology (`ontology/dpp-ontology.jsonld`)
+
+A complete OWL 2 ontology under the `dpp:` namespace (`https://w3id.org/dpp#`) defining:
+
+- **21 classes**: DigitalProductPassport, Product (→ ConstructionProduct → InsulationProduct / TimberProduct / PipeProduct), Organization (→ EconomicOperator / NotifiedBody / TechnicalAssessmentBody), DataElementCollection, DataElement, ValueElement, DeclarationOfPerformance, Document, ChangeEvent, Agent, ProductIdentifier, Facility
+- **16 object properties**: hasDataElementCollection, hasElement, hasValueElement, hasProductIdentifier, hasEconomicOperator, hasChangeLog, hasDoPC, etc.
+- **30 datatype properties**: declarationCode, harmonisedStandard, avcpSystem, numericValue, textValue, unit, thermalConductivity, bendingStrength, ringStiffness, etc.
+- **Equivalence mappings**: `dpp:Organization ≡ schema:Organization`, `dpp:Product ≡ schema:Product`
+
+Served at `GET /ontology` as `application/ld+json`.
+
+### SHACL Shapes (`ontology/dpp-shacl.jsonld`)
+
+9 validation shapes conforming to prEN 18216-18223:
+- DigitalProductPassportShape, OrganizationShape, ProductIdentifierShape
+- DataElementCollectionShape, DataElementShape, ValueElementShape
+- ChangeEventShape, **DeclarationOfPerformanceShape**, DocumentShape
+
+Served at `GET /ontology/shacl` as `application/ld+json`.
+
+## 🏛️ Declaration of Performance and Conformity (DoPC)
+
+Each product DPP includes a `#dopc` DataElementCollection with `dpp:dopcMetadata` containing:
+- Declaration code, date of issue, harmonised standard reference
+- AVCP system (1, 1+, 2, 2+, 3, 4), notified body, intended use
+
+### Product-Specific DoPC Properties
+
+| Product | Standard | Properties |
+|---------|----------|------------|
+| **Knauf Acoustic Batt** | EN 13162:2012+A1:2015 | Thermal conductivity, thermal resistance, reaction to fire, water vapour resistance, compressive strength, dimensional stability, water absorption, sound absorption, tensile strength perpendicular, thickness tolerance |
+| **Schilliger Glulam** | EN 14080:2013 | Strength class (GL24h), bending strength, tension parallel/perpendicular, shear strength, compression parallel/perpendicular, modulus of elasticity, density, reaction to fire, formaldehyde emission, moisture content, delamination resistance |
+| **PVC Sewage Pipe** | EN 1401-1:2019 | Ring stiffness, impact resistance, wall thickness, chemical resistance, pressure rating, watertightness, longitudinal reversion, reaction to fire, internal pressure resistance, creep ratio |
+
+All DoPC properties are linked to bSDD URIs and include provenance metadata referencing the source DoP document.
 
 ## 📚 References
 

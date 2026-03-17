@@ -1,0 +1,310 @@
+{
+  "@context": {
+    "sh": "http://www.w3.org/ns/shacl#",
+    "dpp": "https://w3id.org/dpp#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "schema": "https://schema.org/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sh:targetClass": { "@id": "sh:targetClass", "@type": "@id" },
+    "sh:node": { "@id": "sh:node", "@type": "@id" },
+    "sh:datatype": { "@id": "sh:datatype", "@type": "@id" },
+    "sh:path": { "@id": "sh:path", "@type": "@id" },
+    "sh:property": { "@id": "sh:property", "@type": "@id" }
+  },
+  "@graph": [
+    {
+      "@id": "dpp:SHACLShapesMetadata",
+      "dcterms:title": "SHACL Shapes for DPP Ontology",
+      "dcterms:description": "Validation shapes for Digital Product Passport data conforming to prEN 18216-18223:2025."
+    },
+    {
+      "@id": "dpp:DigitalProductPassportShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": "dpp:DigitalProductPassport",
+      "sh:property": [
+        {
+          "sh:path": "dpp:status",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:economicOperator",
+          "sh:node": "dpp:OrganizationShape",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:productIdentifiers",
+          "sh:node": "dpp:ProductIdentifierShape",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:dataElementCollections",
+          "sh:node": "dpp:DataElementCollectionShape",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:dppSchemaVersion",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:granularity",
+          "sh:datatype": "xsd:string",
+          "sh:in": {
+            "@list": ["model", "batch", "item"]
+          }
+        },
+        {
+          "sh:path": "dpp:backupOperator",
+          "sh:node": "dpp:OrganizationShape"
+        },
+        {
+          "sh:path": "dpp:labels",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:changeLog",
+          "sh:node": "dpp:ChangeEventShape"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:OrganizationShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": [
+        "dpp:Organization",
+        "schema:Organization"
+      ],
+      "sh:property": [
+        {
+          "sh:path": "schema:name",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:lei",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:gln",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:ProductIdentifierShape",
+      "@type": "sh:NodeShape",
+      "sh:property": [
+        {
+          "sh:path": "dpp:scheme",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:value",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:namespace",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:DataElementCollectionShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": "dpp:DataElementCollection",
+      "sh:property": [
+        {
+          "sh:path": "dcterms:title",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:labelSet",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:elements",
+          "sh:or": {
+            "@list": [
+              { "sh:node": "dpp:DataElementShape" },
+              { "sh:node": "dpp:DocumentShape" }
+            ]
+          }
+        },
+        {
+          "sh:path": "dpp:dopcMetadata",
+          "sh:node": "dpp:DeclarationOfPerformanceShape"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:DataElementShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": [
+        "dpp:SingleDataElement",
+        "dpp:DataElement"
+      ],
+      "sh:property": [
+        {
+          "sh:path": "dpp:path",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:name",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:dictionaryReference",
+          "sh:datatype": "xsd:anyURI"
+        },
+        {
+          "sh:path": "dpp:valueElement",
+          "sh:node": "dpp:ValueElementShape"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:ValueElementShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": "dpp:ValueElement",
+      "sh:xone": {
+        "@list": [
+          {
+            "sh:property": [
+              {
+                "sh:path": "dpp:numericValue",
+                "sh:datatype": "xsd:double",
+                "sh:minCount": 1
+              }
+            ]
+          },
+          {
+            "sh:property": [
+              {
+                "sh:path": "dpp:textValue",
+                "sh:datatype": "xsd:string",
+                "sh:minCount": 1
+              }
+            ]
+          }
+        ]
+      },
+      "sh:property": [
+        {
+          "sh:path": "dpp:unit",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:ChangeEventShape",
+      "@type": "sh:NodeShape",
+      "sh:property": [
+        {
+          "sh:path": "dpp:changeId",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:timestamp",
+          "sh:datatype": "xsd:dateTime",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:changeType",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1,
+          "sh:in": {
+            "@list": ["create", "update", "delete"]
+          }
+        }
+      ]
+    },
+    {
+      "@id": "dpp:DeclarationOfPerformanceShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": "dpp:DeclarationOfPerformance",
+      "sh:property": [
+        {
+          "sh:path": "dpp:declarationCode",
+          "sh:datatype": "xsd:string",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:dateOfIssue",
+          "sh:datatype": "xsd:date",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:harmonisedStandard",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:avcpSystem",
+          "sh:datatype": "xsd:string",
+          "sh:in": {
+            "@list": ["1", "1+", "2", "2+", "3", "4"]
+          }
+        },
+        {
+          "sh:path": "dpp:notifiedBody",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:declaredUnit",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:functionalUnit",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:intendedUse",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:documentReference",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    },
+    {
+      "@id": "dpp:DocumentShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": "dpp:Document",
+      "sh:property": [
+        {
+          "sh:path": "schema:url",
+          "sh:datatype": "xsd:anyURI",
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": "dpp:fileName",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:mediaType",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:hashAlgorithm",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:hashValue",
+          "sh:datatype": "xsd:string"
+        },
+        {
+          "sh:path": "dpp:language",
+          "sh:datatype": "xsd:string"
+        }
+      ]
+    }
+  ]
+}
