@@ -1,6 +1,7 @@
 """
-Lignum DPP API Server
-Conforming to prEN 18222:2025 - API specification
+Lignum DPP API Server [DEMO]
+Proof-of-concept conforming to prEN 18222:2025 - API specification
+NOT an official Digital Product Passport server.
 """
 
 import json
@@ -20,14 +21,63 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import uvicorn
 
+# Base URL: use explicit env var, fall back to Vercel's auto-set URL, then localhost
+BASE_URL = os.getenv("BASE_URL") or (
+    f"https://{os.getenv('VERCEL_URL')}" if os.getenv("VERCEL_URL") else "http://localhost:8000"
+)
+BASE_URL = BASE_URL.rstrip("/")
+
+DEMO_DISCLAIMER = (
+    "DEMO / PROOF OF CONCEPT — This is NOT an official Digital Product Passport server. "
+    "Sample data only. Not operated by or affiliated with any manufacturer. "
+    "Presented at bS-Summit Porto."
+)
+
+# Tag metadata controls ordering in Swagger UI
+tags_metadata = [
+    {"name": "Demo Landing", "description": "Interactive landing page with product cards and QR codes"},
+    {"name": "Linked Data & Ontology", "description": "OWL ontology, SHACL shapes, and JSON-LD validation"},
+    {"name": "GS1 Digital Link", "description": "Resolve product identifiers via GS1 Digital Link URIs"},
+    {"name": "DPP CRUD", "description": "Create, read, update, delete Digital Product Passports (prEN 18222)"},
+    {"name": "Data Elements", "description": "Access individual data element collections and elements"},
+    {"name": "Registry", "description": "EU DPP registry simulation (PoC)"},
+    {"name": "System", "description": "Health checks and admin endpoints"},
+]
+
 # Initialize FastAPI app
 app = FastAPI(
-    title="Lignum DPP API",
-    description="Digital Product Passport API conforming to prEN 18222:2025",
-    version="1.0.0",
+    title="Lignum DPP API [DEMO] — bS-Summit Porto",
+    description=(
+        "## DEMO / PROOF OF CONCEPT\n\n"
+        "**This is NOT an official Digital Product Passport server.**\n"
+        "Sample data for demonstration purposes only. Not affiliated with any manufacturer.\n\n"
+        "---\n\n"
+        "### What is this?\n"
+        "A working proof-of-concept of the **prEN 18222:2025** DPP API specification for construction products, "
+        "featuring:\n\n"
+        "- **GS1 Digital Link** resolution (scan a QR code → get the DPP)\n"
+        "- **bSDD** (buildingSMART Data Dictionary) property references with clickable links\n"
+        "- **OWL ontology** & **SHACL shapes** for linked-data validation\n"
+        "- **Content negotiation**: same URL returns HTML (browser) or JSON-LD (`Accept: application/ld+json`)\n"
+        "- **Declaration of Performance** (DoPC) data per EU CPR\n\n"
+        "### Try it\n"
+        "1. Browse the [DPP list](/dpps) or the [interactive landing page](/)\n"
+        "2. Click a DPP link in your browser → HTML view with bSDD links & QR codes\n"
+        "3. `curl` the same URL with `-H 'Accept: application/ld+json'` → JSON-LD\n"
+        "4. POST a DPP to [`/validate`](#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post) to check SHACL conformance\n\n"
+        "### Sample products\n"
+        "| Product | GTIN | GS1 Link |\n"
+        "|---------|------|----------|\n"
+        "| Knauf Acoustic Batt | `04012345678901` | [`/id/01/04012345678901`](/id/01/04012345678901) |\n"
+        "| Schilliger Glulam GL24h | `07640123456789` | [`/id/01/07640123456789`](/id/01/07640123456789) |\n"
+        "| PVC Sewage Pipe DN110 | `05790001234561` | [`/id/01/05790001234561`](/id/01/05790001234561) |\n\n"
+        "*Presented at bS-Summit Porto — buildingSMART International*"
+    ),
+    version="0.1.0-demo",
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
+    openapi_tags=tags_metadata,
 )
 
 # CORS configuration
@@ -39,17 +89,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Demo disclaimer middleware — adds headers to every response
+@app.middleware("http")
+async def add_demo_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-DPP-Demo"] = "true"
+    response.headers["X-DPP-Disclaimer"] = (
+        "DEMO ONLY - Not an official DPP server - bS-Summit Porto PoC"
+    )
+    return response
+
 # In-memory storage (replace with database in production)
 dpp_storage: Dict[str, Dict] = {}
 registry_storage: Dict[str, Dict] = {}
 
 # Load sample DPPs from JSON-LD files
 def load_sample_dpps():
-    """Load sample DPP files from dpp/products directory"""
-    base_path = Path(__file__).parent.parent
-    dpp_dir = base_path / "dpp" / "products"
+    """Load sample DPP files from dpp/products directory.
+
+    Replaces hardcoded localhost:8000 URLs with BASE_URL and injects
+    demo disclaimer metadata into each DPP.
+    """
+    api_path = Path(__file__).parent
+    base_path = api_path.parent
+    # Vercel bundles files inside api/; local dev uses project root
+    dpp_dir = api_path / "data" / "dpp"
     if not dpp_dir.exists():
-        # Fallback to legacy project root (pre‑refactor)
+        dpp_dir = base_path / "dpp" / "products"
+    if not dpp_dir.exists():
         candidates = [
             base_path / "dpp_knauf_acoustic_batt.jsonld",
             base_path / "dpp_schilliger_glulam.jsonld",
@@ -60,32 +127,30 @@ def load_sample_dpps():
 
     for filepath in candidates:
         try:
-            with open(filepath, 'r') as f:
-                dpp_data = json.load(f)
+            raw = filepath.read_text(encoding="utf-8")
+            # Replace localhost URLs with deployment BASE_URL
+            if BASE_URL != "http://localhost:8000":
+                raw = raw.replace("http://localhost:8000", BASE_URL)
+            dpp_data = json.loads(raw)
             dpp_id = dpp_data.get("id")
             if dpp_id:
+                # Inject demo disclaimer into every DPP
+                dpp_data["dpp:disclaimer"] = DEMO_DISCLAIMER
+                dpp_data["dpp:demoNotice"] = {
+                    "type": "schema:SpecialAnnouncement",
+                    "schema:name": "Demo Disclaimer",
+                    "schema:text": (
+                        "This DPP instance is a proof-of-concept demonstration. "
+                        "All data is illustrative and not authoritative. "
+                        "Not operated by or affiliated with any manufacturer."
+                    ),
+                    "schema:category": "demo",
+                    "schema:event": "bS-Summit Porto"
+                }
                 dpp_storage[dpp_id] = dpp_data
                 print(f"Loaded sample DPP: {dpp_id}")
         except Exception as e:
             print(f"Warning: failed to load DPP {filepath}: {e}")
-
-# Load samples on startup
-@app.on_event("startup")
-async def startup_event():
-    load_sample_dpps()
-    print(f"DPP API started with {len(dpp_storage)} sample DPPs loaded")
-    # Mount local static files for documents used in DPPs
-    base_path = Path(__file__).parent.parent
-    # Prefer new /data directory; fallback to legacy vLignum
-    data_dir = base_path / "data"
-    legacy_dir = base_path / "vLignum"
-    mount_dir = data_dir if data_dir.exists() else legacy_dir if legacy_dir.exists() else None
-    if mount_dir is not None:
-        try:
-            app.mount("/files", StaticFiles(directory=str(mount_dir)), name="files")
-        except Exception:
-            # Already mounted
-            pass
 
 # Pydantic models for request/response
 class ProductIdentifier(BaseModel):
@@ -125,170 +190,633 @@ def verify_bearer_token(authorization: Optional[str] = Header(None)) -> bool:
     return authorization.startswith("Bearer ")
 
 def render_dpp_as_html(dpp: Dict) -> str:
-    """Render DPP as HTML for human viewing"""
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Digital Product Passport</title>
-        <style>
-            body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; background: #f5f5f5; }}
-            .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-            h1 {{ color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }}
-            h2 {{ color: #34495e; margin-top: 30px; }}
-            h3 {{ color: #7f8c8d; }}
-            .info-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }}
-            .info-card {{ background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #3498db; }}
-            .label {{ font-weight: bold; color: #555; }}
-            .value {{ color: #333; margin-left: 10px; }}
-            .collection {{ margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }}
-            .element {{ margin: 10px 0; padding: 10px; background: white; border-radius: 5px; }}
-            .indicator-table {{ width: 100%; border-collapse: collapse; margin: 10px 0; }}
-            .indicator-table th {{ background: #3498db; color: white; padding: 10px; text-align: left; }}
-            .indicator-table td {{ padding: 10px; border-bottom: 1px solid #ddd; }}
-            .document-link {{ color: #3498db; text-decoration: none; }}
-            .document-link:hover {{ text-decoration: underline; }}
-            .qr-section {{ margin: 30px 0; padding: 20px; background: #ecf0f1; border-radius: 8px; text-align: center; }}
-            .status-badge {{ display: inline-block; padding: 5px 15px; border-radius: 20px; background: #27ae60; color: white; font-weight: bold; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>🔐 Digital Product Passport</h1>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <span class="label">DPP ID:</span>
-                    <span class="value">{html_module.escape(str(dpp.get('id', 'N/A')))}</span>
-                </div>
-                <div class="info-card">
-                    <span class="label">Status:</span>
-                    <span class="status-badge">{html_module.escape(str(dpp.get('dpp:status', 'N/A')))}</span>
-                </div>
-                <div class="info-card">
-                    <span class="label">Schema Version:</span>
-                    <span class="value">{html_module.escape(str(dpp.get('dpp:dppSchemaVersion', 'N/A')))}</span>
-                </div>
-                <div class="info-card">
-                    <span class="label">Last Modified:</span>
-                    <span class="value">{html_module.escape(str(dpp.get('dcterms:modified', 'N/A')))}</span>
-                </div>
-            </div>
-    """
-    
-    # Economic Operator
-    if 'dpp:economicOperator' in dpp:
-        op = dpp['dpp:economicOperator']
-        html += f"""
-            <h2>📦 Economic Operator</h2>
-            <div class="info-card">
-                <div><span class="label">Name:</span> <span class="value">{html_module.escape(str(op.get('schema:name', 'N/A')))}</span></div>
-                <div><span class="label">LEI:</span> <span class="value">{html_module.escape(str(op.get('dpp:lei', 'N/A')))}</span></div>
-                <div><span class="label">GLN:</span> <span class="value">{html_module.escape(str(op.get('dpp:gln', 'N/A')))}</span></div>
-            </div>
-        """
-    
-    # Product Identifiers
-    if 'dpp:productIdentifiers' in dpp:
-        html += "<h2>🏷️ Product Identifiers</h2><div class='info-grid'>"
-        for pid in dpp['dpp:productIdentifiers']:
-            html += f"""
-                <div class="info-card">
-                    <span class="label">{html_module.escape(str(pid.get('dpp:scheme', 'Unknown')))}:</span>
-                    <span class="value">{html_module.escape(str(pid.get('dpp:value', 'N/A')))}</span>
-                </div>
-            """
-        html += "</div>"
-    
-    # Data Element Collections
-    if 'dpp:dataElementCollections' in dpp:
-        html += "<h2>📊 Data Collections</h2>"
-        for collection in dpp['dpp:dataElementCollections']:
-            title = html_module.escape(str(collection.get('dcterms:title', 'Untitled Collection')))
-            html += f"<div class='collection'><h3>{title}</h3>"
-            
-            # Render DoPC metadata header if present
-            if 'dpp:dopcMetadata' in collection:
-                meta = collection['dpp:dopcMetadata']
-                html += "<div class='element' style='background:#e8f4fd;border-left:4px solid #2980b9;padding:15px;margin-bottom:15px;'>"
-                html += "<strong>Declaration of Performance</strong><br>"
-                for mk, ml in [('dpp:declarationCode','Code'), ('dpp:dateOfIssue','Issued'),
-                               ('dpp:harmonisedStandard','Standard'), ('dpp:avcpSystem','AVCP System'),
-                               ('dpp:notifiedBody','Notified Body'), ('dpp:intendedUse','Intended Use'),
-                               ('dpp:declaredUnit','Declared Unit')]:
-                    if mk in meta:
-                        html += f"<span class='label'>{html_module.escape(ml)}:</span> <span class='value'>{html_module.escape(str(meta[mk]))}</span><br>"
-                html += "</div>"
+    """Render DPP as a polished HTML page for human viewing."""
+    dpp_id = dpp.get("id", "N/A")
+    op = dpp.get("dpp:economicOperator", {})
+    op_name = html_module.escape(str(op.get("schema:name", "Unknown")))
 
-            if 'dpp:elements' in collection:
-                for element in collection['dpp:elements']:
-                    if element.get('type') == 'dpp:Document':
-                        # Render document
-                        html += f"""
-                            <div class="element">
-                                📄 <a href="{html_module.escape(str(element.get('schema:url', '#')))}" class="document-link" target="_blank">
-                                    {html_module.escape(str(element.get('dpp:fileName', 'Document')))}
-                                </a>
-                            </div>
-                        """
-                    elif 'dpp:value' in element and isinstance(element['dpp:value'], list):
-                        # Render indicator table
-                        path = element.get('dpp:path', '')
-                        if 'indicators' in path:
-                            html += "<table class='indicator-table'><thead><tr><th>Indicator</th><th>Module</th><th>Value</th><th>Unit</th></tr></thead><tbody>"
-                            for ind in element['dpp:value']:
-                                html += f"""
-                                    <tr>
-                                        <td>{html_module.escape(str(ind.get('indicator', 'N/A')))}</td>
-                                        <td>{html_module.escape(str(ind.get('module', 'N/A')))}</td>
-                                        <td>{html_module.escape(str(ind.get('value', 'N/A')))}</td>
-                                        <td>{html_module.escape(str(ind.get('unit', 'N/A')))}</td>
-                                    </tr>
-                                """
-                            html += "</tbody></table>"
-                    elif 'dpp:valueElement' in element:
-                        # Render single value
-                        ve = element['dpp:valueElement']
-                        name = html_module.escape(str(element.get('dpp:name', 'Property')))
-                        value = html_module.escape(str(ve.get('dpp:numericValue') or ve.get('dpp:textValue', 'N/A')))
-                        unit = html_module.escape(str(ve.get('dpp:unit', '')))
-                        html += f"""
-                            <div class="element">
-                                <span class="label">{name}:</span>
-                                <span class="value">{value} {unit}</span>
-                            </div>
-                        """
-            html += "</div>"
-    
-    # QR Code section
-    for collection in dpp.get('dpp:dataElementCollections', []):
-        if collection.get('id') == '#carrier':
-            for element in collection.get('dpp:elements', []):
-                if element.get('id') == '#qrLink':
-                    qr_uri = element.get('dpp:value', {}).get('uri', '')
-                    if qr_uri:
-                        html += f"""
-                            <div class="qr-section">
-                                <h3>📱 Data Carrier QR Code</h3>
-                                <p>Scan to access this DPP:</p>
-                                <code>{html_module.escape(str(qr_uri))}</code>
-                            </div>
-                        """
-    
-    html += """
+    # Derive product name
+    collections = dpp.get("dpp:dataElementCollections", [])
+    dopc_coll = next((c for c in collections if c.get("id") == "#dopc"), None)
+    product_name = "Construction Product"
+    if dopc_coll and "dpp:dopcMetadata" in dopc_coll:
+        product_name = dopc_coll["dpp:dopcMetadata"].get("dpp:productName", product_name)
+    if product_name == "Construction Product":
+        product_name = dpp_id.split(":")[-1].replace("-", " ").title()
+
+    # Find GS1 link and QR URI
+    pids = dpp.get("dpp:productIdentifiers", [])
+    gtin = next((p["dpp:value"] for p in pids if p.get("dpp:scheme") == "gtin"), "")
+    qr_uri = ""
+    for c in collections:
+        if c.get("id") == "#carrier":
+            for e in c.get("dpp:elements", []):
+                if e.get("id") == "#qrLink":
+                    qr_uri = e.get("dpp:value", {}).get("uri", "")
+
+    # Generate QR code as inline SVG-style using simple table approach
+    qr_data_uri = ""
+    if qr_uri:
+        try:
+            import qrcode
+            import io
+            import base64
+            qr = qrcode.QRCode(version=1, box_size=6, border=2)
+            qr.add_data(qr_uri)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            buf = io.BytesIO()
+            img.save(buf, format="PNG")
+            qr_data_uri = f"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}"
+        except Exception:
+            pass
+
+    # --- Build HTML ---
+    esc = html_module.escape
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{esc(product_name)} &mdash; DPP [DEMO]</title>
+    <style>
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
+        .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 8px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }}
+        .container {{ max-width: 860px; margin: 0 auto; padding: 60px 24px 48px; }}
+        .header {{ margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e5e5; }}
+        .header h1 {{ font-size: 1.75em; font-weight: 700; color: #111; margin-bottom: 4px; letter-spacing: -0.01em; }}
+        .header .operator {{ font-size: 0.95em; color: #666; }}
+        .meta-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; margin: 24px 0; background: #e5e5e5; border: 1px solid #e5e5e5; border-radius: 4px; overflow: hidden; }}
+        .meta-item {{ background: #fafafa; padding: 14px 16px; }}
+        .meta-item .lbl {{ font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #888; margin-bottom: 4px; font-weight: 600; }}
+        .meta-item .val {{ font-size: 13px; color: #1a1a1a; word-break: break-all; }}
+        .meta-item .val code {{ background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-size: 12px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
+        .status {{ display: inline-block; padding: 2px 10px; border-radius: 3px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }}
+        .status-active {{ background: #dcfce7; color: #166534; }}
+        .section {{ margin: 32px 0; }}
+        .section-title {{ font-size: 0.85em; font-weight: 700; color: #444; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #111; text-transform: uppercase; letter-spacing: 0.8px; }}
+        .card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 16px; margin-bottom: 12px; }}
+        .prop-row {{ display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }}
+        .prop-row:last-child {{ border-bottom: none; }}
+        .prop-name {{ font-size: 13px; color: #555; flex: 1; }}
+        .prop-value {{ font-size: 13px; font-weight: 600; color: #111; text-align: right; }}
+        .prop-unit {{ font-size: 12px; color: #888; margin-left: 4px; font-weight: 400; }}
+        .bsdd-link {{ display: inline-block; margin-left: 6px; padding: 1px 6px; background: #f0f7ff; border: 1px solid #c5d9ed; border-radius: 3px; font-size: 10px; color: #2563eb; text-decoration: none; font-weight: 600; letter-spacing: 0.3px; }}
+        .bsdd-link:hover {{ background: #dbeafe; }}
+        .dopc-header {{ background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 16px; margin-bottom: 14px; }}
+        .dopc-header strong {{ color: #1e40af; font-size: 14px; }}
+        .dopc-meta {{ font-size: 13px; color: #555; line-height: 1.8; }}
+        .doc-item {{ display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 6px; text-decoration: none; color: #1a1a1a; transition: border-color 0.15s; }}
+        .doc-item:hover {{ border-color: #999; }}
+        .doc-icon {{ font-size: 16px; color: #888; }}
+        .doc-name {{ font-size: 13px; font-weight: 500; }}
+        .indicator-table {{ width: 100%; border-collapse: collapse; }}
+        .indicator-table th {{ background: #f5f5f5; color: #555; padding: 10px 14px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; border-bottom: 2px solid #ddd; }}
+        .indicator-table td {{ padding: 9px 14px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; }}
+        .indicator-table tr:hover td {{ background: #fafafa; }}
+        .carrier-card {{ background: #fafafa; border: 1px solid #e5e5e5; border-radius: 4px; padding: 24px; text-align: center; }}
+        .carrier-card h3 {{ color: #111; margin-bottom: 12px; font-size: 14px; font-weight: 600; }}
+        .carrier-card img {{ margin: 12px auto; display: block; }}
+        .carrier-card code {{ display: block; background: #f0f0f0; padding: 10px; border-radius: 3px; font-size: 11px; color: #333; margin-top: 12px; word-break: break-all; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
+        .carrier-card .gs1-label {{ font-size: 11px; color: #888; margin-top: 8px; }}
+        .class-card {{ display: flex; align-items: center; gap: 16px; padding: 16px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 8px; }}
+        .class-info {{ flex: 1; }}
+        .class-info .scheme {{ font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }}
+        .class-info .name {{ font-size: 15px; font-weight: 600; color: #111; margin: 4px 0; }}
+        .class-info a {{ color: #2563eb; font-size: 12px; text-decoration: none; }}
+        .class-info a:hover {{ text-decoration: underline; }}
+        .json-toggle {{ display: inline-block; margin-top: 20px; padding: 7px 16px; background: #fff; border: 1px solid #ccc; border-radius: 3px; color: #333; font-size: 13px; text-decoration: none; font-weight: 500; }}
+        .json-toggle:hover {{ background: #f5f5f5; border-color: #999; }}
+        .footer {{ text-align: center; padding: 32px 0; color: #999; font-size: 12px; margin-top: 24px; border-top: 1px solid #e5e5e5; }}
+        .footer a {{ color: #666; text-decoration: none; }}
+        .footer a:hover {{ color: #111; }}
+        a.back-link {{ color: #666; text-decoration: none; font-size: 13px; }}
+        a.back-link:hover {{ color: #111; }}
+    </style>
+</head>
+<body>
+    <div class="demo-banner">
+        DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — Not affiliated with any manufacturer — bS-Summit Porto
+    </div>
+    <div class="container">
+        <a href="/" class="back-link">&larr; Back to all products</a>
+        <div class="header" style="margin-top:16px;">
+            <h1>{esc(product_name)}</h1>
+            <div class="operator">{op_name}</div>
         </div>
-    </body>
-    </html>
-    """
+
+        <div class="meta-grid">
+            <div class="meta-item">
+                <div class="lbl">Status</div>
+                <div class="val"><span class="status status-active">{esc(str(dpp.get('dpp:status', 'N/A')))}</span></div>
+            </div>
+            <div class="meta-item">
+                <div class="lbl">Schema Version</div>
+                <div class="val">{esc(str(dpp.get('dpp:dppSchemaVersion', 'N/A')))}</div>
+            </div>
+            <div class="meta-item">
+                <div class="lbl">Last Modified</div>
+                <div class="val">{esc(str(dpp.get('dcterms:modified', 'N/A')))}</div>
+            </div>
+            <div class="meta-item">
+                <div class="lbl">DPP ID</div>
+                <div class="val"><code>{esc(str(dpp_id))}</code></div>
+            </div>
+        </div>
+"""
+
+    # Product Identifiers
+    if pids:
+        html += '<div class="section"><h2 class="section-title">Product Identifiers</h2><div class="meta-grid">'
+        for pid in pids:
+            scheme = esc(str(pid.get("dpp:scheme", "unknown")))
+            val = esc(str(pid.get("dpp:value", "")))
+            html += f'<div class="meta-item"><div class="lbl">{scheme}</div><div class="val"><code>{val}</code></div></div>'
+        html += "</div></div>"
+
+    # Economic Operator detail
+    if op:
+        html += '<div class="section"><h2 class="section-title">Economic Operator</h2><div class="card">'
+        for k, label in [("schema:name", "Name"), ("dpp:lei", "LEI"), ("dpp:gln", "GLN"), ("id", "DID")]:
+            if k in op:
+                html += f'<div class="prop-row"><span class="prop-name">{esc(label)}</span><span class="prop-value">{esc(str(op[k]))}</span></div>'
+        html += "</div></div>"
+
+    # Data Element Collections — render order: DoPC, EPD, Documents, Carrier, Classification
+    # Skip #productProperties entirely (duplicates DoPC declared values)
+    for collection in collections:
+        coll_id = collection.get("id", "")
+        title = esc(str(collection.get("dcterms:title", "Untitled")))
+        elements = collection.get("dpp:elements", [])
+
+        # --- Skip product properties (redundant with DoPC) ---
+        if coll_id == "#productProperties":
+            continue
+
+        # --- Classification ---
+        if coll_id == "#classification":
+            html += f'<div class="section"><h2 class="section-title">{title}</h2>'
+            for element in elements:
+                val = element.get("dpp:value", {})
+                if isinstance(val, dict):
+                    scheme = esc(str(val.get("scheme", "")))
+                    name = esc(str(val.get("name", "")))
+                    uri = val.get("uri", "")
+                    html += f"""<div class="class-card">
+                        <div class="class-info">
+                            <div class="scheme">{scheme}</div>
+                            <div class="name">{name}</div>
+                            {f'<a href="{esc(uri)}" target="_blank">{esc(uri)}</a>' if uri else ''}
+                        </div>
+                    </div>"""
+            html += "</div>"
+            continue
+
+        # --- Data Carrier / QR ---
+        if coll_id == "#carrier":
+            html += f'<div class="section"><h2 class="section-title">{title}</h2><div class="carrier-card">'
+            if qr_data_uri:
+                html += f'<img src="{qr_data_uri}" alt="QR Code" width="180" height="180">'
+            if qr_uri:
+                html += f'<code>{esc(qr_uri)}</code>'
+                html += '<div class="gs1-label">GS1 Digital Link — scan to access this DPP</div>'
+            if gtin:
+                gs1_link = f"{BASE_URL}/id/01/{gtin}"
+                html += f'<div style="margin-top:12px;"><a href="{esc(gs1_link)}" class="bsdd-link" style="font-size:13px;">Open GS1 Link</a></div>'
+            html += "</div></div>"
+            continue
+
+        # --- Documents ---
+        if coll_id == "#documents":
+            html += f'<div class="section"><h2 class="section-title">{title}</h2>'
+            for element in elements:
+                if element.get("type") == "dpp:Document":
+                    fname = esc(str(element.get("dpp:fileName", "Document")))
+                    url = esc(str(element.get("schema:url", "#")))
+                    html += f'<a href="{url}" class="doc-item" target="_blank"><span class="doc-name">{fname}</span></a>'
+            html += "</div>"
+            continue
+
+        # --- DoPC or EPD collections ---
+        html += f'<div class="section"><h2 class="section-title">{title}</h2>'
+
+        # DoPC metadata header
+        if "dpp:dopcMetadata" in collection:
+            meta = collection["dpp:dopcMetadata"]
+            html += '<div class="dopc-header"><strong>Declaration of Performance (DoPC)</strong><div class="dopc-meta">'
+            for mk, ml in [("dpp:declarationCode", "Code"), ("dpp:dateOfIssue", "Issued"),
+                           ("dpp:harmonisedStandard", "Standard"), ("dpp:avcpSystem", "AVCP System"),
+                           ("dpp:notifiedBody", "Notified Body"), ("dpp:intendedUse", "Intended Use"),
+                           ("dpp:declaredUnit", "Declared Unit"), ("dpp:productName", "Product Name")]:
+                if mk in meta:
+                    html += f"<div><strong>{esc(ml)}:</strong> {esc(str(meta[mk]))}</div>"
+            html += "</div></div>"
+
+        # Render elements
+        has_props = False
+        for element in elements:
+            # Indicator table (EPD LCIA)
+            if "dpp:value" in element and isinstance(element["dpp:value"], list):
+                items = element["dpp:value"]
+                if items and isinstance(items[0], dict) and "indicator" in items[0]:
+                    html += '<div class="card"><table class="indicator-table"><thead><tr><th>Indicator</th><th>Module</th><th>Value</th><th>Unit</th></tr></thead><tbody>'
+                    for ind in items:
+                        html += f'<tr><td>{esc(str(ind.get("indicator","")))}</td><td>{esc(str(ind.get("module","")))}</td><td>{esc(str(ind.get("value","")))}</td><td>{esc(str(ind.get("unit","")))}</td></tr>'
+                    html += "</tbody></table></div>"
+                continue
+
+            # Single value property with optional bSDD link
+            if "dpp:valueElement" in element:
+                if not has_props:
+                    html += '<div class="card">'
+                    has_props = True
+                ve = element["dpp:valueElement"]
+                raw_name = str(element.get("dpp:name", "Property"))
+                # Clean up property names: strip DOPC_ prefix, replace underscores
+                display_name = raw_name
+                if display_name.startswith("DOPC_"):
+                    display_name = display_name[5:]
+                display_name = display_name.replace("_", " ").title()
+                value = esc(str(ve.get("dpp:numericValue") or ve.get("dpp:textValue", "N/A")))
+                unit = esc(str(ve.get("dpp:unit", "")))
+                dict_ref = element.get("dpp:dictionaryReference", "")
+                bsdd_html = ""
+                if dict_ref and "buildingsmart.org" in dict_ref:
+                    bsdd_html = f'<a href="{esc(dict_ref)}" class="bsdd-link" target="_blank" title="View in bSDD">bSDD</a>'
+                html += f'<div class="prop-row"><span class="prop-name">{esc(display_name)}{bsdd_html}</span><span class="prop-value">{value}<span class="prop-unit">{unit}</span></span></div>'
+                continue
+
+            # Object values (EPD metadata etc.) — format dicts and lists nicely
+            if "dpp:value" in element and isinstance(element["dpp:value"], dict):
+                obj = element["dpp:value"]
+                if not has_props:
+                    html += '<div class="card">'
+                    has_props = True
+                for k, v in obj.items():
+                    display_key = esc(str(k).replace("_", " ").title())
+                    if isinstance(v, str) and (v.startswith("http://") or v.startswith("https://")):
+                        html += f'<div class="prop-row"><span class="prop-name">{display_key}</span><span class="prop-value"><a href="{esc(v)}" target="_blank" style="color:#2563eb;text-decoration:none;">{esc(v)}</a></span></div>'
+                    elif isinstance(v, dict):
+                        # Format nested dicts like {value: 1, unit: m³} nicely
+                        if "value" in v and "unit" in v:
+                            html += f'<div class="prop-row"><span class="prop-name">{display_key}</span><span class="prop-value">{esc(str(v["value"]))}<span class="prop-unit">{esc(str(v["unit"]))}</span></span></div>'
+                        else:
+                            parts = ", ".join(f"{esc(str(dk))}: {esc(str(dv))}" for dk, dv in v.items())
+                            html += f'<div class="prop-row"><span class="prop-name">{display_key}</span><span class="prop-value">{parts}</span></div>'
+                    elif isinstance(v, list):
+                        # Format lists nicely
+                        html += f'<div class="prop-row"><span class="prop-name">{display_key}</span><span class="prop-value">{esc(", ".join(str(i) for i in v))}</span></div>'
+                    elif isinstance(v, bool):
+                        html += f'<div class="prop-row"><span class="prop-name">{display_key}</span><span class="prop-value">{"Yes" if v else "No"}</span></div>'
+                    else:
+                        html += f'<div class="prop-row"><span class="prop-name">{display_key}</span><span class="prop-value">{esc(str(v))}</span></div>'
+                continue
+
+        if has_props:
+            html += "</div>"
+        html += "</div>"
+
+    # JSON-LD toggle link
+    encoded_id = dpp_id.replace("/", "%2F").replace(":", "%3A")
+    html += f"""
+        <div style="text-align:center;margin-top:30px;">
+            <a href="/dpps/{encoded_id}" class="json-toggle" onclick="fetch('/dpps/{encoded_id}',{{headers:{{'Accept':'application/ld+json'}}}}).then(r=>r.json()).then(d=>{{document.getElementById('json-view').textContent=JSON.stringify(d,null,2);document.getElementById('json-panel').style.display='block';}});return false;">
+                View JSON-LD
+            </a>
+        </div>
+        <pre id="json-panel" style="display:none;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:4px;padding:20px;margin-top:16px;overflow-x:auto;font-size:12px;color:#333;max-height:600px;overflow-y:auto;font-family:'SF Mono',Monaco,'Cascadia Code',monospace;"><code id="json-view"></code></pre>
+        <div class="footer">
+            <a href="/">Home</a> &middot;
+            <a href="/docs">API Docs</a> &middot;
+            <a href="/ontology">Ontology</a><br>
+            bS-Summit Porto — buildingSMART International
+        </div>
+    </div>
+</body>
+</html>"""
     return html
 
 # API Endpoints
 
-@app.post("/dpps", status_code=201, response_model=Dict)
+@app.get("/", tags=["Demo Landing"])
+async def root(request: Request):
+    """Interactive demo landing page.
+
+    Returns HTML in a browser, JSON-LD otherwise.
+    Browse sample DPPs, scan QR codes, explore bSDD links and the OWL ontology.
+    """
+    accept = request.headers.get("accept", "")
+    if "text/html" in accept:
+        # Build product cards from loaded DPPs
+        product_cards = ""
+        for dpp in dpp_storage.values():
+            dpp_id = dpp.get("id", "")
+            op = dpp.get("dpp:economicOperator", {})
+            op_name = html_module.escape(str(op.get("schema:name", "Unknown")))
+            pids = dpp.get("dpp:productIdentifiers", [])
+            gtin = next((p["dpp:value"] for p in pids if p.get("dpp:scheme") == "gtin"), "")
+            labels = dpp.get("dpp:labels", [])
+            label_tags = "".join(f'<span class="tag">{html_module.escape(l)}</span>' for l in labels[:5])
+
+            # Extract product name from collection title or DPP ID
+            collections = dpp.get("dpp:dataElementCollections", [])
+            dopc_coll = next((c for c in collections if c.get("id") == "#dopc"), None)
+            product_name = "Construction Product"
+            if dopc_coll and "dpp:dopcMetadata" in dopc_coll:
+                product_name = dopc_coll["dpp:dopcMetadata"].get("dpp:productName", product_name)
+            if product_name == "Construction Product":
+                # Derive from ID
+                short = dpp_id.split(":")[-1].replace("-", " ").title()
+                product_name = short
+
+            encoded_id = dpp_id.replace("/", "%2F").replace(":", "%3A")
+            gs1_link = f"/id/01/{gtin}" if gtin else ""
+
+            product_cards += f"""
+                <div class="product-card">
+                    <div class="product-header">
+                        <h3>{html_module.escape(product_name)}</h3>
+                        <span class="operator">{op_name}</span>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-meta">
+                            <div><strong>GTIN:</strong> <code>{html_module.escape(gtin)}</code></div>
+                            <div><strong>DPP ID:</strong> <code style="font-size:11px">{html_module.escape(dpp_id)}</code></div>
+                        </div>
+                        <div class="tags">{label_tags}</div>
+                    </div>
+                    <div class="product-actions">
+                        <a href="/dpps/{encoded_id}" class="btn btn-primary" title="HTML view in browser, JSON-LD via curl">View DPP</a>
+                        <a href="{gs1_link}" class="btn btn-gs1" title="GS1 Digital Link resolver">GS1 Resolve</a>
+                    </div>
+                </div>
+            """
+
+        return HTMLResponse(content=f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Lignum DPP Demo — bS-Summit Porto</title>
+            <style>
+                * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+                body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
+                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 8px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }}
+                .top {{ padding: 56px 24px 0; max-width: 960px; margin: 0 auto; }}
+                .intro {{ padding: 40px 0 32px; border-bottom: 1px solid #e5e5e5; }}
+                .intro h1 {{ font-size: 1.75em; font-weight: 700; color: #111; letter-spacing: -0.02em; margin-bottom: 10px; }}
+                .intro p {{ font-size: 15px; color: #555; max-width: 640px; line-height: 1.6; }}
+                .standards {{ display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }}
+                .standards span {{ background: #f5f5f5; border: 1px solid #ddd; padding: 4px 12px; font-size: 12px; color: #444; font-weight: 500; border-radius: 3px; }}
+                .disclaimer-box {{ margin: 20px 0 0; background: #fef2f2; border: 1px solid #fecaca; border-radius: 3px; padding: 12px 16px; font-size: 12px; color: #991b1b; line-height: 1.5; }}
+                .main {{ max-width: 960px; margin: 0 auto; padding: 0 24px 48px; }}
+                .section-title {{ font-size: 0.8em; font-weight: 700; color: #444; margin: 40px 0 16px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #111; padding-bottom: 8px; }}
+                .product-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }}
+                .product-card {{ background: #fff; border: 1px solid #e5e5e5; overflow: hidden; transition: border-color 0.15s; border-radius: 3px; }}
+                .product-card:hover {{ border-color: #999; }}
+                .product-header {{ padding: 16px 16px 10px; border-bottom: 1px solid #f0f0f0; }}
+                .product-header h3 {{ font-size: 1em; color: #111; margin-bottom: 2px; font-weight: 600; }}
+                .operator {{ font-size: 12px; color: #888; }}
+                .product-body {{ padding: 12px 16px; }}
+                .product-meta {{ font-size: 12px; color: #666; line-height: 1.8; }}
+                .product-meta code {{ background: #f5f5f5; padding: 1px 5px; border-radius: 3px; font-size: 11px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
+                .tags {{ margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tag {{ background: #f5f5f5; color: #555; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .product-actions {{ padding: 10px 16px 14px; display: flex; gap: 8px; }}
+                .btn {{ padding: 6px 14px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.1s; }}
+                .btn-primary {{ background: #111; color: #fff; }}
+                .btn-primary:hover {{ background: #333; }}
+                .btn-gs1 {{ background: #fff; color: #333; border: 1px solid #ccc; }}
+                .btn-gs1:hover {{ border-color: #999; background: #fafafa; }}
+                .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }}
+                .feature-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; }}
+                .feature-card h4 {{ color: #111; margin-bottom: 6px; font-size: 13px; font-weight: 700; }}
+                .feature-card p {{ font-size: 12px; color: #666; line-height: 1.5; }}
+                .feature-card a {{ color: #2563eb; text-decoration: none; font-size: 12px; font-weight: 500; }}
+                .feature-card a:hover {{ text-decoration: underline; }}
+                .try-it {{ background: #fafafa; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; margin: 16px 0; }}
+                .try-it p {{ font-size: 13px; color: #555; }}
+                .try-it strong {{ color: #111; }}
+                .try-it code {{ background: #f0f0f0; padding: 10px 14px; border-radius: 3px; display: block; font-size: 12px; color: #333; overflow-x: auto; margin: 10px 0; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
+                .try-it .hint {{ font-size: 11px; color: #999; margin-top: 6px; }}
+                .footer {{ text-align: center; padding: 32px 0; color: #999; font-size: 12px; border-top: 1px solid #e5e5e5; margin-top: 40px; }}
+                .footer a {{ color: #666; text-decoration: none; }}
+                .footer a:hover {{ color: #111; }}
+            </style>
+        </head>
+        <body>
+            <div class="demo-banner">
+                DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — Not affiliated with any manufacturer — bS-Summit Porto
+            </div>
+            <div class="top">
+                <div class="intro">
+                    <h1>Digital Product Passport</h1>
+                    <p>
+                        A proof-of-concept implementation of the <strong>prEN 18222:2025</strong> DPP API for construction products,
+                        with GS1 Digital Link resolution, bSDD property references, and SHACL validation.
+                    </p>
+                    <div class="standards">
+                        <span>prEN 18222 API</span>
+                        <span>prEN 18223 Data Model</span>
+                        <span>GS1 Digital Link</span>
+                        <span>bSDD</span>
+                        <span>OWL + SHACL</span>
+                        <span>EU CPR / DoPC</span>
+                    </div>
+                    <div class="disclaimer-box">
+                        <strong>Disclaimer:</strong> This is a proof-of-concept demonstration presented at bS-Summit Porto.
+                        This server is not an official Digital Product Passport system.
+                        All product data shown is illustrative sample data only.
+                        Not operated by or affiliated with any manufacturer.
+                    </div>
+                </div>
+            </div>
+            <div class="main">
+                <h2 class="section-title">Sample Products</h2>
+                <div class="product-grid">
+                    {product_cards}
+                    <div class="product-card" id="create-card" style="border-style:dashed;">
+                        <div id="create-prompt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;cursor:pointer;" onclick="document.getElementById('create-prompt').style.display='none';document.getElementById('create-form').style.display='block';">
+                            <div style="font-size:28px;color:#ccc;margin-bottom:8px;">+</div>
+                            <div style="font-size:14px;font-weight:600;color:#333;">Create your DPP</div>
+                            <div style="font-size:11px;color:#999;margin-top:4px;">Try it — does not persist after reload</div>
+                        </div>
+                        <div id="create-form" style="display:none;padding:16px;">
+                            <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:12px;">New Product Passport</div>
+                            <div style="font-size:10px;color:#999;background:#fafafa;border:1px solid #eee;border-radius:3px;padding:6px 8px;margin-bottom:12px;">In-memory only. Resets on next deploy or cold start.</div>
+                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product name</label>
+                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Manufacturer</label>
+                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">GTIN (13 digits)</label>
+                            <input id="cf-gtin" type="text" placeholder="e.g. 06412345678901" maxlength="14" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:monospace;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product type</label>
+                            <select id="cf-type" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:14px;font-family:inherit;background:#fff;outline:none;">
+                                <option value="IfcBuildingElementProxy">General building element</option>
+                                <option value="IfcSlab">Slab / panel</option>
+                                <option value="IfcBeam">Beam / column</option>
+                                <option value="IfcWall">Wall element</option>
+                                <option value="IfcWindow">Window</option>
+                                <option value="IfcDoor">Door</option>
+                                <option value="IfcCovering">Insulation / covering</option>
+                                <option value="IfcPipeSegment">Pipe segment</option>
+                            </select>
+                            <div style="display:flex;gap:8px;">
+                                <button onclick="submitDpp()" style="flex:1;padding:7px 14px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
+                                <button onclick="document.getElementById('create-form').style.display='none';document.getElementById('create-prompt').style.display='flex';" style="padding:7px 14px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
+                            </div>
+                            <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="user-dpps"></div>
+
+                <script>
+                function submitDpp() {{
+                    var name = document.getElementById('cf-name').value.trim();
+                    var mfr = document.getElementById('cf-mfr').value.trim();
+                    var gtin = document.getElementById('cf-gtin').value.trim();
+                    var ifcType = document.getElementById('cf-type').value;
+                    var errEl = document.getElementById('cf-error');
+                    errEl.style.display = 'none';
+                    if (!name || !mfr) {{ errEl.textContent = 'Product name and manufacturer are required.'; errEl.style.display = 'block'; return; }}
+                    var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                    var dppId = 'did:web:lignum.dev:dpp:user-' + slug + '-' + Date.now().toString(36);
+                    var body = {{
+                        "@context": {{"dpp": "https://w3id.org/dpp#", "schema": "https://schema.org/", "dcterms": "http://purl.org/dc/terms/"}},
+                        "id": dppId,
+                        "type": "dpp:DigitalProductPassport",
+                        "dpp:status": "active",
+                        "dpp:dppSchemaVersion": "1.0.0",
+                        "dpp:economicOperator": {{"schema:name": mfr, "type": "schema:Organization"}},
+                        "dpp:productIdentifiers": gtin ? [{{"dpp:scheme": "gtin", "dpp:value": gtin}}] : [],
+                        "dpp:labels": [ifcType, "user-created"],
+                        "dpp:dataElementCollections": [
+                            {{
+                                "id": "#dopc",
+                                "type": "dpp:DataElementCollection",
+                                "dcterms:title": "Declaration of Performance and Conformity",
+                                "dpp:dopcMetadata": {{
+                                    "dpp:productName": name,
+                                    "dpp:declarationCode": "USER-" + Date.now().toString(36).toUpperCase(),
+                                    "dpp:dateOfIssue": new Date().toISOString().split('T')[0],
+                                    "dpp:intendedUse": "Demonstration purposes only"
+                                }},
+                                "dpp:elements": []
+                            }},
+                            {{
+                                "id": "#classification",
+                                "type": "dpp:DataElementCollection",
+                                "dcterms:title": "Classification",
+                                "dpp:elements": [{{
+                                    "id": "#ifcClass",
+                                    "type": "dpp:DataElement",
+                                    "dpp:value": {{
+                                        "scheme": "bSDD / IFC 4.3",
+                                        "name": ifcType,
+                                        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/" + ifcType
+                                    }}
+                                }}]
+                            }},
+                            {{
+                                "id": "#carrier",
+                                "type": "dpp:DataElementCollection",
+                                "dcterms:title": "Data Carrier",
+                                "dpp:elements": gtin ? [{{
+                                    "id": "#qrLink",
+                                    "type": "dpp:DataElement",
+                                    "dpp:value": {{"uri": "{BASE_URL}/id/01/" + gtin}}
+                                }}] : []
+                            }}
+                        ]
+                    }};
+                    fetch('/dpps', {{method: 'POST', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(body)}})
+                        .then(function(r) {{ if (!r.ok) return r.json().then(function(e) {{ throw new Error(e.detail || 'Failed'); }}); return r.json(); }})
+                        .then(function(dpp) {{
+                            var enc = encodeURIComponent(dpp.id);
+                            var gs1Html = gtin ? '<a href="/id/01/' + gtin + '" class="btn btn-gs1">GS1 Resolve</a>' : '';
+                            var card = '<div class="product-card" style="border-color:#16a34a;">'
+                                + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
+                                + '<div class="product-body"><div class="product-meta">'
+                                + (gtin ? '<div><strong>GTIN:</strong> <code>' + gtin + '</code></div>' : '')
+                                + '<div><strong>DPP ID:</strong> <code style="font-size:11px">' + dpp.id + '</code></div>'
+                                + '</div><div class="tags"><span class="tag">' + ifcType + '</span><span class="tag">user-created</span></div></div>'
+                                + '<div class="product-actions"><a href="/dpps/' + enc + '" class="btn btn-primary">View DPP</a>' + gs1Html + '</div></div>';
+                            document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
+                            document.getElementById('create-form').style.display = 'none';
+                            document.getElementById('create-prompt').style.display = 'flex';
+                            document.getElementById('cf-name').value = '';
+                            document.getElementById('cf-mfr').value = '';
+                            document.getElementById('cf-gtin').value = '';
+                        }})
+                        .catch(function(e) {{ errEl.textContent = e.message; errEl.style.display = 'block'; }});
+                }}
+                </script>
+
+                <h2 class="section-title">Explore</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h4>OWL Ontology</h4>
+                        <p>Formal DPP ontology in JSON-LD. Classes, properties, and relationships for digital product passports.</p>
+                        <a href="/ontology">View ontology</a>
+                    </div>
+                    <div class="feature-card">
+                        <h4>SHACL Shapes</h4>
+                        <p>Validation shapes that define constraints on DPP data. Use with the /validate endpoint.</p>
+                        <a href="/ontology/shacl">View shapes</a>
+                    </div>
+                    <div class="feature-card">
+                        <h4>SHACL Validator</h4>
+                        <p>POST any DPP JSON-LD to check conformance against SHACL shapes. Try it from the Swagger UI.</p>
+                        <a href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post">Try validator</a>
+                    </div>
+                    <div class="feature-card">
+                        <h4>API Documentation</h4>
+                        <p>Full interactive Swagger UI with examples you can execute directly.</p>
+                        <a href="/docs">Open Swagger</a>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Content Negotiation</h2>
+                <div class="try-it">
+                    <p>The same DPP URL returns <strong>HTML</strong> in your browser or <strong>JSON-LD</strong> via curl:</p>
+                    <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
+                    <p class="hint">Open the same URL in your browser to see the HTML view with bSDD links and QR codes.</p>
+                </div>
+            </div>
+            <div class="footer">
+                Presented at bS-Summit Porto — buildingSMART International<br>
+                <a href="/docs">API Docs</a> &middot;
+                <a href="/ontology">Ontology</a> &middot;
+                <a href="/ontology/shacl">SHACL Shapes</a>
+            </div>
+        </body>
+        </html>
+        """)
+    return {
+        "name": "Lignum DPP API [DEMO]",
+        "disclaimer": DEMO_DISCLAIMER,
+        "version": "0.1.0-demo",
+        "endpoints": {
+            "landing_page": "/",
+            "dpps": "/dpps",
+            "docs": "/docs",
+            "ontology": "/ontology",
+            "shacl": "/ontology/shacl",
+            "validate": "/validate",
+            "health": "/health"
+        }
+    }
+
+@app.post("/dpps", status_code=201, response_model=Dict, tags=["DPP CRUD"])
 async def create_dpp(request: Request, response: Response):
-    """CreateDPP - Create a new Digital Product Passport"""
+    """Create a new Digital Product Passport.
+
+    POST a JSON-LD DPP document. An `id` will be generated if not provided.
+    """
     try:
         dpp_data = await request.json()
         
@@ -338,7 +866,7 @@ async def create_dpp(request: Request, response: Response):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/dpps")
+@app.get("/dpps", tags=["DPP CRUD"])
 async def list_dpps(
     limit: int = Query(20, le=100),
     offset: int = Query(0, ge=0),
@@ -375,13 +903,21 @@ async def list_dpps(
         "offset": offset
     }
 
-@app.get("/id/01/{gtin}")
-@app.get("/id/01/{gtin}/21/{serial}")
-@app.get("/id/01/{gtin}/10/{batch}")
-async def gs1_digital_link_resolver(gtin: str, serial: Optional[str] = None, batch: Optional[str] = None):
-    """Resolve GS1 Digital Link to a DPP (PoC).
+@app.get("/id/01/{gtin}", tags=["GS1 Digital Link"])
+@app.get("/id/01/{gtin}/21/{serial}", tags=["GS1 Digital Link"])
+@app.get("/id/01/{gtin}/10/{batch}", tags=["GS1 Digital Link"])
+async def gs1_digital_link_resolver(request: Request, gtin: str, serial: Optional[str] = None, batch: Optional[str] = None):
+    """Resolve a GS1 Digital Link URI to a DPP.
 
-    Returns the first matching DPP JSON-LD for the provided GTIN, optionally using serial to disambiguate.
+    This is what happens when someone scans a QR code on a physical product.
+    The URI contains the GTIN (AI 01) and optionally a serial number (AI 21) or batch (AI 10).
+
+    **Try these GTINs:**
+    - `04012345678901` — Knauf Acoustic Batt
+    - `07640123456789` — Schilliger Glulam GL24h
+    - `05790001234561` — PVC Sewage Pipe DN110
+
+    Returns HTML in browser, JSON-LD otherwise (content negotiation).
     """
     candidates: List[Dict] = []
     for dpp in dpp_storage.values():
@@ -405,11 +941,24 @@ async def gs1_digital_link_resolver(gtin: str, serial: Optional[str] = None, bat
         if narrowed:
             candidates = narrowed
 
-    return JSONResponse(content=candidates[0], media_type="application/ld+json")
+    resolved = candidates[0]
+    accept = request.headers.get("accept", "")
+    if "text/html" in accept:
+        return HTMLResponse(content=render_dpp_as_html(resolved))
+    return JSONResponse(content=resolved, media_type="application/ld+json")
 
-@app.get("/dpps/{dpp_id}")
+@app.get("/dpps/{dpp_id}", tags=["DPP CRUD"])
 async def read_dpp_by_id(dpp_id: str, request: Request):
-    """ReadDPPById - Retrieve a DPP by its ID"""
+    """Get a DPP by ID (content negotiation).
+
+    Returns **HTML** in a browser (with bSDD links, QR codes, DoPC data)
+    or **JSON-LD** when requested via `Accept: application/ld+json`.
+
+    **Try these IDs:**
+    - `did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001`
+    - `did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001`
+    - `did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001`
+    """
     # URL decode the ID
     dpp_id = unquote(dpp_id)
     
@@ -432,9 +981,9 @@ async def read_dpp_by_id(dpp_id: str, request: Request):
     else:
         return JSONResponse(content=dpp, media_type="application/ld+json")
 
-@app.patch("/dpps/{dpp_id}")
+@app.patch("/dpps/{dpp_id}", tags=["DPP CRUD"])
 async def update_dpp_by_id(dpp_id: str, request: Request):
-    """UpdateDPPById - Update DPP using JSON Merge Patch (RFC 7396)"""
+    """Update a DPP using JSON Merge Patch (RFC 7396)."""
     dpp_id = unquote(dpp_id)
     
     if dpp_id not in dpp_storage:
@@ -489,9 +1038,9 @@ async def update_dpp_by_id(dpp_id: str, request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete("/dpps/{dpp_id}", status_code=204)
+@app.delete("/dpps/{dpp_id}", status_code=204, tags=["DPP CRUD"])
 async def delete_dpp_by_id(dpp_id: str):
-    """DeleteDPPById - Delete a DPP"""
+    """Delete a DPP by ID."""
     dpp_id = unquote(dpp_id)
     
     if dpp_id not in dpp_storage:
@@ -500,9 +1049,9 @@ async def delete_dpp_by_id(dpp_id: str):
     del dpp_storage[dpp_id]
     return Response(status_code=204)
 
-@app.get("/dppsByProductId/{product_id}")
+@app.get("/dppsByProductId/{product_id}", tags=["DPP CRUD"])
 async def read_dpp_by_product_id(product_id: str):
-    """ReadDPPByProductId - Retrieve DPP by product identifier"""
+    """Get a DPP by product identifier (GTIN, MPN, etc.)."""
     # Search for DPP with matching product ID
     for dpp in dpp_storage.values():
         for pid in dpp.get("dpp:productIdentifiers", []):
@@ -511,9 +1060,9 @@ async def read_dpp_by_product_id(product_id: str):
     
     raise HTTPException(status_code=404, detail="DPP not found for product ID")
 
-@app.get("/dppsByProductId/{product_id}/versions")
+@app.get("/dppsByProductId/{product_id}/versions", tags=["DPP CRUD"])
 async def read_dpp_version_by_date(product_id: str, date: str):
-    """ReadDPPVersionByProductIdAndDate - Get DPP version at specific date"""
+    """Get DPP version at a specific date (PoC)."""
     # This would require version history storage
     # For now, return current version if it exists
     for dpp in dpp_storage.values():
@@ -527,9 +1076,9 @@ async def read_dpp_version_by_date(product_id: str, date: str):
     
     raise HTTPException(status_code=404, detail="DPP not found for product ID")
 
-@app.post("/registerDPP", status_code=201)
+@app.post("/registerDPP", status_code=201, tags=["Registry"])
 async def register_dpp(registry_request: RegistryRequest):
-    """PostNewDPPToRegistry - Register DPP with EU registry"""
+    """Register a DPP with the EU registry (PoC simulation)."""
     # Generate registry ID
     registry_id = generate_registry_id()
     registry_url = f"/registry/{registry_id.split(':')[-1]}"
@@ -553,9 +1102,9 @@ async def register_dpp(registry_request: RegistryRequest):
     
     return RegistryResponse(registryId=registry_id, registryUrl=registry_url)
 
-@app.get("/registry/{registry_suffix}")
+@app.get("/registry/{registry_suffix}", tags=["Registry"])
 async def get_registry_entry(registry_suffix: str):
-    """Local registry lookup (PoC)."""
+    """Look up a registry entry (PoC simulation)."""
     key = None
     for rid in registry_storage.keys():
         if rid.endswith(registry_suffix):
@@ -565,9 +1114,12 @@ async def get_registry_entry(registry_suffix: str):
         raise HTTPException(status_code=404, detail="Registry entry not found")
     return registry_storage[key]
 
-@app.get("/dpps/{dpp_id}/dataElements/{collection_id}")
+@app.get("/dpps/{dpp_id}/dataElements/{collection_id}", tags=["Data Elements"])
 async def read_data_element_collection(dpp_id: str, collection_id: str):
-    """ReadDataElementCollection - Get specific data collection"""
+    """Get a specific data element collection from a DPP.
+
+    Collection IDs: `productProperties`, `epd`, `dopc`, `documents`, `carrier`, `classification`
+    """
     dpp_id = unquote(dpp_id)
     
     if dpp_id not in dpp_storage:
@@ -585,9 +1137,9 @@ async def read_data_element_collection(dpp_id: str, collection_id: str):
     
     raise HTTPException(status_code=404, detail="Collection not found")
 
-@app.patch("/dpps/{dpp_id}/dataElements/{collection_id}")
+@app.patch("/dpps/{dpp_id}/dataElements/{collection_id}", tags=["Data Elements"])
 async def update_data_element_collection(dpp_id: str, collection_id: str, request: Request):
-    """UpdateDataElementCollection - Update specific collection"""
+    """Update a data element collection via JSON Merge Patch."""
     dpp_id = unquote(dpp_id)
     
     if dpp_id not in dpp_storage:
@@ -644,9 +1196,9 @@ async def update_data_element_collection(dpp_id: str, collection_id: str, reques
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON")
 
-@app.get("/dpps/{dpp_id}/dataElements/{collection_id}/{element_id}")
+@app.get("/dpps/{dpp_id}/dataElements/{collection_id}/{element_id}", tags=["Data Elements"])
 async def read_data_element(dpp_id: str, collection_id: str, element_id: str):
-    """ReadDataElement - Get specific data element"""
+    """Get a specific data element within a collection."""
     dpp_id = unquote(dpp_id)
     
     if dpp_id not in dpp_storage:
@@ -668,46 +1220,256 @@ async def read_data_element(dpp_id: str, collection_id: str, element_id: str):
     
     raise HTTPException(status_code=404, detail="Element not found")
 
-@app.get("/ontology")
+def _find_ontology_file(filename: str) -> Path:
+    """Locate an ontology file, checking api/data first (Vercel), then project root."""
+    api_path = Path(__file__).parent
+    for candidate in [api_path / "data" / "ontology" / filename,
+                      api_path.parent / "ontology" / filename]:
+        if candidate.exists():
+            return candidate
+    return api_path.parent / "ontology" / filename  # fallback for error msg
+
+@app.get("/ontology", tags=["Linked Data & Ontology"])
 async def get_ontology():
-    """Serve the DPP OWL ontology for linked-data dereferencing"""
-    base_path = Path(__file__).parent.parent
-    ontology_path = base_path / "ontology" / "dpp-ontology.jsonld"
+    """Get the DPP OWL ontology (JSON-LD).
+
+    Returns the formal OWL ontology defining DPP classes and properties.
+    Use this to understand the DPP data model and its linked-data semantics.
+    """
+    ontology_path = _find_ontology_file("dpp-ontology.jsonld")
     if not ontology_path.exists():
         raise HTTPException(status_code=404, detail="Ontology file not found")
     with open(ontology_path, 'r') as f:
         ontology = json.load(f)
     return JSONResponse(content=ontology, media_type="application/ld+json")
 
-@app.get("/ontology/shacl")
+@app.get("/ontology/shacl", tags=["Linked Data & Ontology"])
 async def get_shacl_shapes():
-    """Serve the SHACL validation shapes"""
-    base_path = Path(__file__).parent.parent
-    shacl_path = base_path / "ontology" / "dpp-shacl.jsonld"
+    """Get SHACL validation shapes (JSON-LD).
+
+    Returns the SHACL shapes graph that defines constraints on DPP instances.
+    These shapes are used by the /validate endpoint.
+    """
+    shacl_path = _find_ontology_file("dpp-shacl.jsonld")
     if not shacl_path.exists():
         raise HTTPException(status_code=404, detail="SHACL shapes file not found")
     with open(shacl_path, 'r') as f:
         shapes = json.load(f)
     return JSONResponse(content=shapes, media_type="application/ld+json")
 
-@app.get("/health")
+VALIDATE_EXAMPLE = {
+    "summary": "Minimal DPP",
+    "description": "A minimal DPP document to test validation. Try also fetching a full DPP from /dpps/{id} and POSTing it here.",
+    "value": {
+        "@context": {"dpp": "https://w3id.org/dpp#", "dcterms": "http://purl.org/dc/terms/", "schema": "https://schema.org/"},
+        "id": "did:web:example.com:dpp:test-001",
+        "type": "dpp:DigitalProductPassport",
+        "dpp:status": "active",
+        "dpp:dppSchemaVersion": "1.0.0",
+        "dcterms:created": "2025-01-01T00:00:00Z",
+        "dcterms:modified": "2025-01-01T00:00:00Z",
+        "dpp:economicOperator": {"type": "schema:Organization", "schema:name": "Test Corp"},
+        "dpp:productIdentifiers": [{"dpp:scheme": "gtin", "dpp:value": "01234567890123"}],
+        "dpp:dataElementCollections": []
+    }
+}
+
+@app.post("/validate", tags=["Linked Data & Ontology"],
+           openapi_extra={
+               "requestBody": {
+                   "required": True,
+                   "content": {
+                       "application/json": {
+                           "schema": {"type": "object"},
+                           "example": VALIDATE_EXAMPLE["value"]
+                       }
+                   }
+               }
+           })
+async def validate_dpp(request: Request):
+    """Validate a DPP JSON-LD against SHACL shapes.
+
+    POST a full DPP JSON-LD document and receive a SHACL-style validation report.
+
+    **Tip:** Copy a DPP from `GET /dpps/{id}` and paste it here to validate,
+    or use the minimal example provided.
+    """
+    try:
+        dpp = await request.json()
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+
+    # Load SHACL shapes
+    shacl_path = _find_ontology_file("dpp-shacl.jsonld")
+    if not shacl_path.exists():
+        raise HTTPException(status_code=500, detail="SHACL shapes file not found")
+    shapes = json.loads(shacl_path.read_text(encoding="utf-8"))
+
+    # Build a lookup of shapes by @id
+    shape_map: Dict[str, Dict] = {}
+    for node in shapes.get("@graph", []):
+        if node.get("@id"):
+            shape_map[node["@id"]] = node
+
+    findings: List[Dict[str, Any]] = []
+    conforms = True
+
+    def _check_value_type(val, expected_dt: str) -> bool:
+        """Loose datatype check for demo purposes."""
+        if expected_dt in ("xsd:string", "xsd:anyURI"):
+            return isinstance(val, str)
+        if expected_dt == "xsd:double":
+            return isinstance(val, (int, float))
+        if expected_dt in ("xsd:date", "xsd:dateTime"):
+            return isinstance(val, str) and len(val) >= 8
+        return True
+
+    def _validate_node(data: Any, shape_id: str, path_prefix: str):
+        nonlocal conforms
+        shape = shape_map.get(shape_id)
+        if not shape or not isinstance(data, dict):
+            return
+
+        props = shape.get("sh:property", [])
+        if isinstance(props, dict):
+            props = [props]
+
+        for prop in props:
+            prop_path = prop.get("sh:path", "")
+            min_count = prop.get("sh:minCount", 0)
+            datatype = prop.get("sh:datatype", "")
+            allowed = None
+            sh_in = prop.get("sh:in")
+            if isinstance(sh_in, dict):
+                allowed = sh_in.get("@list")
+
+            full_path = f"{path_prefix}.{prop_path}" if path_prefix else prop_path
+            val = data.get(prop_path)
+
+            # Required check
+            if min_count and min_count >= 1 and val is None:
+                conforms = False
+                findings.append({
+                    "severity": "Violation",
+                    "path": full_path,
+                    "shape": shape_id,
+                    "message": f"Required property '{prop_path}' is missing"
+                })
+                continue
+
+            if val is None:
+                continue
+
+            # Datatype check (single values)
+            if datatype and not isinstance(val, (list, dict)):
+                if not _check_value_type(val, datatype):
+                    conforms = False
+                    findings.append({
+                        "severity": "Violation",
+                        "path": full_path,
+                        "shape": shape_id,
+                        "message": f"Expected {datatype}, got {type(val).__name__}"
+                    })
+
+            # Allowed values check
+            if allowed is not None and val not in allowed:
+                conforms = False
+                findings.append({
+                    "severity": "Violation",
+                    "path": full_path,
+                    "shape": shape_id,
+                    "message": f"Value '{val}' not in allowed set {allowed}"
+                })
+
+            # Recurse into nested node shapes
+            nested_shape = prop.get("sh:node")
+            if nested_shape:
+                items = val if isinstance(val, list) else [val]
+                for item in items:
+                    if isinstance(item, dict):
+                        _validate_node(item, nested_shape, full_path)
+
+            # sh:or — accept if any branch passes
+            sh_or = prop.get("sh:or")
+            if sh_or and isinstance(val, list):
+                or_list = sh_or.get("@list", []) if isinstance(sh_or, dict) else []
+                for item in val:
+                    if isinstance(item, dict):
+                        matched = False
+                        for branch in or_list:
+                            branch_node = branch.get("sh:node")
+                            if branch_node and branch_node in shape_map:
+                                # Quick check: see if required props exist
+                                bs = shape_map[branch_node]
+                                bprops = bs.get("sh:property", [])
+                                if isinstance(bprops, dict):
+                                    bprops = [bprops]
+                                req_ok = all(
+                                    item.get(bp.get("sh:path")) is not None
+                                    for bp in bprops
+                                    if bp.get("sh:minCount", 0) >= 1
+                                )
+                                if req_ok:
+                                    matched = True
+                                    _validate_node(item, branch_node, full_path)
+                                    break
+                        if not matched:
+                            findings.append({
+                                "severity": "Warning",
+                                "path": full_path,
+                                "shape": "sh:or",
+                                "message": f"Element did not match any branch in sh:or"
+                            })
+
+    # Validate top-level DPP shape
+    _validate_node(dpp, "dpp:DigitalProductPassportShape", "")
+
+    # Validate nested collections
+    for coll in dpp.get("dpp:dataElementCollections", []):
+        coll_path = f"dpp:dataElementCollections[{coll.get('id', '?')}]"
+        _validate_node(coll, "dpp:DataElementCollectionShape", coll_path)
+
+    return {
+        "conforms": conforms,
+        "resultsCount": len(findings),
+        "results": findings,
+        "shapesUsed": "dpp-shacl.jsonld",
+        "disclaimer": "Lightweight SHACL validation (demo) — not a full RDF/SHACL engine."
+    }
+
+@app.get("/health", tags=["System"])
 async def health_check():
-    """Health check endpoint"""
+    """Health check — shows loaded DPP count."""
     return {
         "status": "healthy",
         "dpps_loaded": len(dpp_storage),
         "registry_entries": len(registry_storage)
     }
 
-@app.post("/admin/reload")
+@app.post("/admin/reload", tags=["System"])
 async def reload_dpps():
-    """Reload DPP files from disk (admin endpoint)"""
+    """Reload DPP files from disk (admin)."""
     dpp_storage.clear()
     load_sample_dpps()
     return {
         "message": "DPPs reloaded from disk",
         "dpps_loaded": len(dpp_storage)
     }
+
+# --- Module-level initialization (Vercel doesn't reliably call ASGI startup events) ---
+# Mount static files AFTER all routes (mount is a catch-all)
+_api_path = Path(__file__).parent
+_base_path = _api_path.parent
+# Check api/data first (Vercel), then project root data/
+_data_dir = _api_path / "data" if (_api_path / "data").exists() else _base_path / "data"
+_legacy_dir = _base_path / "vLignum"
+_mount_dir = _data_dir if _data_dir.exists() else _legacy_dir if _legacy_dir.exists() else None
+if _mount_dir is not None:
+    app.mount("/files", StaticFiles(directory=str(_mount_dir)), name="files")
+
+# Load sample DPPs
+load_sample_dpps()
+print(f"DPP API initialized with {len(dpp_storage)} sample DPPs (BASE_URL={BASE_URL})")
 
 if __name__ == "__main__":
     host = os.getenv("HOST", "0.0.0.0")
