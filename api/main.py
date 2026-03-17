@@ -642,17 +642,15 @@ async def root(request: Request):
                         <div id="create-prompt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;cursor:pointer;" onclick="document.getElementById('create-prompt').style.display='none';document.getElementById('create-form').style.display='block';">
                             <div style="font-size:28px;color:#ccc;margin-bottom:8px;">+</div>
                             <div style="font-size:14px;font-weight:600;color:#333;">Create your DPP</div>
-                            <div style="font-size:11px;color:#999;margin-top:4px;">Try it — does not persist after reload</div>
+                            <div style="font-size:11px;color:#999;margin-top:4px;">Client-side only — gone on page reload</div>
                         </div>
                         <div id="create-form" style="display:none;padding:16px;">
                             <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:12px;">New Product Passport</div>
-                            <div style="font-size:10px;color:#999;background:#fafafa;border:1px solid #eee;border-radius:3px;padding:6px 8px;margin-bottom:12px;">In-memory only. Resets on next deploy or cold start.</div>
+                            <div style="font-size:10px;color:#999;background:#fafafa;border:1px solid #eee;border-radius:3px;padding:6px 8px;margin-bottom:12px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
                             <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product name</label>
-                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
                             <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Manufacturer</label>
-                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">GTIN (13 digits)</label>
-                            <input id="cf-gtin" type="text" placeholder="e.g. 06412345678901" maxlength="14" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:monospace;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
                             <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product type</label>
                             <select id="cf-type" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:14px;font-family:inherit;background:#fff;outline:none;">
                                 <option value="IfcBuildingElementProxy">General building element</option>
@@ -665,7 +663,7 @@ async def root(request: Request):
                                 <option value="IfcPipeSegment">Pipe segment</option>
                             </select>
                             <div style="display:flex;gap:8px;">
-                                <button onclick="submitDpp()" style="flex:1;padding:7px 14px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
+                                <button onclick="createLocalDpp()" style="flex:1;padding:7px 14px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
                                 <button onclick="document.getElementById('create-form').style.display='none';document.getElementById('create-prompt').style.display='flex';" style="padding:7px 14px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
                             </div>
                             <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
@@ -675,84 +673,28 @@ async def root(request: Request):
                 <div id="user-dpps"></div>
 
                 <script>
-                function submitDpp() {{
-                    var name = document.getElementById('cf-name').value.trim();
-                    var mfr = document.getElementById('cf-mfr').value.trim();
-                    var gtin = document.getElementById('cf-gtin').value.trim();
+                function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
+                function createLocalDpp() {{
+                    var rawName = document.getElementById('cf-name').value.trim().substring(0, 80);
+                    var rawMfr = document.getElementById('cf-mfr').value.trim().substring(0, 80);
                     var ifcType = document.getElementById('cf-type').value;
                     var errEl = document.getElementById('cf-error');
                     errEl.style.display = 'none';
-                    if (!name || !mfr) {{ errEl.textContent = 'Product name and manufacturer are required.'; errEl.style.display = 'block'; return; }}
-                    var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                    var dppId = 'did:web:lignum.dev:dpp:user-' + slug + '-' + Date.now().toString(36);
-                    var body = {{
-                        "@context": {{"dpp": "https://w3id.org/dpp#", "schema": "https://schema.org/", "dcterms": "http://purl.org/dc/terms/"}},
-                        "id": dppId,
-                        "type": "dpp:DigitalProductPassport",
-                        "dpp:status": "active",
-                        "dpp:dppSchemaVersion": "1.0.0",
-                        "dpp:economicOperator": {{"schema:name": mfr, "type": "schema:Organization"}},
-                        "dpp:productIdentifiers": gtin ? [{{"dpp:scheme": "gtin", "dpp:value": gtin}}] : [],
-                        "dpp:labels": [ifcType, "user-created"],
-                        "dpp:dataElementCollections": [
-                            {{
-                                "id": "#dopc",
-                                "type": "dpp:DataElementCollection",
-                                "dcterms:title": "Declaration of Performance and Conformity",
-                                "dpp:dopcMetadata": {{
-                                    "dpp:productName": name,
-                                    "dpp:declarationCode": "USER-" + Date.now().toString(36).toUpperCase(),
-                                    "dpp:dateOfIssue": new Date().toISOString().split('T')[0],
-                                    "dpp:intendedUse": "Demonstration purposes only"
-                                }},
-                                "dpp:elements": []
-                            }},
-                            {{
-                                "id": "#classification",
-                                "type": "dpp:DataElementCollection",
-                                "dcterms:title": "Classification",
-                                "dpp:elements": [{{
-                                    "id": "#ifcClass",
-                                    "type": "dpp:DataElement",
-                                    "dpp:value": {{
-                                        "scheme": "bSDD / IFC 4.3",
-                                        "name": ifcType,
-                                        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/" + ifcType
-                                    }}
-                                }}]
-                            }},
-                            {{
-                                "id": "#carrier",
-                                "type": "dpp:DataElementCollection",
-                                "dcterms:title": "Data Carrier",
-                                "dpp:elements": gtin ? [{{
-                                    "id": "#qrLink",
-                                    "type": "dpp:DataElement",
-                                    "dpp:value": {{"uri": "{BASE_URL}/id/01/" + gtin}}
-                                }}] : []
-                            }}
-                        ]
-                    }};
-                    fetch('/dpps', {{method: 'POST', headers: {{'Content-Type': 'application/json'}}, body: JSON.stringify(body)}})
-                        .then(function(r) {{ if (!r.ok) return r.json().then(function(e) {{ throw new Error(e.detail || 'Failed'); }}); return r.json(); }})
-                        .then(function(dpp) {{
-                            var enc = encodeURIComponent(dpp.id);
-                            var gs1Html = gtin ? '<a href="/id/01/' + gtin + '" class="btn btn-gs1">GS1 Resolve</a>' : '';
-                            var card = '<div class="product-card" style="border-color:#16a34a;">'
-                                + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
-                                + '<div class="product-body"><div class="product-meta">'
-                                + (gtin ? '<div><strong>GTIN:</strong> <code>' + gtin + '</code></div>' : '')
-                                + '<div><strong>DPP ID:</strong> <code style="font-size:11px">' + dpp.id + '</code></div>'
-                                + '</div><div class="tags"><span class="tag">' + ifcType + '</span><span class="tag">user-created</span></div></div>'
-                                + '<div class="product-actions"><a href="/dpps/' + enc + '" class="btn btn-primary">View DPP</a>' + gs1Html + '</div></div>';
-                            document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
-                            document.getElementById('create-form').style.display = 'none';
-                            document.getElementById('create-prompt').style.display = 'flex';
-                            document.getElementById('cf-name').value = '';
-                            document.getElementById('cf-mfr').value = '';
-                            document.getElementById('cf-gtin').value = '';
-                        }})
-                        .catch(function(e) {{ errEl.textContent = e.message; errEl.style.display = 'block'; }});
+                    if (!rawName || !rawMfr) {{ errEl.textContent = 'Product name and manufacturer are required.'; errEl.style.display = 'block'; return; }}
+                    var name = esc(rawName);
+                    var mfr = esc(rawMfr);
+                    var type = esc(ifcType);
+                    var card = '<div class="product-card" style="border-left:3px solid #999;">'
+                        + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
+                        + '<div class="product-body"><div class="product-meta">'
+                        + '<div style="font-size:11px;color:#999;">Client-side preview only</div>'
+                        + '</div><div class="tags"><span class="tag">' + type + '</span><span class="tag">local preview</span></div></div>'
+                        + '</div>';
+                    document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
+                    document.getElementById('create-form').style.display = 'none';
+                    document.getElementById('create-prompt').style.display = 'flex';
+                    document.getElementById('cf-name').value = '';
+                    document.getElementById('cf-mfr').value = '';
                 }}
                 </script>
 
