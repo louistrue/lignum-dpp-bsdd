@@ -262,7 +262,9 @@ h1 { font-size: 28px; font-weight: 700; color: #111; letter-spacing: -0.02em; ma
 }
 
 .log-details {
-  margin-top: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
 }
 .log-details summary {
   cursor: pointer;

@@ -33,13 +33,20 @@ DEMO_DISCLAIMER = (
     "Presented at bS-Summit Porto."
 )
 
+# Demo protection: when True, seed DPPs cannot be deleted or destructively modified.
+# Set DEMO_PROTECTED=false to disable (e.g. for local development).
+DEMO_PROTECTED = os.getenv("DEMO_PROTECTED", "true").lower() != "false"
+
+# IDs of seed DPPs loaded from disk — populated by load_sample_dpps()
+_seed_dpp_ids: set = set()
+
 # SVG favicon — stylised tree-ring cross-section (wood = "lignum")
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#111"/>
-  <circle cx="16" cy="16" r="11" fill="none" stroke="#c8a87c" stroke-width="1.5" opacity=".35"/>
-  <circle cx="16" cy="16" r="8" fill="none" stroke="#c8a87c" stroke-width="1.5" opacity=".5"/>
-  <circle cx="16" cy="16" r="5" fill="none" stroke="#c8a87c" stroke-width="1.5" opacity=".7"/>
-  <circle cx="16" cy="16" r="2" fill="#c8a87c"/>
+  <rect width="32" height="32" rx="6" fill="#fff"/>
+  <circle cx="16" cy="16" r="11" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".35"/>
+  <circle cx="16" cy="16" r="8" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".5"/>
+  <circle cx="16" cy="16" r="5" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".7"/>
+  <circle cx="16" cy="16" r="2" fill="#8b6f47"/>
 </svg>"""
 
 FAVICON_DATA_URI = "data:image/svg+xml," + FAVICON_SVG.replace("#", "%23").replace("\n", "").replace("  ", "")
@@ -164,6 +171,7 @@ def load_sample_dpps():
                     "schema:event": "bS-Summit Porto"
                 }
                 dpp_storage[dpp_id] = dpp_data
+                _seed_dpp_ids.add(dpp_id)
                 print(f"Loaded sample DPP: {dpp_id}")
         except Exception as e:
             print(f"Warning: failed to load DPP {filepath}: {e}")
@@ -688,7 +696,7 @@ async def root(request: Request):
                             <span class="demo-tag">Client-side</span>
                         </div>
                         <div>
-                            <a class="btn btn-primary" onclick="document.getElementById('create-section').hidden=false;this.closest('.demo-card').style.display='none';" style="cursor:pointer;">Get Started</a>
+                            <a class="btn btn-primary" onclick="document.getElementById('create-section').hidden=!document.getElementById('create-section').hidden;this.textContent=document.getElementById('create-section').hidden?'Get Started':'Close';" style="cursor:pointer;">Get Started</a>
                         </div>
                     </div>
                     <div class="demo-card">
@@ -737,7 +745,7 @@ async def root(request: Request):
                     </div>
                     <div style="display:flex;gap:8px;margin-top:16px;">
                         <button onclick="createLocalDpp()" style="padding:8px 20px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
-                        <button onclick="document.getElementById('create-section').hidden=true;document.querySelector('.demo-grid .demo-card').style.display='flex';" style="padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
+                        <button onclick="document.getElementById('create-section').hidden=true;document.querySelector('.demo-card a.btn').textContent='Get Started';" style="padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
                     </div>
                     <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
                 </div>
@@ -996,10 +1004,16 @@ async def read_dpp_by_id(dpp_id: str, request: Request):
 async def update_dpp_by_id(dpp_id: str, request: Request):
     """Update a DPP using JSON Merge Patch (RFC 7396)."""
     dpp_id = unquote(dpp_id)
-    
+
     if dpp_id not in dpp_storage:
         raise HTTPException(status_code=404, detail="DPP not found")
-    
+
+    if DEMO_PROTECTED and dpp_id in _seed_dpp_ids:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: seed product DPPs are protected and cannot be modified."
+        )
+
     try:
         patch_data = await request.json()
         
@@ -1053,10 +1067,16 @@ async def update_dpp_by_id(dpp_id: str, request: Request):
 async def delete_dpp_by_id(dpp_id: str):
     """Delete a DPP by ID."""
     dpp_id = unquote(dpp_id)
-    
+
     if dpp_id not in dpp_storage:
         raise HTTPException(status_code=404, detail="DPP not found")
-    
+
+    if DEMO_PROTECTED and dpp_id in _seed_dpp_ids:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: seed product DPPs are protected and cannot be deleted."
+        )
+
     del dpp_storage[dpp_id]
     return Response(status_code=204)
 
@@ -1152,10 +1172,16 @@ async def read_data_element_collection(dpp_id: str, collection_id: str):
 async def update_data_element_collection(dpp_id: str, collection_id: str, request: Request):
     """Update a data element collection via JSON Merge Patch."""
     dpp_id = unquote(dpp_id)
-    
+
     if dpp_id not in dpp_storage:
         raise HTTPException(status_code=404, detail="DPP not found")
-    
+
+    if DEMO_PROTECTED and dpp_id in _seed_dpp_ids:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: seed product DPPs are protected and cannot be modified."
+        )
+
     try:
         patch_data = await request.json()
         dpp = dpp_storage[dpp_id]
@@ -1468,6 +1494,11 @@ async def health_check():
 @app.post("/admin/reload", tags=["System"])
 async def reload_dpps():
     """Reload DPP files from disk (admin)."""
+    if DEMO_PROTECTED:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: admin reload is disabled to protect demo data."
+        )
     dpp_storage.clear()
     load_sample_dpps()
     return {
