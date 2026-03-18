@@ -1,305 +1,212 @@
-# Digital Product Passport (DPP) Proof of Concept
+# buildingSMART DPP Demo
 
-## 🎯 Overview
+**A demonstration implementation of Digital Product Passports for construction products.**
 
-This repository contains a mock implementation of Digital Product Passports (DPP) for construction products, fully conforming to the draft European standards (prEN 18216-18223) and ISO 22057:2022 for machine-readable EPD data.
+Proof-of-concept conforming to draft European standards prEN 18216--18223 and ISO 22057:2022, developed in the context of the [DPP Keystone](https://dpp-keystone.org/) initiative. All product properties are linked to the [buildingSMART Data Dictionary (bSDD)](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/) and identified using [GS1](https://www.gs1.org/standards/gs1-digital-link) identifiers.
 
-## 📋 Standards Conformance
+> **Disclaimer:** This is a demonstration project. All product data is illustrative. The prEN standards are drafts under CEN enquiry and may change before final publication. This implementation is not affiliated with or endorsed by CEN, ISO, or the European Commission.
 
-This PoC implements:
-
-- **prEN 18223:2025** - System Interoperability and Data Model
-- **prEN 18222:2025** - API specification  
-- **prEN 18221:2025** - Storage, Archiving & Persistence
-- **prEN 18220:2025** - Data Carriers (QR codes)
-- **prEN 18219:2025** - Unique Identifiers (DIDs, GS1)
-- **prEN 18216:2025** - Data Exchange Protocols (JSON-LD, HTTPS)
-- **ISO 22057:2022**  - Data templates for EPD in BIM
-
-## 🏗️ Architecture
-
-```
-┌────────────────────────────────────────────────────────┐
-│                    DPP System Architecture             │
-├────────────────────────────────────────────────────────┤
-│                                                        │
-│  ┌──────────────┐     ┌──────────────┐                 │
-│  │  JSON-LD     │────▶│   REST API   │                 │
-│  │   DPP Files  │     │  (FastAPI)   │                 │
-│  └──────────────┘     └──────────────┘                 │
-│         │                     │                        │
-│         ▼                     ▼                        │
-│  ┌──────────────┐     ┌──────────────┐                 │
-│  │  QR Codes    │     │  HTML View   │                 │
-│  │  (Carriers)  │     │  (Human UI)  │                 │
-│  └──────────────┘     └──────────────┘                 │
-│                                                        │
-│  ┌───────────────────────────────────┐                 │
-│  │        EU Registry Interface      │                 │
-│  └───────────────────────────────────┘                 │
-│                                                        │
-└────────────────────────────────────────────────────────┘
-```
-
-## 📁 Project Structure
-
-```
-openDPP/
-├── api/
-│   ├── main.py                      # FastAPI server
-│   └── requirements.txt             # Python dependencies
-├── data/                            # Documents served via /files (EPD/DoP/etc.)
-├── docs/
-│   ├── README_DEMO.md               # Demo walkthrough (localhost)
-│   ├── openapi.yaml                 # OpenAPI 3.0 specification
-│   └── comparison-dpp-keystone.md   # Schema comparison with DPP Keystone
-├── dpp/
-│   └── products/                    # DPP JSON-LD documents (served)
-├── ifc/
-│   ├── samples/                     # Input IFCs
-│   ├── outputs/                     # Patched IFCs
-│   ├── ids/                         # IDS definitions
-│   └── tools/                       # IFC utilities (patch_ifc.py)
-├── mapping/
-│   └── mapping.csv                  # Property → IFC mapping with bSDD URIs
-├── ontology/
-│   ├── dpp-ontology.jsonld          # Formal OWL ontology (JSON-LD)
-│   └── dpp-shacl.jsonld             # SHACL validation shapes
-├── qr_codes/                        # Generated QR images + index.html
-│   └── tools/
-│       └── generate_qr_codes.py     # QR code generator
-├── run_demo.sh                      # One‑command demo runner
-└── README.md                        # This file
-```
-
-## 🚀 Quick Start
-
-### 1. Install Dependencies
-
-```bash
-# Install API dependencies
-cd api
-pip install -r requirements.txt
-cd ..
-
-# Install QR code generator dependencies
-pip install qrcode pillow
-```
-
-### 2. Start the API Server
-
-```bash
-cd api
-python main.py
-```
-
-The API will be available at:
-- API endpoints: http://localhost:8000
-- Interactive docs: http://localhost:8000/docs
-- OpenAPI spec: http://localhost:8000/openapi.json
- 
-Hot‑reload DPPs after editing files (no restart):
-```bash
-curl -X POST http://localhost:8000/admin/reload
-```
-
-### 3. Generate QR Codes
-
-```bash
-python qr_codes/tools/generate_qr_codes.py
-```
-
-View generated QR codes by opening `qr_codes/index.html` in a browser.
-
-## 📊 Sample DPPs
-
-The PoC includes three fully compliant DPPs:
-
-1. **Knauf Acoustic Batt** - Insulation product with thermal properties
-2. **Schilliger Glulam** - Engineered timber with EPD data
-3. **PVC Sewage Pipe** - Infrastructure product with full lifecycle data
-
-## 🔑 Key Features
-
-### DPP Structure (prEN 18223)
-
-Each DPP includes:
-- **Header**: DPP ID, status, schema version, timestamps
-- **Economic Operator**: Organization with LEI/GLN identifiers
-- **Product Identifiers**: GTIN, MPN, custom IDs
-- **Data Collections**:
-  - Product properties with bSDD references
-  - Full EPD data (ISO 22057 compliant)
-  - Linked documents with hash verification (served from `data/` via `/files`)
-  - Data carrier information
-- **Change Log**: Full audit trail of modifications
-
-### REST API (prEN 18222)
-
-Core endpoints:
-- `POST /dpps` - Create new DPP
-- `GET /dpps/{dppId}` - Read DPP (JSON-LD or HTML)
-- `PATCH /dpps/{dppId}` - Update using JSON Merge Patch
-- `DELETE /dpps/{dppId}` - Delete DPP
-- `GET /dppsByProductId/{productId}` - Find by product ID
-- `POST /registerDPP` - Register with EU registry
-
-### Identifiers (prEN 18219)
-
-Supports multiple identifier schemes:
-- **DID:web** - Decentralized identifiers for DPPs
-- **GS1 GTIN** - Global Trade Item Numbers
-- **LEI** - Legal Entity Identifiers
-- **GLN** - Global Location Numbers
-
-### Data Carriers (prEN 18220)
-
-QR codes encode:
-- GS1 Digital Links (localhost): `http://localhost:8000/id/01/{GTIN}/21/{SERIAL}` or `.../10/{BATCH}`
-- DID resolver URLs (localhost): `http://localhost:8000/dpps/did:web:...`
-
-## 📈 EPD Data (ISO 22057)
-
-Each DPP includes comprehensive EPD data:
-
-### LCIA Indicators (EN 15804+A2)
-- GWP (total, fossil, biogenic, luluc)
-- ODP, AP, EP (freshwater, marine, terrestrial)
-- POCP, ADPE, ADPF
-
-### LCI Indicators
-- Energy use (PERE, PERM, PENRE, PENRM)
-- Resource use (SM, RSF, NRSF, FW)
-- Waste categories (HWD, NHWD, RWD)
-- Output flows (CRU, MFR, MER, EEE, EET)
-
-### Scenarios
-- A4: Transport to site
-- A5: Installation
-- B1-B7: Use phase
-- C1-C4: End of life
-- D: Benefits beyond system boundary
-
-## 🔒 Security & Persistence
-
-- HTTPS with TLS 1.3
-- JWT bearer tokens (ready for implementation)
-- OAuth 2.0 support
-- Document hash verification (SHA-256)
-- Complete change log for audit trail
-
-## 🧪 Testing the API
-
-### Create a DPP
-
-```bash
-curl -X POST http://localhost:8000/dpps \
-  -H "Content-Type: application/json" \
-  -d @dpp/products/dpp_knauf_acoustic_batt.jsonld
-```
-
-### Read a DPP (JSON-LD)
-
-```bash
-curl http://localhost:8000/dpps/did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001 \
-  -H "Accept: application/ld+json"
-```
-
-### Read a DPP (HTML)
-
-```bash
-curl http://localhost:8000/dpps/did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001 \
-  -H "Accept: text/html"
-```
-
-### Register with EU Registry
-
-```bash
-curl -X POST http://localhost:8000/registerDPP \
-  -H "Content-Type: application/json" \
-  -d '{
-    "dppId": "did:web:bsdd-dpp.dev:dpp:example-001",
-    "productIdentifiers": [{"scheme": "gtin", "value": "04012345678901"}],
-    "economicOperatorId": "did:web:example.com"
-  }'
-```
-
-## 🎨 Human-Readable View
-
-The API automatically generates HTML views for DPPs when accessed with `Accept: text/html`. Features:
-- Clean, responsive design
-- Organized data sections
-- Indicator tables
-- Document links
-- QR code information
-
-## 🔄 Version Management
-
-Each DPP maintains:
-- Creation timestamp
-- Last modification timestamp
-- Complete change log with:
-  - Change ID (UUID)
-  - Timestamp
-  - Actor information
-  - Changed properties
-  - Change type (create/update/delete)
-
-## 📝 Semantic Interoperability
-
-All properties link to:
-- **bSDD** (buildingSMART Data Dictionary)
-- **ISO 23386/23387** property definitions
-- **EN standards** for specific domains
- - IfcExternalReference + IfcExternalReferenceRelationship links for bSDD URIs
- - IfcDocumentInformation + IfcDocumentReference for EPD/DoP/DPP documents
-
-## 🧬 OWL Ontology & SHACL Validation
-
-### Formal Ontology (`ontology/dpp-ontology.jsonld`)
-
-A complete OWL 2 ontology under the `dpp:` namespace (`https://w3id.org/dpp#`) defining:
-
-- **21 classes**: DigitalProductPassport, Product (→ ConstructionProduct → InsulationProduct / TimberProduct / PipeProduct), Organization (→ EconomicOperator / NotifiedBody / TechnicalAssessmentBody), DataElementCollection, DataElement, ValueElement, DeclarationOfPerformance, Document, ChangeEvent, Agent, ProductIdentifier, Facility
-- **16 object properties**: hasDataElementCollection, hasElement, hasValueElement, hasProductIdentifier, hasEconomicOperator, hasChangeLog, hasDoPC, etc.
-- **30 datatype properties**: declarationCode, harmonisedStandard, avcpSystem, numericValue, textValue, unit, thermalConductivity, bendingStrength, ringStiffness, etc.
-- **Equivalence mappings**: `dpp:Organization ≡ schema:Organization`, `dpp:Product ≡ schema:Product`
-
-Served at `GET /ontology` as `application/ld+json`.
-
-### SHACL Shapes (`ontology/dpp-shacl.jsonld`)
-
-9 validation shapes conforming to prEN 18216-18223:
-- DigitalProductPassportShape, OrganizationShape, ProductIdentifierShape
-- DataElementCollectionShape, DataElementShape, ValueElementShape
-- ChangeEventShape, **DeclarationOfPerformanceShape**, DocumentShape
-
-Served at `GET /ontology/shacl` as `application/ld+json`.
-
-## 🏛️ Declaration of Performance and Conformity (DoPC)
-
-Each product DPP includes a `#dopc` DataElementCollection with `dpp:dopcMetadata` containing:
-- Declaration code, date of issue, harmonised standard reference
-- AVCP system (1, 1+, 2, 2+, 3, 4), notified body, intended use
-
-### Product-Specific DoPC Properties
-
-| Product | Standard | Properties |
-|---------|----------|------------|
-| **Knauf Acoustic Batt** | EN 13162:2012+A1:2015 | Thermal conductivity, thermal resistance, reaction to fire, water vapour resistance, compressive strength, dimensional stability, water absorption, sound absorption, tensile strength perpendicular, thickness tolerance |
-| **Schilliger Glulam** | EN 14080:2013 | Strength class (GL24h), bending strength, tension parallel/perpendicular, shear strength, compression parallel/perpendicular, modulus of elasticity, density, reaction to fire, formaldehyde emission, moisture content, delamination resistance |
-| **PVC Sewage Pipe** | EN 1401-1:2019 | Ring stiffness, impact resistance, wall thickness, chemical resistance, pressure rating, watertightness, longitudinal reversion, reaction to fire, internal pressure resistance, creep ratio |
-
-All DoPC properties are linked to bSDD URIs and include provenance metadata referencing the source DoP document.
-
-## 📚 References
-
-- [ESPR Framework](https://ec.europa.eu/environment/eussd/smgp/PEFCR_OEFSR_en.htm)
-- [prEN 18216-18223 Draft Standards](https://www.cencenelec.eu/)
-- [ISO 22057:2022](https://www.iso.org/standard/72463.html)
-- [buildingSMART Data Dictionary](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/)
-- [GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link)
+**Live demo:** [bsdd-dpp.dev](https://bsdd-dpp.dev)
 
 ---
 
-**Note**: This is a proof-of-concept implementation. The prEN standards are drafts under enquiry and may change before final publication.
+## Live Demo
+
+Hosted at [bsdd-dpp.dev](https://bsdd-dpp.dev). All processing runs entirely client-side; no data is uploaded to a server.
+
+### IFC Enrichment Tool
+
+Four-step workflow for enriching IFC building models with DPP data:
+
+1. **Upload** -- Select an IFC file
+2. **Review** -- Inspect element-to-product assignments
+3. **Process** -- In-browser enrichment with real-time progress
+4. **Export** -- Download the enriched IFC file
+
+Writes into the IFC model: property sets, bSDD classification references, EPD indicators (EN 15804+A2), document references (DoP, EPD), GS1 identifiers (GTIN, Digital Links), and DPP resolver links (DID:web).
+
+### Emissions Calculator
+
+Three-step whole-building LCA tool:
+
+1. **Upload** -- Load an IFC file (optionally enriched from the previous tool)
+2. **Configure** -- Select EN 15804+A2 life cycle modules (A1--A3, A4, A5, C2--C4)
+3. **Results** -- Environmental impact results with material and module breakdowns (export to CSV/JSON)
+
+---
+
+## Standards Conformance
+
+| Standard | Scope |
+|----------|-------|
+| prEN 18223:2025 | System interoperability and data model |
+| prEN 18222:2025 | API specification |
+| prEN 18221:2025 | Storage, archiving, and persistence |
+| prEN 18220:2025 | Data carriers (QR codes) |
+| prEN 18219:2025 | Unique identifiers (DIDs, GS1) |
+| prEN 18216:2025 | Data exchange protocols (JSON-LD, HTTPS) |
+| ISO 22057:2022 | Data templates for EPD in BIM |
+| EN 15804+A2 | Environmental product declarations (LCA indicators) |
+
+---
+
+## Architecture
+
+```mermaid
+graph TD
+    subgraph Server ["REST API (FastAPI)"]
+        API["API Endpoints<br/>prEN 18222"]
+        HTML["HTML Views<br/>Human-readable"]
+        STATIC["Static Assets"]
+    end
+
+    subgraph Data ["DPP Data Layer"]
+        DPP["JSON-LD DPP Files<br/>prEN 18223"]
+        ONT["OWL Ontology &<br/>SHACL Shapes"]
+        MAP["Property Mapping<br/>bSDD URIs"]
+    end
+
+    subgraph Web ["Web Tools (client-side)"]
+        ENRICH["IFC Enrichment Tool<br/>/enrich/"]
+        LCA["Emissions Calculator<br/>/lca/"]
+    end
+
+    subgraph Carriers ["Data Carriers"]
+        QR["QR Codes<br/>GS1 Digital Link"]
+    end
+
+    DPP --> API
+    ONT --> API
+    API --> HTML
+    API --> QR
+    MAP --> ENRICH
+    DPP --> ENRICH
+    ENRICH --> LCA
+    STATIC --> ENRICH
+    STATIC --> LCA
+```
+
+---
+
+## Getting Started
+
+Prerequisites: Python 3.10+, Node.js 18+ (for building web tools from source).
+
+```bash
+# Install and start the API server
+cd api && pip install -r requirements.txt && python main.py
+```
+
+The server starts at `http://localhost:8000` with API docs at `/docs`, IFC enrichment at `/enrich/`, and emissions calculator at `/emissions/`.
+
+To build web tools from source: `cd web && npm install && npm run build` (output goes to `api/static/`).
+
+---
+
+## Sample DPPs
+
+| Product | Type | Key Properties | GTIN |
+|---------|------|----------------|------|
+| Knauf Acoustic Batt | Mineral wool insulation | Thermal conductivity, fire reaction, sound absorption | 04012345678901 |
+| Schilliger Glulam GL24h | Engineered timber | Bending strength, density, formaldehyde emission | 07611234567890 |
+| PVC Sewage Pipe | Infrastructure pipe | Ring stiffness, impact resistance, chemical resistance | 04098765432109 |
+
+Each DPP includes bSDD-linked properties, EPD data per ISO 22057, Declaration of Performance data, and linked documents with SHA-256 hash verification.
+
+---
+
+## REST API
+
+Conforms to prEN 18222:2025. Supports content negotiation (JSON-LD or HTML).
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/dpps` | Create a new DPP |
+| `GET` | `/dpps/{dppId}` | Retrieve a DPP |
+| `PATCH` | `/dpps/{dppId}` | Update (JSON Merge Patch) |
+| `DELETE` | `/dpps/{dppId}` | Delete a DPP |
+| `GET` | `/dppsByProductId/{productId}` | Look up by product identifier |
+| `POST` | `/registerDPP` | Register with EU registry (simulated) |
+
+Identifier resolution:
+- DID:web: `GET /dpps/did:web:bsdd-dpp.dev:dpp:{product-id}`
+- GS1 Digital Link: `GET /id/01/{GTIN}/21/{SERIAL}`
+
+---
+
+## Data Model
+
+Each DPP document (prEN 18223) contains:
+
+- **Header** -- DPP ID (DID:web), status, schema version, timestamps
+- **Economic operator** -- Organisation with LEI and GLN identifiers
+- **Product identifiers** -- GTIN (GS1), manufacturer part number
+- **Data collections** -- Product properties (bSDD), EPD data (ISO 22057 / EN 15804+A2), DoPC, linked documents, data carriers
+- **Change log** -- Audit trail with actor, timestamp, and change type
+
+### Identifier schemes
+
+DID:web (DPP documents), GS1 GTIN (products), LEI (organisations), GLN (facilities).
+
+### EPD indicators (EN 15804+A2)
+
+LCIA: GWP (total, fossil, biogenic, luluc), ODP, AP, EP (freshwater, marine, terrestrial), POCP, ADPE, ADPF. Life cycle stages A1--A3, A4, A5, B1--B7, C1--C4, D.
+
+---
+
+## Semantic Interoperability
+
+All properties link to:
+
+- **bSDD** -- Property and classification URIs for all product properties
+- **GS1** -- Product and organisation identifiers (GTIN, GLN, Digital Link)
+- **IFC** -- IfcExternalReference for bSDD URIs; IfcDocumentReference for EPD/DoP/DPP documents
+
+Property-to-IFC mapping is defined in `mapping/mapping.csv`.
+
+---
+
+## Ontology and Validation
+
+**OWL 2 ontology** (`ontology/dpp-ontology.jsonld`) under namespace `https://w3id.org/dpp#`: 21 classes, 16 object properties, 30 datatype properties, with equivalence mappings to schema.org. Served at `GET /ontology`.
+
+**SHACL shapes** (`ontology/dpp-shacl.jsonld`): 9 validation shapes conforming to prEN 18216--18223 (DigitalProductPassport, Organisation, ProductIdentifier, DataElementCollection, DataElement, ValueElement, ChangeEvent, DeclarationOfPerformance, Document). Served at `GET /ontology/shacl`.
+
+---
+
+## Declaration of Performance (DoPC)
+
+Each DPP includes DoPC data with declaration code, harmonised standard, AVCP system, and notified body.
+
+| Product | Harmonised Standard | Key Declared Properties |
+|---------|---------------------|------------------------|
+| Knauf Acoustic Batt | EN 13162:2012+A1:2015 | Thermal conductivity, fire reaction, sound absorption |
+| Schilliger Glulam | EN 14080:2013 | Strength class (GL24h), bending strength, density |
+| PVC Sewage Pipe | EN 1401-1:2019 | Ring stiffness, impact resistance, chemical resistance |
+
+All DoPC properties are linked to bSDD URIs with provenance metadata referencing the source DoP document.
+
+---
+
+## References and Standards
+
+### European standards (draft)
+
+- prEN 18216--18223:2025 -- Digital Product Passport for construction products (data exchange, identifiers, data carriers, storage, API, data model)
+
+### International standards
+
+- [ISO 22057:2022](https://www.iso.org/standard/72463.html) -- Data templates for EPDs in BIM
+- [EN 15804+A2](https://www.en-standard.eu/) -- Environmental product declarations
+- [ISO 23386](https://www.iso.org/standard/75401.html) / [ISO 23387](https://www.iso.org/standard/75403.html) -- Interconnected data dictionaries
+
+### External resources
+
+- [DPP Keystone](https://dpp-keystone.org/) -- Reference framework for Digital Product Passports in construction
+- [buildingSMART Data Dictionary (bSDD)](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/) -- Classification and property definitions
+- [GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link) -- Identifier resolution standard
+- [ESPR](https://commission.europa.eu/energy-climate-change-environment/standards-tools-and-labels/products-labelling-rules-and-requirements/sustainable-products/ecodesign-sustainable-products-regulation_en) -- EU Ecodesign for Sustainable Products Regulation
+
+---
+
+**Disclaimer:** This is a demonstration. All product data is illustrative and does not represent real manufacturer declarations. The prEN 18216--18223 standards are drafts under CEN enquiry and subject to change.
