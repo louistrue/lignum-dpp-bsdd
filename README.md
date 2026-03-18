@@ -202,7 +202,7 @@ All DoPC properties are linked to bSDD URIs with provenance metadata referencing
 
 ### External resources
 
-- [DPP Keystone](https://dpp-keystone.org/) -- Reference framework for Digital Product Passports in construction
+- [DPP Keystone](https://dpp-keystone.org/) -- Reference framework for Digital Product Passports
 - [buildingSMART Data Dictionary (bSDD)](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/) -- Classification and property definitions
 - [GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link) -- Identifier resolution standard
 - [ESPR](https://commission.europa.eu/energy-climate-change-environment/standards-tools-and-labels/products-labelling-rules-and-requirements/sustainable-products/ecodesign-sustainable-products-regulation_en) -- EU Ecodesign for Sustainable Products Regulation
