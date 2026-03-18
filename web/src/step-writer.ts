@@ -29,7 +29,7 @@ function stepStr(s: string): string {
 /** Determine IFC measure type from unit string */
 function ifcMeasure(value: string, unit: string): string {
   const v = value.trim();
-  const u = unit.trim().toLowerCase().replace(/³/g, '3').replace(/·/g, '/');
+  const u = unit.trim().toLowerCase().replace(/²/g, '2').replace(/³/g, '3').replace(/·/g, '/');
   const isNum = !isNaN(parseFloat(v));
 
   if ((u === 'w/mk' || u === 'w/m/k') && isNum) return `IFCTHERMALCONDUCTIVITYMEASURE(${parseFloat(v)})`;
@@ -39,7 +39,7 @@ function ifcMeasure(value: string, unit: string): string {
 
   // EPD units → IfcReal
   const epdUnits = ['kgco2e', 'kgso2e', 'kgcfc-11e', 'kgpo4e', 'mj', 'kj', 'kpa', 'kn/m2',
-    'kpa·s/m2', 'kpas/m2', '%', '%-', 'm2k/w', 'm²k/w', 'bar'];
+    'kpa/s/m2', 'kpas/m2', '%', '%-', 'm2k/w', 'bar'];
   if (epdUnits.includes(u.replace(/ /g, '')) && isNum) return `IFCREAL(${parseFloat(v)})`;
 
   if ((u === '-' || u === '') && isNum) return `IFCREAL(${parseFloat(v)})`;
