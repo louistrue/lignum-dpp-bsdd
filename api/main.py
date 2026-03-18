@@ -297,6 +297,10 @@ def render_dpp_as_html(dpp: Dict) -> str:
         .dopc-meta {{ font-size: 13px; color: #555; line-height: 1.8; }}
         .doc-item {{ display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 6px; text-decoration: none; color: #1a1a1a; transition: border-color 0.15s; }}
         .doc-item:hover {{ border-color: #999; }}
+        .doc-badge {{ font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 3px; white-space: nowrap; }}
+        .doc-badge-dop {{ background: #fef3c7; color: #92400e; }}
+        .doc-badge-epd {{ background: #d1fae5; color: #065f46; }}
+        .doc-badge-sheet {{ background: #e0e7ff; color: #3730a3; }}
         .doc-icon {{ font-size: 16px; color: #888; }}
         .doc-name {{ font-size: 13px; font-weight: 500; }}
         .indicator-table {{ width: 100%; border-collapse: collapse; }}
@@ -418,11 +422,26 @@ def render_dpp_as_html(dpp: Dict) -> str:
         # --- Documents ---
         if coll_id == "#documents":
             html += f'<div class="section"><h2 class="section-title">{title}</h2>'
+            # Group documents by category
+            docs_by_cat: list[tuple[str, str, str, str]] = []  # (category, badge_class, fname, url)
             for element in elements:
                 if element.get("type") == "dpp:Document":
-                    fname = esc(str(element.get("dpp:fileName", "Document")))
-                    url = esc(str(element.get("schema:url", "#")))
-                    html += f'<a href="{url}" class="doc-item" target="_blank"><span class="doc-name">{fname}</span></a>'
+                    fname = str(element.get("dpp:fileName", "Document"))
+                    url = str(element.get("schema:url", "#"))
+                    eid = str(element.get("id", ""))
+                    fl = fname.lower()
+                    el = eid.lower()
+                    if "dop" in el or "dop" in fl or "leistungserkl" in fl:
+                        docs_by_cat.append(("DoP", "doc-badge-dop", fname, url))
+                    elif "epd" in el or "epd" in fl or "nepd" in fl:
+                        docs_by_cat.append(("EPD", "doc-badge-epd", fname, url))
+                    else:
+                        docs_by_cat.append(("Product Sheet", "doc-badge-sheet", fname, url))
+            # Sort: DoP first, then EPD, then Product Sheet
+            cat_order = {"DoP": 0, "EPD": 1, "Product Sheet": 2}
+            docs_by_cat.sort(key=lambda x: cat_order.get(x[0], 9))
+            for cat, badge_cls, fname, url in docs_by_cat:
+                html += f'<a href="{esc(url)}" class="doc-item" target="_blank"><span class="doc-badge {badge_cls}">{esc(cat)}</span><span class="doc-name">{esc(fname)}</span></a>'
             html += "</div>"
             continue
 
