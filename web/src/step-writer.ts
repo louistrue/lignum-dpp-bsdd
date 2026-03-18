@@ -1,5 +1,5 @@
 /**
- * STEP entity writer — generates new IFC STEP lines to append to the DATA section.
+ * STEP entity writer - generates new IFC STEP lines to append to the DATA section.
  */
 
 import type { ComponentConfig, PropertyDef } from './config';

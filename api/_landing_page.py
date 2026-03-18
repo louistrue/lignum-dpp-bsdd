@@ -23,11 +23,11 @@ def build_landing_html(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{meta_description}">
     <meta name="theme-color" content="#2c2418">
-    <meta property="og:title" content="buildingSMART DPP — Digital Product Passport Demo">
+    <meta property="og:title" content="buildingSMART DPP - Digital Product Passport Demo">
     <meta property="og:description" content="{meta_description}">
     <meta property="og:type" content="website">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <title>buildingSMART DPP — Digital Product Passport Demo</title>
+    <title>buildingSMART DPP - Digital Product Passport Demo</title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {{
@@ -481,7 +481,7 @@ def build_landing_html(
             <h1>Digital Product Passport<br>for Construction</h1>
             <p class="hero-desc">
                 A proof-of-concept <strong>prEN 18222:2025</strong> API for construction product passports
-                &mdash; with GS1 Digital Link resolution, bSDD property references, and SHACL validation.
+                with GS1 Digital Link resolution, bSDD property references, and SHACL validation.
             </p>
             <div class="hero-standards">
                 <span>prEN 18222</span>
@@ -556,7 +556,7 @@ def build_landing_html(
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
                     <div>
                         <h3>New Product Passport</h3>
-                        <div class="form-hint">Client-side preview &mdash; appears in the products grid above. Not persisted.</div>
+                        <div class="form-hint">Client-side preview. Appears in the products grid above. Not persisted.</div>
                     </div>
                     <button onclick="closeCreateForm();" class="btn btn-outline" style="flex-shrink:0;">&times; Close</button>
                 </div>
@@ -719,7 +719,7 @@ def build_landing_html(
             </div>
 
             <div id="validate-section" class="validate-card" style="margin-top: 16px;">
-                <p><strong>SHACL Validation</strong> &mdash; load a sample DPP or paste your own JSON-LD to check conformance.</p>
+                <p><strong>SHACL Validation</strong> - load a sample DPP or paste your own JSON-LD to check conformance.</p>
                 <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
                     <button onclick="loadDpp('timber')" class="btn btn-outline btn-sm validate-sample-btn" data-key="timber">Timber (Glulam)</button>
                     <button onclick="loadDpp('insulation')" class="btn btn-outline btn-sm validate-sample-btn" data-key="insulation">Insulation (Knauf)</button>

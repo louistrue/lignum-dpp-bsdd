@@ -679,7 +679,7 @@ def find_target_element(ifc, component: str):
 
 # ----------------------- DPP helpers (classes, docs, links, identifiers) -----------------------
 
-# Base URL for the DPP API — replaces localhost references in source files
+# Base URL for the DPP API - replaces localhost references in source files
 _DPP_BASE_URL = os.environ.get("DPP_API_URL", "https://bsdd-dpp.dev").rstrip("/")
 
 def _load_dpp_json(filepath: str) -> Optional[Dict]:
@@ -919,7 +919,7 @@ def main():
     dpp_links_by_comp = load_dpp_links(args.dpp_dir)
     dpp_ids_by_comp = load_dpp_identifiers(args.dpp_dir)
 
-    # Base URL for document links — uses deployed API by default, override with DPP_API_URL env var
+    # Base URL for document links - uses deployed API by default, override with DPP_API_URL env var
     files_base = os.environ.get("DPP_API_URL", "https://bsdd-dpp.dev").rstrip("/")
 
     # Demo fallbacks for /files if no DPP docs were found

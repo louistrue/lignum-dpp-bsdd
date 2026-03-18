@@ -1,5 +1,5 @@
 /**
- * Minimal IFC STEP parser — extracts entities we need for enrichment.
+ * Minimal IFC STEP parser - extracts entities we need for enrichment.
  * Works on the raw text of an IFC file without external dependencies.
  */
 

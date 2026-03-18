@@ -1,5 +1,5 @@
 /**
- * LCA Emissions Calculator — pure calculation module, no DOM dependencies.
+ * LCA Emissions Calculator - pure calculation module, no DOM dependencies.
  * Computes environmental impacts from IFC element quantities and DPP/EPD data.
  */
 
