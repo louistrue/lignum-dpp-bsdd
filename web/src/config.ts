@@ -71,9 +71,9 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
       { name: 'GWP_total', value: '0.010', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C4' },
     ],
     documents: [
-      { name: 'Product Datasheet', url: `${BASE}/files/insul/Acoustic%20Batt%20Datasheet%20.pdf`, type: 'datasheet' },
-      { name: 'Product Datasheet', url: `${BASE}/files/insul/Data.pdf`, type: 'datasheet' },
       { name: 'Declaration of Performance (DoP)', url: `${BASE}/files/insul/G4209LSCPR_EN.pdf`, type: 'dop' },
+      { name: 'Product Sheet', url: `${BASE}/files/insul/Acoustic%20Batt%20Datasheet%20.pdf`, type: 'datasheet' },
+      { name: 'Product Sheet (EPD Data)', url: `${BASE}/files/insul/Data.pdf`, type: 'datasheet' },
     ],
     gs1: {
       gtin: '04012345678901',
@@ -122,7 +122,7 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
     documents: [
       { name: 'Declaration of Performance (DoP)', url: `${BASE}/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf`, type: 'dop' },
       { name: 'Environmental Product Declaration (EPD)', url: `${BASE}/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf`, type: 'epd' },
-      { name: 'Product Information (Brettschichtholz)', url: `${BASE}/files/bsh/BSH-Brettschichtholz.pdf`, type: 'datasheet' },
+      { name: 'Product Sheet', url: `${BASE}/files/bsh/BSH-Brettschichtholz.pdf`, type: 'datasheet' },
     ],
     gs1: {
       gtin: '07640123456789',
@@ -171,8 +171,7 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
       { name: 'GWP_total', value: '0.045', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C4' },
     ],
     documents: [
-      { name: 'EPD – PVC Sewage Pipe DN110', url: `${BASE}/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf`, type: 'epd' },
-      { name: 'EPD – PE100 Pressure Pipe (related)', url: `${BASE}/files/pipe/NEPD-3586-2251_PE100-PE100-RC.pdf`, type: 'epd' },
+      { name: 'Environmental Product Declaration (EPD)', url: `${BASE}/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf`, type: 'epd' },
     ],
     gs1: {
       gtin: '05790001234561',
