@@ -86,7 +86,7 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
     label: 'Timber (Schilliger Glulam GL24h)',
     psetName: 'CPset_TimberPerformance',
     epdPsetName: 'CPset_EpdIndicators',
-    dictionaryRootUri: 'https://identifier.buildingsmart.org/uri/demo2025/timber/1.0.0',
+    dictionaryRootUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0',
     classificationUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/class/glulam-gl24h',
     classificationLabel: 'Glulam GL24h',
     properties: [

@@ -203,8 +203,19 @@ export class StepWriter {
     config: ComponentConfig,
     elementIds: number[],
   ): void {
+    // Derive dictionary root from classificationUri when it points to a different
+    // dictionary than dictionaryRootUri (e.g. class in cei-bois.org/wood but config
+    // says demo2025/timber). The parent IfcClassification must match the class URI.
+    let rootUri = config.dictionaryRootUri;
+    if (config.classificationUri.includes('/class/')) {
+      const derivedRoot = config.classificationUri.split('/class/')[0];
+      if (derivedRoot && derivedRoot !== rootUri) {
+        rootUri = derivedRoot;
+      }
+    }
+
     // Parse dictionary metadata from URI
-    const parts = config.dictionaryRootUri.split('/');
+    const parts = rootUri.split('/');
     const uriIdx = parts.indexOf('uri');
     const scheme = uriIdx >= 0 && parts.length > uriIdx + 1 ? parts[uriIdx + 1] : '';
     const dictName = uriIdx >= 0 && parts.length > uriIdx + 2 ? parts[uriIdx + 2] : 'bSDD';
@@ -213,7 +224,7 @@ export class StepWriter {
     const clsId = this.newId();
     // IFC4 IfcClassification: Source, Edition, EditionDate, Name, Description, Specification(Location), ReferenceTokens
     this.emit(clsId, 'IFCCLASSIFICATION',
-      `${stepStr(scheme)},${stepStr(edition)},$,${stepStr(dictName)},$,${stepStr(config.dictionaryRootUri)},$`);
+      `${stepStr(scheme)},${stepStr(edition)},$,${stepStr(dictName)},$,${stepStr(rootUri)},$`);
 
     // Extract identification from class URI
     let ident = '$';
