@@ -1,0 +1,22 @@
+{
+  "name": "lignum-dpp-ifc-enrich",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:lca": "vite --config vite.config.lca.ts",
+    "build": "tsc && vite build && vite build --config vite.config.lca.ts && mv ../public/emissions/lca.html ../public/emissions/index.html",
+    "build:enrich": "vite build",
+    "build:lca": "vite build --config vite.config.lca.ts",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ifc-lite/parser": "^2.1.2",
+    "@ifc-lite/export": "^1.16.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
+  }
+}

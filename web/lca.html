@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emissions Calculator — Lignum Demo</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <div class="banner">DEMO — Whole-building LCA emissions from IFC + Digital Product Passport EPD data</div>
+  <main>
+    <div class="hero">
+      <h1>Emissions Calculator</h1>
+      <p class="subtitle">
+        Calculate whole-building environmental impacts using IFC element quantities and
+        EPD data from Digital Product Passports. Select life cycle modules per EN 15804.
+      </p>
+      <div class="capability-chips">
+        <span class="chip"><span class="chip-icon">&#9632;</span> EN 15804+A2</span>
+        <span class="chip"><span class="chip-icon">&#9632;</span> GWP / Carbon</span>
+        <span class="chip"><span class="chip-icon">&#9632;</span> Acidification</span>
+        <span class="chip"><span class="chip-icon">&#9632;</span> Eutrophication</span>
+        <span class="chip"><span class="chip-icon">&#9632;</span> Primary Energy</span>
+      </div>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="steps" id="steps">
+      <div class="step active" data-step="1"><span class="step-num">1</span><span class="step-label">Upload</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="2"><span class="step-num">2</span><span class="step-label">Configure</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="3"><span class="step-num">3</span><span class="step-label">Results</span></div>
+    </div>
+
+    <!-- Step 1: Upload -->
+    <section id="step-upload" class="panel">
+      <div id="dropzone" class="dropzone">
+        <div class="dropzone-content">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p>Drop <strong>.ifc</strong> file here or <label for="file-input" class="file-label">browse</label></p>
+          <span class="dropzone-hint">Runs entirely in your browser — no data leaves your machine</span>
+          <input type="file" id="file-input" accept=".ifc" hidden />
+        </div>
+      </div>
+      <div id="from-enrich-msg" hidden style="margin-top:16px;">
+        <div class="file-info">
+          <div class="file-info-left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>Enriched IFC loaded from previous step</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Configure modules -->
+    <section id="step-configure" class="panel" hidden>
+      <div class="file-info" id="file-info">
+        <div class="file-info-left">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span id="file-name"></span>
+          <span id="file-size" class="file-size-label"></span>
+        </div>
+        <button id="clear-file" class="btn-text" title="Change file">Change file</button>
+      </div>
+
+      <h2 class="panel-title">Life Cycle Modules</h2>
+      <p class="panel-desc">Select which EN 15804 life cycle modules to include in the calculation.</p>
+      <div id="module-grid" class="module-grid"></div>
+
+      <div id="element-summary" class="summary-box"></div>
+
+      <div class="panel-actions">
+        <button id="calculate-btn" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Calculate Emissions
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 3: Results -->
+    <section id="step-results" class="panel" hidden>
+      <div class="results-header">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+          <h2 class="panel-title" style="margin:0;">LCA Results</h2>
+          <p class="results-subtitle" id="results-subtitle"></p>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="stats-grid"></div>
+
+      <div id="carbon-callout"></div>
+      <div id="no-data-warning"></div>
+
+      <div id="indicator-bars" class="indicator-section"></div>
+
+      <div id="material-breakdown">
+        <h3 class="results-section-title">Material Breakdown</h3>
+        <div id="breakdown-table"></div>
+      </div>
+
+      <div id="module-breakdown" style="margin-top:28px;">
+        <h3 class="results-section-title">Module Breakdown</h3>
+        <div id="module-table"></div>
+      </div>
+
+      <div class="results-actions">
+        <button id="export-csv-btn" class="btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button id="export-json-btn" class="btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export JSON
+        </button>
+        <span style="flex:1;"></span>
+        <button id="restart-btn" class="btn-secondary">Start Over</button>
+      </div>
+    </section>
+
+    <footer>
+      <a href="/">&larr; Back to DPP Demo</a>
+      <span class="sep">|</span>
+      <a href="/enrich/">IFC Enrichment</a>
+      <span class="sep">|</span>
+      <a href="/docs">API Docs</a>
+    </footer>
+  </main>
+  <script type="module" src="./src/lca-ui.ts"></script>
+</body>
+</html>

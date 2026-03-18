@@ -33,6 +33,29 @@ DEMO_DISCLAIMER = (
     "Presented at bS-Summit Porto."
 )
 
+# Demo protection: when True, seed DPPs cannot be deleted or destructively modified.
+# Set DEMO_PROTECTED=false to disable (e.g. for local development).
+DEMO_PROTECTED = os.getenv("DEMO_PROTECTED", "true").lower() != "false"
+
+# IDs of seed DPPs loaded from disk — populated by load_sample_dpps()
+_seed_dpp_ids: set = set()
+
+# SVG favicon — stylised tree-ring cross-section (wood = "lignum")
+FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#fff"/>
+  <circle cx="16" cy="16" r="11" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".35"/>
+  <circle cx="16" cy="16" r="8" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".5"/>
+  <circle cx="16" cy="16" r="5" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".7"/>
+  <circle cx="16" cy="16" r="2" fill="#8b6f47"/>
+</svg>"""
+
+FAVICON_DATA_URI = "data:image/svg+xml," + FAVICON_SVG.replace("#", "%23").replace("\n", "").replace("  ", "")
+
+META_DESCRIPTION = (
+    "Proof-of-concept Digital Product Passport (DPP) API for construction products, "
+    "conforming to prEN 18222:2025 with GS1 Digital Link, bSDD references, and SHACL validation."
+)
+
 # Tag metadata controls ordering in Swagger UI
 tags_metadata = [
     {"name": "Demo Landing", "description": "Interactive landing page with product cards and QR codes"},
@@ -148,6 +171,7 @@ def load_sample_dpps():
                     "schema:event": "bS-Summit Porto"
                 }
                 dpp_storage[dpp_id] = dpp_data
+                _seed_dpp_ids.add(dpp_id)
                 print(f"Loaded sample DPP: {dpp_id}")
         except Exception as e:
             print(f"Warning: failed to load DPP {filepath}: {e}")
@@ -239,6 +263,9 @@ def render_dpp_as_html(dpp: Dict) -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{esc(product_name)} — Digital Product Passport (prEN 18222 demo)">
+    <meta name="theme-color" content="#111">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>{esc(product_name)} &mdash; DPP [DEMO]</title>
     <style>
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -270,6 +297,10 @@ def render_dpp_as_html(dpp: Dict) -> str:
         .dopc-meta {{ font-size: 13px; color: #555; line-height: 1.8; }}
         .doc-item {{ display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 6px; text-decoration: none; color: #1a1a1a; transition: border-color 0.15s; }}
         .doc-item:hover {{ border-color: #999; }}
+        .doc-badge {{ font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 3px; white-space: nowrap; }}
+        .doc-badge-dop {{ background: #fef3c7; color: #92400e; }}
+        .doc-badge-epd {{ background: #d1fae5; color: #065f46; }}
+        .doc-badge-sheet {{ background: #e0e7ff; color: #3730a3; }}
         .doc-icon {{ font-size: 16px; color: #888; }}
         .doc-name {{ font-size: 13px; font-weight: 500; }}
         .indicator-table {{ width: 100%; border-collapse: collapse; }}
@@ -391,11 +422,26 @@ def render_dpp_as_html(dpp: Dict) -> str:
         # --- Documents ---
         if coll_id == "#documents":
             html += f'<div class="section"><h2 class="section-title">{title}</h2>'
+            # Group documents by category
+            docs_by_cat: list[tuple[str, str, str, str]] = []  # (category, badge_class, fname, url)
             for element in elements:
                 if element.get("type") == "dpp:Document":
-                    fname = esc(str(element.get("dpp:fileName", "Document")))
-                    url = esc(str(element.get("schema:url", "#")))
-                    html += f'<a href="{url}" class="doc-item" target="_blank"><span class="doc-name">{fname}</span></a>'
+                    fname = str(element.get("dpp:fileName", "Document"))
+                    url = str(element.get("schema:url", "#"))
+                    eid = str(element.get("id", ""))
+                    fl = fname.lower()
+                    el = eid.lower()
+                    if "dop" in el or "declaration" in el or "dop" in fl or "leistungserkl" in fl:
+                        docs_by_cat.append(("DoP", "doc-badge-dop", fname, url))
+                    elif "epd" in el or "epd" in fl or "nepd" in fl:
+                        docs_by_cat.append(("EPD", "doc-badge-epd", fname, url))
+                    else:
+                        docs_by_cat.append(("Product Sheet", "doc-badge-sheet", fname, url))
+            # Sort: DoP first, then EPD, then Product Sheet
+            cat_order = {"DoP": 0, "EPD": 1, "Product Sheet": 2}
+            docs_by_cat.sort(key=lambda x: cat_order.get(x[0], 9))
+            for cat, badge_cls, fname, url in docs_by_cat:
+                html += f'<a href="{esc(url)}" class="doc-item" target="_blank"><span class="doc-badge {badge_cls}">{esc(cat)}</span><span class="doc-name">{esc(fname)}</span></a>'
             html += "</div>"
             continue
 
@@ -560,180 +606,436 @@ async def root(request: Request):
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Lignum DPP Demo — bS-Summit Porto</title>
+            <meta name="description" content="{META_DESCRIPTION}">
+            <meta name="theme-color" content="#111">
+            <meta property="og:title" content="Lignum DPP — Digital Product Passport Demo">
+            <meta property="og:description" content="{META_DESCRIPTION}">
+            <meta property="og:type" content="website">
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+            <title>Lignum DPP — Digital Product Passport Demo</title>
+            <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
             <style>
+                :root {{ --wood: #8b6f47; --wood-light: #c8a87c; --wood-bg: #faf7f4; --ink: #1a1a1a; --muted: #777; --border: #e5e0da; --card: #fff; --radius: 8px; }}
                 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-                body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
-                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 8px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }}
-                .top {{ padding: 56px 24px 0; max-width: 960px; margin: 0 auto; }}
-                .intro {{ padding: 40px 0 32px; border-bottom: 1px solid #e5e5e5; }}
-                .intro h1 {{ font-size: 1.75em; font-weight: 700; color: #111; letter-spacing: -0.02em; margin-bottom: 10px; }}
-                .intro p {{ font-size: 15px; color: #555; max-width: 640px; line-height: 1.6; }}
-                .standards {{ display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }}
-                .standards span {{ background: #f5f5f5; border: 1px solid #ddd; padding: 4px 12px; font-size: 12px; color: #444; font-weight: 500; border-radius: 3px; }}
-                .disclaimer-box {{ margin: 20px 0 0; background: #fef2f2; border: 1px solid #fecaca; border-radius: 3px; padding: 12px 16px; font-size: 12px; color: #991b1b; line-height: 1.5; }}
-                .main {{ max-width: 960px; margin: 0 auto; padding: 0 24px 48px; }}
-                .section-title {{ font-size: 0.8em; font-weight: 700; color: #444; margin: 40px 0 16px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #111; padding-bottom: 8px; }}
-                .product-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }}
-                .product-card {{ background: #fff; border: 1px solid #e5e5e5; overflow: hidden; transition: border-color 0.15s; border-radius: 3px; }}
-                .product-card:hover {{ border-color: #999; }}
-                .product-header {{ padding: 16px 16px 10px; border-bottom: 1px solid #f0f0f0; }}
-                .product-header h3 {{ font-size: 1em; color: #111; margin-bottom: 2px; font-weight: 600; }}
-                .operator {{ font-size: 12px; color: #888; }}
-                .product-body {{ padding: 12px 16px; }}
+                body {{ font-family: 'DM Sans', sans-serif; background: var(--wood-bg); color: var(--ink); line-height: 1.55; }}
+                a {{ color: var(--wood); text-decoration: none; font-weight: 500; }}
+                a:hover {{ text-decoration: underline; }}
+                code {{ font-family: 'JetBrains Mono', monospace; }}
+
+                /* Header bar */
+                .headerbar {{ display: flex; align-items: stretch; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }}
+                .headerbar-demo {{ background: #b91c1c; color: #fff; flex: 1; padding: 7px 24px; display: flex; align-items: center; }}
+                .headerbar-author {{ background: var(--ink); color: #aaa; padding: 7px 20px; display: flex; align-items: center; gap: 12px; white-space: nowrap; font-weight: 500; }}
+                .headerbar-author a {{ color: var(--wood-light); font-weight: 500; }}
+                .headerbar-author a:hover {{ color: #fff; text-decoration: none; }}
+                .headerbar-author svg {{ display: block; }}
+                .headerbar-icons {{ display: flex; align-items: center; gap: 8px; }}
+                .headerbar-icons a {{ color: #666; display: inline-flex; transition: color 0.15s; }}
+                .headerbar-icons a:hover {{ color: #fff; text-decoration: none; }}
+
+                /* Layout */
+                .page {{ max-width: 1080px; margin: 0 auto; padding: 32px 32px 40px; }}
+                @media (max-width: 640px) {{ .page {{ padding: 24px 16px 32px; }} }}
+
+                /* Hero */
+                .hero {{ margin-bottom: 32px; }}
+                .hero h1 {{ font-size: 26px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em; margin-bottom: 6px; }}
+                .hero-desc {{ font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; max-width: 680px; }}
+                .hero-chips {{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }}
+                .hero-chips span {{ background: var(--card); border: 1px solid var(--border); padding: 4px 12px; font-size: 11px; color: #666; font-weight: 500; border-radius: 20px; }}
+
+                /* Sections */
+                .section-label {{ font-size: 11px; font-weight: 700; color: var(--wood); text-transform: uppercase; letter-spacing: 1.2px; margin: 32px 0 14px; }}
+
+                /* Product cards */
+                .product-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }}
+                @media (max-width: 860px) {{ .product-grid {{ grid-template-columns: 1fr 1fr; }} }}
+                @media (max-width: 540px) {{ .product-grid {{ grid-template-columns: 1fr; }} }}
+                .product-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; transition: box-shadow 0.2s, border-color 0.2s; }}
+                .product-card:hover {{ border-color: var(--wood-light); box-shadow: 0 4px 16px rgba(139,111,71,0.08); }}
+                .product-header {{ padding: 18px 20px 10px; }}
+                .product-header h3 {{ font-size: 15px; color: var(--ink); font-weight: 700; margin-bottom: 2px; line-height: 1.3; }}
+                .operator {{ font-size: 12px; color: #aaa; font-weight: 400; }}
+                .product-body {{ padding: 4px 20px 16px; flex: 1; }}
                 .product-meta {{ font-size: 12px; color: #666; line-height: 1.8; }}
-                .product-meta code {{ background: #f5f5f5; padding: 1px 5px; border-radius: 3px; font-size: 11px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-                .tags {{ margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap; }}
-                .tag {{ background: #f5f5f5; color: #555; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-                .product-actions {{ padding: 10px 16px 14px; display: flex; gap: 8px; }}
-                .btn {{ padding: 6px 14px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.1s; }}
-                .btn-primary {{ background: #111; color: #fff; }}
-                .btn-primary:hover {{ background: #333; }}
-                .btn-gs1 {{ background: #fff; color: #333; border: 1px solid #ccc; }}
-                .btn-gs1:hover {{ border-color: #999; background: #fafafa; }}
-                .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }}
-                .feature-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; }}
-                .feature-card h4 {{ color: #111; margin-bottom: 6px; font-size: 13px; font-weight: 700; }}
-                .feature-card p {{ font-size: 12px; color: #666; line-height: 1.5; }}
-                .feature-card a {{ color: #2563eb; text-decoration: none; font-size: 12px; font-weight: 500; }}
-                .feature-card a:hover {{ text-decoration: underline; }}
-                .try-it {{ background: #fafafa; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; margin: 16px 0; }}
-                .try-it p {{ font-size: 13px; color: #555; }}
-                .try-it strong {{ color: #111; }}
-                .try-it code {{ background: #f0f0f0; padding: 10px 14px; border-radius: 3px; display: block; font-size: 12px; color: #333; overflow-x: auto; margin: 10px 0; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-                .try-it .hint {{ font-size: 11px; color: #999; margin-top: 6px; }}
-                .footer {{ text-align: center; padding: 32px 0; color: #999; font-size: 12px; border-top: 1px solid #e5e5e5; margin-top: 40px; }}
-                .footer a {{ color: #666; text-decoration: none; }}
-                .footer a:hover {{ color: #111; }}
+                .product-meta code {{ background: #f5f3f0; padding: 2px 6px; border-radius: 3px; font-size: 10.5px; color: #444; word-break: break-all; }}
+                .tags {{ margin-top: 10px; display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tag {{ background: #f0ece6; color: #7a6a52; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .product-actions {{ padding: 14px 20px; display: flex; gap: 8px; border-top: 1px solid #f0ece6; }}
+
+                /* Buttons */
+                .btn {{ display: inline-flex; align-items: center; gap: 5px; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.15s; cursor: pointer; border: none; font-family: inherit; }}
+                .btn-primary {{ background: var(--ink); color: #fff; }}
+                .btn-primary:hover {{ background: #333; text-decoration: none; }}
+                .btn-outline {{ background: var(--card); color: #555; border: 1px solid var(--border); }}
+                .btn-outline:hover {{ border-color: var(--wood-light); color: var(--ink); text-decoration: none; }}
+                .btn-gs1 {{ background: var(--card); color: var(--wood); border: 1px solid var(--border); }}
+                .btn-gs1:hover {{ border-color: var(--wood-light); background: var(--wood-bg); text-decoration: none; }}
+
+                /* Tool cards */
+                .tools-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }}
+                @media (max-width: 900px) {{ .tools-grid {{ grid-template-columns: 1fr 1fr; }} }}
+                @media (max-width: 640px) {{ .tools-grid {{ grid-template-columns: 1fr; }} }}
+                .tool-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.2s, border-color 0.2s; }}
+                .tool-card:hover {{ border-color: var(--wood-light); box-shadow: 0 4px 16px rgba(139,111,71,0.08); }}
+                .tool-card h3 {{ font-size: 15px; font-weight: 700; color: var(--ink); margin: 0; display: flex; align-items: center; gap: 10px; }}
+                .tool-card p {{ font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; flex: 1; }}
+                .tool-tags {{ display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tool-tag {{ background: #f0ece6; color: #7a6a52; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+
+                /* Create form */
+                .create-form {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }}
+                .create-form h3 {{ font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }}
+                .create-form .form-hint {{ font-size: 13px; color: #999; }}
+                .form-section {{ font-size: 11px; font-weight: 700; color: var(--wood); text-transform: uppercase; letter-spacing: 0.8px; margin: 22px 0 10px; display: flex; align-items: center; justify-content: space-between; }}
+                .form-section:first-of-type {{ margin-top: 20px; }}
+                .form-row {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }}
+                @media (max-width: 640px) {{ .form-row {{ grid-template-columns: 1fr; }} }}
+                .form-group {{ display: flex; flex-direction: column; gap: 5px; }}
+                .form-label {{ font-size: 12px; font-weight: 600; color: #666; }}
+                .form-input {{ padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: var(--card); }}
+                .form-input:focus {{ border-color: var(--wood); box-shadow: 0 0 0 3px rgba(139,111,71,0.1); }}
+                .form-actions {{ display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0ece6; }}
+
+                /* Explore + Conneg */
+                .explore-links {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }}
+                @media (max-width: 640px) {{ .explore-links {{ grid-template-columns: repeat(2, 1fr); }} }}
+                .explore-link {{ display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.15s; }}
+                .explore-link:hover {{ border-color: var(--wood-light); text-decoration: none; }}
+                .explore-link strong {{ font-size: 13px; color: var(--ink); }}
+                .explore-link span {{ font-size: 11px; color: #aaa; font-weight: 400; }}
+                .conneg-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }}
+                .conneg-card p {{ font-size: 13px; color: #555; margin-bottom: 10px; }}
+                .conneg-card code {{ background: var(--ink); color: #a0ffa0; padding: 12px 16px; border-radius: 6px; display: block; font-size: 11px; overflow-x: auto; white-space: pre; }}
+                .conneg-card .hint {{ font-size: 11px; color: #aaa; margin-top: 8px; }}
+
+                /* Footer */
+                .footer {{ text-align: center; padding: 24px 0; color: #bbb; font-size: 12px; margin-top: 40px; border-top: 1px solid var(--border); }}
+                .footer a {{ color: var(--wood-light); font-weight: 400; }}
+                .footer a:hover {{ color: var(--wood); }}
             </style>
         </head>
         <body>
-            <div class="demo-banner">
-                DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — Not affiliated with any manufacturer — bS-Summit Porto
+            <div class="headerbar">
+                <div class="headerbar-demo">DEMO / PROOF OF CONCEPT · NOT an official DPP server · Sample data only · buildingSMART Summit Porto</div>
+                <div class="headerbar-author">
+                    <a href="https://www.lt.plus/">lt.plus</a>
+                    <div class="headerbar-icons">
+                        <a href="https://github.com/louistrue/lignum-dpp-bsdd" title="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        <a href="https://www.linkedin.com/in/louistrue" title="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                    </div>
+                </div>
             </div>
-            <div class="top">
-                <div class="intro">
+            <div class="page">
+                <div class="hero">
                     <h1>Digital Product Passport</h1>
-                    <p>
-                        A proof-of-concept implementation of the <strong>prEN 18222:2025</strong> DPP API for construction products,
+                    <p class="hero-desc">
+                        Proof-of-concept <strong>prEN 18222:2025</strong> DPP API for construction products
                         with GS1 Digital Link resolution, bSDD property references, and SHACL validation.
                     </p>
-                    <div class="standards">
-                        <span>prEN 18222 API</span>
-                        <span>prEN 18223 Data Model</span>
+                    <div class="hero-chips">
+                        <span>prEN 18222</span>
+                        <span>prEN 18223</span>
                         <span>GS1 Digital Link</span>
                         <span>bSDD</span>
                         <span>OWL + SHACL</span>
                         <span>EU CPR / DoPC</span>
                     </div>
-                    <div class="disclaimer-box">
-                        <strong>Disclaimer:</strong> This is a proof-of-concept demonstration presented at bS-Summit Porto.
-                        This server is not an official Digital Product Passport system.
-                        All product data shown is illustrative sample data only.
-                        Not operated by or affiliated with any manufacturer.
-                    </div>
                 </div>
-            </div>
-            <div class="main">
-                <h2 class="section-title">Sample Products</h2>
-                <div class="product-grid">
+
+                <div class="section-label">Sample Products</div>
+                <div id="product-grid" class="product-grid">
                     {product_cards}
-                    <div class="product-card" id="create-card" style="border-style:dashed;">
-                        <div id="create-prompt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;cursor:pointer;" onclick="document.getElementById('create-prompt').style.display='none';document.getElementById('create-form').style.display='block';">
-                            <div style="font-size:28px;color:#ccc;margin-bottom:8px;">+</div>
-                            <div style="font-size:14px;font-weight:600;color:#333;">Create your DPP</div>
-                            <div style="font-size:11px;color:#999;margin-top:4px;">Client-side only — gone on page reload</div>
+                </div>
+
+                <div class="section-label">Demo Tools</div>
+                <div id="demo-cards" class="tools-grid">
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            Create Your DPP
+                        </h3>
+                        <p>Build a product passport from scratch with properties, identifiers, labels, and bSDD classification.</p>
+                        <div class="tool-tags">
+                            <span class="tool-tag">prEN 18223</span>
+                            <span class="tool-tag">JSON-LD</span>
+                            <span class="tool-tag">Client-side</span>
                         </div>
-                        <div id="create-form" style="display:none;padding:16px;">
-                            <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:12px;">New Product Passport</div>
-                            <div style="font-size:10px;color:#999;background:#fafafa;border:1px solid #eee;border-radius:3px;padding:6px 8px;margin-bottom:12px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product name</label>
-                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Manufacturer</label>
-                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product type</label>
-                            <select id="cf-type" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:14px;font-family:inherit;background:#fff;outline:none;">
-                                <option value="IfcBuildingElementProxy">General building element</option>
-                                <option value="IfcSlab">Slab / panel</option>
-                                <option value="IfcBeam">Beam / column</option>
-                                <option value="IfcWall">Wall element</option>
-                                <option value="IfcWindow">Window</option>
-                                <option value="IfcDoor">Door</option>
-                                <option value="IfcCovering">Insulation / covering</option>
-                                <option value="IfcPipeSegment">Pipe segment</option>
-                            </select>
-                            <div style="display:flex;gap:8px;">
-                                <button onclick="createLocalDpp()" style="flex:1;padding:7px 14px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
-                                <button onclick="document.getElementById('create-form').style.display='none';document.getElementById('create-prompt').style.display='flex';" style="padding:7px 14px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
+                        <div><button class="btn btn-primary" onclick="openCreateForm();">Get Started</button></div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Enrich IFC with DPP Data
+                        </h3>
+                        <p>Upload an IFC file and enrich building elements with property sets, bSDD classifications, EPD indicators, GS1 identifiers, and document references.</p>
+                        <div class="tool-tags">
+                            <span class="tool-tag">IFC 2x3 / 4</span>
+                            <span class="tool-tag">bSDD</span>
+                            <span class="tool-tag">EPD</span>
+                            <span class="tool-tag">GS1</span>
+                        </div>
+                        <div><a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a></div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="5" width="4" height="16"/><rect x="17" y="1" width="4" height="20"/></svg>
+                            Calculate Emissions
+                        </h3>
+                        <p>Upload an IFC model to calculate whole-building environmental impacts using EPD data from Digital Product Passports. Supports EN 15804 life cycle modules.</p>
+                        <div class="tool-tags">
+                            <span class="tool-tag">EN 15804</span>
+                            <span class="tool-tag">LCA</span>
+                            <span class="tool-tag">GWP</span>
+                            <span class="tool-tag">EPD</span>
+                        </div>
+                        <div><a href="/emissions/" class="btn btn-primary">Open Calculator</a></div>
+                    </div>
+                </div>
+
+                <div id="create-section" hidden style="margin-top:16px;">
+                    <div class="create-form">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+                            <div>
+                                <h3>New Product Passport</h3>
+                                <div class="form-hint">Client-side preview &mdash; appears in the products grid above. Not persisted.</div>
                             </div>
-                            <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
+                            <button onclick="closeCreateForm();" class="btn btn-outline" style="flex-shrink:0;">&times; Close</button>
+                        </div>
+
+                        <div class="form-section">General</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Product name *</label>
+                                <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="100" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Manufacturer *</label>
+                                <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="100" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">GTIN</label>
+                                <input id="cf-gtin" type="text" placeholder="e.g. 04012345678901" maxlength="14" class="form-input" style="font-family:'JetBrains Mono',monospace;font-size:13px;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product type (IFC)</label>
+                                <select id="cf-type" class="form-input">
+                                    <option value="IfcBuildingElementProxy">General building element</option>
+                                    <option value="IfcSlab">Slab / panel</option>
+                                    <option value="IfcBeam">Beam / column</option>
+                                    <option value="IfcWall">Wall element</option>
+                                    <option value="IfcWindow">Window</option>
+                                    <option value="IfcDoor">Door</option>
+                                    <option value="IfcCovering">Insulation / covering</option>
+                                    <option value="IfcPipeSegment">Pipe segment</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section">Labels &amp; Classification</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Labels <span style="font-weight:400;color:#bbb;">(comma-separated)</span></label>
+                                <input id="cf-labels" type="text" placeholder="e.g. construction, timber, structural" maxlength="200" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">bSDD classification</label>
+                                <input id="cf-bsdd" type="text" placeholder="e.g. Cross Laminated Timber" maxlength="100" class="form-input">
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            Properties
+                            <button type="button" onclick="addPropertyRow();" class="btn btn-outline" style="padding:4px 12px;font-size:11px;">+ Add row</button>
+                        </div>
+                        <div id="cf-props">
+                            <div class="form-row prop-row" style="margin-bottom:8px;">
+                                <div class="form-group"><input type="text" placeholder="Name, e.g. Thermal conductivity" class="form-input prop-name" maxlength="80"></div>
+                                <div class="form-group" style="display:flex;gap:8px;">
+                                    <input type="text" placeholder="Value, e.g. 0.035" class="form-input prop-val" style="flex:1;" maxlength="40">
+                                    <input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="cf-error" style="display:none;margin-top:12px;font-size:12px;color:#b91c1c;background:#fef2f2;padding:10px 14px;border-radius:6px;"></div>
+                        <div class="form-actions">
+                            <button onclick="createLocalDpp()" class="btn btn-primary" style="padding:10px 28px;font-size:13px;">Create DPP</button>
+                            <button onclick="closeCreateForm();" class="btn btn-outline" style="padding:10px 22px;font-size:13px;">Cancel</button>
                         </div>
                     </div>
                 </div>
-                <div id="user-dpps"></div>
 
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
+                function removeRow(btn) {{ btn.closest('.prop-row').remove(); }}
+                function addPropertyRow() {{
+                    var html = '<div class="form-row prop-row" style="margin-bottom:8px;">'
+                        + '<div class="form-group"><input type="text" placeholder="Property name" class="form-input prop-name" maxlength="80"></div>'
+                        + '<div class="form-group" style="display:flex;gap:8px;">'
+                        + '<input type="text" placeholder="Value" class="form-input prop-val" style="flex:1;" maxlength="40">'
+                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">'
+                        + '<button type="button" onclick="removeRow(this)" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:18px;padding:0 6px;line-height:1;" title="Remove">&times;</button>'
+                        + '</div></div>';
+                    document.getElementById('cf-props').insertAdjacentHTML('beforeend', html);
+                }}
+                function openCreateForm() {{
+                    document.getElementById('demo-cards').style.display = 'none';
+                    document.getElementById('create-section').hidden = false;
+                    document.getElementById('cf-name').focus();
+                }}
+                function closeCreateForm() {{
+                    document.getElementById('create-section').hidden = true;
+                    document.getElementById('demo-cards').style.display = '';
+                }}
                 function createLocalDpp() {{
-                    var rawName = document.getElementById('cf-name').value.trim().substring(0, 80);
-                    var rawMfr = document.getElementById('cf-mfr').value.trim().substring(0, 80);
+                    var rawName = document.getElementById('cf-name').value.trim().substring(0, 100);
+                    var rawMfr = document.getElementById('cf-mfr').value.trim().substring(0, 100);
+                    var gtin = esc(document.getElementById('cf-gtin').value.trim().substring(0, 14));
                     var ifcType = document.getElementById('cf-type').value;
+                    var rawLabels = document.getElementById('cf-labels').value.trim();
+                    var bsdd = esc(document.getElementById('cf-bsdd').value.trim().substring(0, 100));
                     var errEl = document.getElementById('cf-error');
                     errEl.style.display = 'none';
                     if (!rawName || !rawMfr) {{ errEl.textContent = 'Product name and manufacturer are required.'; errEl.style.display = 'block'; return; }}
                     var name = esc(rawName);
                     var mfr = esc(rawMfr);
-                    var type = esc(ifcType);
-                    var card = '<div class="product-card" style="border-left:3px solid #999;">'
+
+                    var labels = rawLabels ? rawLabels.split(',').map(function(l) {{ return l.trim(); }}).filter(Boolean).slice(0, 8) : [ifcType];
+                    var tagHtml = labels.map(function(l) {{ return '<span class="tag">' + esc(l) + '</span>'; }}).join('');
+
+                    var propRows = document.querySelectorAll('#cf-props .prop-row');
+                    var propsHtml = '';
+                    propRows.forEach(function(row) {{
+                        var pn = row.querySelector('.prop-name').value.trim();
+                        var pv = row.querySelector('.prop-val').value.trim();
+                        var pu = row.querySelector('.prop-unit').value.trim();
+                        if (pn && pv) {{
+                            propsHtml += '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ece6;font-size:12px;">'
+                                + '<span style="color:#666;">' + esc(pn) + '</span>'
+                                + '<span style="font-weight:600;color:var(--ink);">' + esc(pv) + (pu ? ' <span style="color:#aaa;font-weight:400;">' + esc(pu) + '</span>' : '') + '</span></div>';
+                        }}
+                    }});
+
+                    var metaHtml = '';
+                    if (gtin) {{ metaHtml += '<div><strong>GTIN:</strong> <code>' + gtin + '</code></div>'; }}
+                    metaHtml += '<div><strong>DPP ID:</strong> <code style="font-size:10px;">did:web:local:dpp:' + rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '</code></div>';
+                    var classHtml = bsdd ? '<div style="margin-top:6px;font-size:11px;color:#666;"><strong>Classification:</strong> ' + esc(bsdd) + '</div>' : '';
+
+                    var card = '<div class="product-card" style="border-left:3px solid var(--wood);">'
                         + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
-                        + '<div class="product-body"><div class="product-meta">'
-                        + '<div style="font-size:11px;color:#999;">Client-side preview only</div>'
-                        + '</div><div class="tags"><span class="tag">' + type + '</span><span class="tag">local preview</span></div></div>'
-                        + '</div>';
-                    document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
-                    document.getElementById('create-form').style.display = 'none';
-                    document.getElementById('create-prompt').style.display = 'flex';
+                        + '<div class="product-body">'
+                        + '<div class="product-meta">' + metaHtml + classHtml + '</div>'
+                        + (propsHtml ? '<div style="margin-top:10px;">' + propsHtml + '</div>' : '')
+                        + '<div class="tags">' + tagHtml + '</div>'
+                        + '</div></div>';
+
+                    document.getElementById('product-grid').insertAdjacentHTML('beforeend', card);
                     document.getElementById('cf-name').value = '';
                     document.getElementById('cf-mfr').value = '';
+                    document.getElementById('cf-gtin').value = '';
+                    document.getElementById('cf-labels').value = '';
+                    document.getElementById('cf-bsdd').value = '';
+                    document.getElementById('cf-props').innerHTML = '<div class="form-row prop-row" style="margin-bottom:8px;">'
+                        + '<div class="form-group"><input type="text" placeholder="Name, e.g. Thermal conductivity" class="form-input prop-name" maxlength="80"></div>'
+                        + '<div class="form-group" style="display:flex;gap:8px;">'
+                        + '<input type="text" placeholder="Value, e.g. 0.035" class="form-input prop-val" style="flex:1;" maxlength="40">'
+                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">'
+                        + '</div></div>';
+                    closeCreateForm();
                 }}
                 </script>
 
-                <h2 class="section-title">Explore</h2>
-                <div class="features">
-                    <div class="feature-card">
-                        <h4>OWL Ontology</h4>
-                        <p>Formal DPP ontology in JSON-LD. Classes, properties, and relationships for digital product passports.</p>
-                        <a href="/ontology">View ontology</a>
-                    </div>
-                    <div class="feature-card">
-                        <h4>SHACL Shapes</h4>
-                        <p>Validation shapes that define constraints on DPP data. Use with the /validate endpoint.</p>
-                        <a href="/ontology/shacl">View shapes</a>
-                    </div>
-                    <div class="feature-card">
-                        <h4>SHACL Validator</h4>
-                        <p>POST any DPP JSON-LD to check conformance against SHACL shapes. Try it from the Swagger UI.</p>
-                        <a href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post">Try validator</a>
-                    </div>
-                    <div class="feature-card">
-                        <h4>API Documentation</h4>
-                        <p>Full interactive Swagger UI with examples you can execute directly.</p>
-                        <a href="/docs">Open Swagger</a>
-                    </div>
+                <div class="section-label">Explore</div>
+                <div class="explore-links">
+                    <a class="explore-link" href="/validate" onclick="event.preventDefault(); document.getElementById('validate-section').scrollIntoView({{behavior:'smooth'}})"><strong>Validate DPP</strong><span>SHACL conformance check</span></a>
+                    <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes &amp; properties</span></a>
+                    <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Constraint definitions</span></a>
+                    <a class="explore-link" href="/docs"><strong>API Docs</strong><span>Swagger UI</span></a>
                 </div>
 
-                <h2 class="section-title">Content Negotiation</h2>
-                <div class="try-it">
-                    <p>The same DPP URL returns <strong>HTML</strong> in your browser or <strong>JSON-LD</strong> via curl:</p>
-                    <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
-                    <p class="hint">Open the same URL in your browser to see the HTML view with bSDD links and QR codes.</p>
+                <div id="validate-section" class="conneg-card" style="margin-top: 12px;">
+                    <p><strong>SHACL Validation</strong> &mdash; load a sample DPP or paste your own JSON-LD to check conformance:</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <button onclick="loadDpp('timber')" class="btn btn-outline validate-sample-btn" data-key="timber" style="font-size: 11px; padding: 5px 12px;">Timber (Glulam)</button>
+                        <button onclick="loadDpp('insulation')" class="btn btn-outline validate-sample-btn" data-key="insulation" style="font-size: 11px; padding: 5px 12px;">Insulation (Knauf)</button>
+                        <button onclick="loadDpp('pipe')" class="btn btn-outline validate-sample-btn" data-key="pipe" style="font-size: 11px; padding: 5px 12px;">Pipe (PVC DN110)</button>
+                    </div>
+                    <textarea id="validate-input" rows="5" placeholder='Select a sample above or paste your own DPP JSON-LD here&hellip;' style="width:100%; font-family: monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical; background: var(--card);"></textarea>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
+                        <button onclick="runValidation()" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;">Validate</button>
+                        <button onclick="clearValidation()" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px;">Clear</button>
+                        <span id="validate-loaded" style="font-size: 11px; color: #888; margin-left: auto;"></span>
+                    </div>
+                    <pre id="validate-result" style="display:none; margin-top: 10px; padding: 10px; background: #1a1a1a; color: #e0e0e0; border-radius: var(--radius); font-size: 11px; max-height: 240px; overflow-y: auto; white-space: pre-wrap;"></pre>
                 </div>
-            </div>
-            <div class="footer">
-                Presented at bS-Summit Porto — buildingSMART International<br>
-                <a href="/docs">API Docs</a> &middot;
-                <a href="/ontology">Ontology</a> &middot;
-                <a href="/ontology/shacl">SHACL Shapes</a>
+                <script>
+                const DPP_IDS = {{
+                    timber: 'did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001',
+                    insulation: 'did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001',
+                    pipe: 'did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001'
+                }};
+                async function loadDpp(key) {{
+                    const ta = document.getElementById('validate-input');
+                    const label = document.getElementById('validate-loaded');
+                    const out = document.getElementById('validate-result');
+                    out.style.display = 'none';
+                    document.querySelectorAll('.validate-sample-btn').forEach(b => b.style.borderColor = '');
+                    const btn = document.querySelector('[data-key="'+key+'"]');
+                    if (btn) btn.style.borderColor = 'var(--wood)';
+                    ta.value = 'Loading\u2026';
+                    try {{
+                        const id = DPP_IDS[key];
+                        const res = await fetch('/dpps/' + encodeURIComponent(id), {{headers: {{'Accept': 'application/ld+json'}}}});
+                        const dpp = await res.json();
+                        ta.value = JSON.stringify(dpp, null, 2);
+                        label.textContent = 'Loaded: ' + (dpp['dcterms:title'] || dpp.id || key);
+                    }} catch(e) {{ ta.value = 'Error loading: ' + e.message; label.textContent = ''; }}
+                }}
+                function clearValidation() {{
+                    document.getElementById('validate-input').value = '';
+                    document.getElementById('validate-result').style.display = 'none';
+                    document.getElementById('validate-loaded').textContent = '';
+                    document.querySelectorAll('.validate-sample-btn').forEach(b => b.style.borderColor = '');
+                }}
+                async function runValidation() {{
+                    const ta = document.getElementById('validate-input');
+                    const out = document.getElementById('validate-result');
+                    out.style.display = 'block';
+                    if (!ta.value.trim()) {{ out.textContent = 'Select a sample or paste DPP JSON-LD first.'; out.style.color = '#888'; return; }}
+                    try {{
+                        const body = JSON.parse(ta.value);
+                        const res = await fetch('/validate', {{method:'POST', headers:{{'Content-Type':'application/json'}}, body: JSON.stringify(body)}});
+                        const result = await res.json();
+                        const conforms = result.conforms;
+                        const count = (result.results || []).length;
+                        let summary = conforms ? '\u2705 Conforms! No violations found.' : '\u274c ' + count + ' violation(s) found:';
+                        if (!conforms) {{
+                            for (const r of result.results || []) {{
+                                summary += '\\n\\n\u2022 ' + (r.message || r.detail || JSON.stringify(r));
+                            }}
+                        }}
+                        out.textContent = summary;
+                        out.style.color = conforms ? '#4ade80' : '#f87171';
+                    }} catch(e) {{ out.textContent = 'Error: ' + e.message; out.style.color = '#f87171'; }}
+                }}
+                </script>
+
+                <div class="section-label">Content Negotiation</div>
+                <div class="conneg-card">
+                    <p>Same URL returns <strong>HTML</strong> in browser or <strong>JSON-LD</strong> via curl:</p>
+                    <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
+                    <div class="hint">Open in browser for HTML view with bSDD links and QR codes.</div>
+                </div>
+
+                <div class="footer">
+                    <a href="/docs">API Docs</a> &middot;
+                    <a href="/ontology">Ontology</a> &middot;
+                    <a href="/ontology/shacl">SHACL</a>
+                    &middot; buildingSMART Summit Porto
+                </div>
             </div>
         </body>
         </html>
@@ -927,10 +1229,16 @@ async def read_dpp_by_id(dpp_id: str, request: Request):
 async def update_dpp_by_id(dpp_id: str, request: Request):
     """Update a DPP using JSON Merge Patch (RFC 7396)."""
     dpp_id = unquote(dpp_id)
-    
+
     if dpp_id not in dpp_storage:
         raise HTTPException(status_code=404, detail="DPP not found")
-    
+
+    if DEMO_PROTECTED and dpp_id in _seed_dpp_ids:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: seed product DPPs are protected and cannot be modified."
+        )
+
     try:
         patch_data = await request.json()
         
@@ -984,10 +1292,16 @@ async def update_dpp_by_id(dpp_id: str, request: Request):
 async def delete_dpp_by_id(dpp_id: str):
     """Delete a DPP by ID."""
     dpp_id = unquote(dpp_id)
-    
+
     if dpp_id not in dpp_storage:
         raise HTTPException(status_code=404, detail="DPP not found")
-    
+
+    if DEMO_PROTECTED and dpp_id in _seed_dpp_ids:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: seed product DPPs are protected and cannot be deleted."
+        )
+
     del dpp_storage[dpp_id]
     return Response(status_code=204)
 
@@ -1083,10 +1397,16 @@ async def read_data_element_collection(dpp_id: str, collection_id: str):
 async def update_data_element_collection(dpp_id: str, collection_id: str, request: Request):
     """Update a data element collection via JSON Merge Patch."""
     dpp_id = unquote(dpp_id)
-    
+
     if dpp_id not in dpp_storage:
         raise HTTPException(status_code=404, detail="DPP not found")
-    
+
+    if DEMO_PROTECTED and dpp_id in _seed_dpp_ids:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: seed product DPPs are protected and cannot be modified."
+        )
+
     try:
         patch_data = await request.json()
         dpp = dpp_storage[dpp_id]
@@ -1379,6 +1699,14 @@ async def validate_dpp(request: Request):
         "disclaimer": "Lightweight SHACL validation (demo) — not a full RDF/SHACL engine."
     }
 
+@app.get("/favicon.svg", include_in_schema=False)
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """Serve SVG favicon for browsers."""
+    return Response(content=FAVICON_SVG, media_type="image/svg+xml",
+                    headers={"Cache-Control": "public, max-age=604800"})
+
+
 @app.get("/health", tags=["System"])
 async def health_check():
     """Health check — shows loaded DPP count."""
@@ -1391,6 +1719,11 @@ async def health_check():
 @app.post("/admin/reload", tags=["System"])
 async def reload_dpps():
     """Reload DPP files from disk (admin)."""
+    if DEMO_PROTECTED:
+        raise HTTPException(
+            status_code=403,
+            detail="Demo mode: admin reload is disabled to protect demo data."
+        )
     dpp_storage.clear()
     load_sample_dpps()
     return {
@@ -1410,6 +1743,16 @@ if not _files_dir.exists():
     _files_dir = _base_path / "vLignum"
 if _files_dir.exists():
     app.mount("/files", StaticFiles(directory=str(_files_dir)), name="files")
+
+# Serve IFC enrichment tool static assets
+_enrich_dir = _api_path / "static" / "enrich"
+if _enrich_dir.exists():
+    app.mount("/enrich", StaticFiles(directory=str(_enrich_dir), html=True), name="enrich")
+
+# Serve emissions calculator static assets
+_emissions_dir = _api_path / "static" / "emissions"
+if _emissions_dir.exists():
+    app.mount("/emissions", StaticFiles(directory=str(_emissions_dir), html=True), name="emissions")
 
 # Load sample DPPs
 load_sample_dpps()
