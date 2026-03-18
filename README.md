@@ -99,22 +99,38 @@ This implementation addresses the following standards:
 
 ## Architecture
 
-```
-+------------------------------------------------------------+
-|                   buildingSMART DPP Demo                    |
-+------------------------------------------------------------+
-|                                                            |
-|  JSON-LD DPP Files ──> REST API (FastAPI)                  |
-|       |                     |                              |
-|       v                     v                              |
-|  QR Codes              HTML Views                          |
-|  (GS1 Digital Link)    (Human-readable)                    |
-|                                                            |
-|  Web Tools (client-side, Vite + TypeScript)                |
-|  ├── IFC Enrichment    (/enrich/)                          |
-|  └── Emissions Calc    (/lca/)                             |
-|                                                            |
-+------------------------------------------------------------+
+```mermaid
+graph TD
+    subgraph Server ["REST API (FastAPI)"]
+        API["API Endpoints<br/>prEN 18222"]
+        HTML["HTML Views<br/>Human-readable"]
+        STATIC["Static Assets"]
+    end
+
+    subgraph Data ["DPP Data Layer"]
+        DPP["JSON-LD DPP Files<br/>prEN 18223"]
+        ONT["OWL Ontology &<br/>SHACL Shapes"]
+        MAP["Property Mapping<br/>bSDD URIs"]
+    end
+
+    subgraph Web ["Web Tools (client-side)"]
+        ENRICH["IFC Enrichment Tool<br/>/enrich/"]
+        LCA["Emissions Calculator<br/>/lca/"]
+    end
+
+    subgraph Carriers ["Data Carriers"]
+        QR["QR Codes<br/>GS1 Digital Link"]
+    end
+
+    DPP --> API
+    ONT --> API
+    API --> HTML
+    API --> QR
+    MAP --> ENRICH
+    DPP --> ENRICH
+    ENRICH --> LCA
+    STATIC --> ENRICH
+    STATIC --> LCA
 ```
 
 ---
