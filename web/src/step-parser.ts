@@ -27,6 +27,13 @@ export interface MaterialAssociation {
   materialRef: number; // direct material or layer set / profile set usage
 }
 
+export interface ElementQuantity {
+  grossVolume: number | null;
+  netVolume: number | null;
+  length: number | null;
+  grossArea: number | null;
+}
+
 export interface ParsedModel {
   entities: Map<number, StepEntity>;
   elements: IfcElement[];
@@ -35,6 +42,8 @@ export interface ParsedModel {
   elementMaterials: Map<number, number[]>;
   /** material ID → element IDs */
   materialElements: Map<number, number[]>;
+  /** element ID → quantity data (volumes, lengths, areas) */
+  elementQuantities: Map<number, ElementQuantity>;
   maxId: number;
   ownerHistoryId: number | null;
 }
@@ -272,12 +281,70 @@ export function parseIfcStep(text: string): ParsedModel {
     }
   }
 
+  // Extract element quantities (volumes, lengths, areas) via IfcRelDefinesByProperties → IfcElementQuantity
+  const elementQuantities = new Map<number, ElementQuantity>();
+
+  for (const [, ent] of entities) {
+    if (ent.type !== 'IFCRELDEFINESBYPROPERTIES') continue;
+    const parts = splitStepArgs(ent.args);
+    const elemRefs = extractRefs(parts[4] || '');
+    const defRef = extractRefs(parts[5] || '');
+    if (defRef.length === 0) continue;
+
+    const defEntity = entities.get(defRef[0]);
+    if (!defEntity || defEntity.type !== 'IFCELEMENTQUANTITY') continue;
+
+    // Extract quantity member refs from arg[5] of IfcElementQuantity
+    const eqParts = splitStepArgs(defEntity.args);
+    const qtyRefs = extractRefs(eqParts[5] || '');
+
+    // Parse each quantity value
+    let grossVolume: number | null = null;
+    let netVolume: number | null = null;
+    let length: number | null = null;
+    let grossArea: number | null = null;
+
+    for (const qRef of qtyRefs) {
+      const qEnt = entities.get(qRef);
+      if (!qEnt) continue;
+      const qParts = splitStepArgs(qEnt.args);
+      const qName = extractString(qEnt.args, 0);
+      const qVal = parseFloat(qParts[3]?.trim() || '');
+      if (isNaN(qVal)) continue;
+
+      if (qEnt.type === 'IFCQUANTITYVOLUME') {
+        if (qName === 'GrossVolume') grossVolume = qVal;
+        else if (qName === 'NetVolume') netVolume = qVal;
+        else if (grossVolume === null) grossVolume = qVal; // fallback: any volume
+      } else if (qEnt.type === 'IFCQUANTITYLENGTH') {
+        if (qName === 'Length' || qName === 'length') length = qVal;
+        else if (length === null) length = qVal;
+      } else if (qEnt.type === 'IFCQUANTITYAREA') {
+        if (qName === 'GrossSurfaceArea') grossArea = qVal;
+        else if (grossArea === null) grossArea = qVal;
+      }
+    }
+
+    // Assign to each related element
+    for (const elemId of elemRefs) {
+      const existing = elementQuantities.get(elemId) || {
+        grossVolume: null, netVolume: null, length: null, grossArea: null,
+      };
+      if (grossVolume !== null) existing.grossVolume = grossVolume;
+      if (netVolume !== null) existing.netVolume = netVolume;
+      if (length !== null) existing.length = length;
+      if (grossArea !== null) existing.grossArea = grossArea;
+      elementQuantities.set(elemId, existing);
+    }
+  }
+
   return {
     entities,
     elements,
     materials,
     elementMaterials,
     materialElements,
+    elementQuantities,
     maxId,
     ownerHistoryId,
   };

@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "dev:lca": "vite --config vite.config.lca.ts",
+    "build": "tsc && vite build && vite build --config vite.config.lca.ts && mv ../public/emissions/lca.html ../public/emissions/index.html",
+    "build:enrich": "vite build",
+    "build:lca": "vite build --config vite.config.lca.ts",
     "preview": "vite preview"
   },
   "dependencies": {
