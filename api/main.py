@@ -277,72 +277,74 @@ def render_dpp_as_html(dpp: Dict) -> str:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{esc(product_name)} — Digital Product Passport (prEN 18222 demo)">
-    <meta name="theme-color" content="#111">
+    <meta name="theme-color" content="#2c2418">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>{esc(product_name)} &mdash; DPP [DEMO]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {{ --oak: #6b5534; --oak-light: #a68b5b; --oak-muted: #c4a97d; --ink: #1e1a14; --ink-soft: #4a4035; --muted: #8a7e70; --border: #e5e0da; --border-light: #f0ece6; --card: #fff; --radius: 8px; }}
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
-        .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 8px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }}
-        .container {{ max-width: 860px; margin: 0 auto; padding: 60px 24px 48px; }}
-        .header {{ margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e5e5e5; }}
-        .header h1 {{ font-size: 1.75em; font-weight: 700; color: #111; margin-bottom: 4px; letter-spacing: -0.01em; }}
-        .header .operator {{ font-size: 0.95em; color: #666; }}
-        .meta-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; margin: 24px 0; background: #e5e5e5; border: 1px solid #e5e5e5; border-radius: 4px; overflow: hidden; }}
-        .meta-item {{ background: #fafafa; padding: 14px 16px; }}
-        .meta-item .lbl {{ font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #888; margin-bottom: 4px; font-weight: 600; }}
-        .meta-item .val {{ font-size: 13px; color: #1a1a1a; word-break: break-all; }}
-        .meta-item .val code {{ background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-size: 12px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-        .status {{ display: inline-block; padding: 2px 10px; border-radius: 3px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }}
+        body {{ font-family: 'Outfit', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: var(--ink); min-height: 100vh; line-height: 1.6; -webkit-font-smoothing: antialiased; }}
+        .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: var(--ink); color: #a09080; text-align: center; padding: 8px 20px; font-size: 11px; font-weight: 400; letter-spacing: 0.2px; }}
+        .container {{ max-width: 860px; margin: 0 auto; padding: 52px 24px 48px; }}
+        .header {{ margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }}
+        .header h1 {{ font-family: 'Source Serif 4', Georgia, serif; font-size: 1.85em; font-weight: 700; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.02em; }}
+        .header .operator {{ font-size: 0.95em; color: var(--muted); font-weight: 300; }}
+        .meta-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; margin: 24px 0; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }}
+        .meta-item {{ background: #fafaf8; padding: 14px 16px; }}
+        .meta-item .lbl {{ font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }}
+        .meta-item .val {{ font-size: 13px; color: var(--ink); word-break: break-all; }}
+        .meta-item .val code {{ background: var(--border-light); padding: 2px 5px; border-radius: 4px; font-size: 12px; color: var(--ink-soft); font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace; }}
+        .status {{ display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }}
         .status-active {{ background: #dcfce7; color: #166534; }}
         .section {{ margin: 32px 0; }}
-        .section-title {{ font-size: 0.85em; font-weight: 700; color: #444; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #111; text-transform: uppercase; letter-spacing: 0.8px; }}
-        .card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 16px; margin-bottom: 12px; }}
-        .prop-row {{ display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }}
+        .section-title {{ font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); text-transform: uppercase; letter-spacing: 0.5px; }}
+        .card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }}
+        .prop-row {{ display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--border-light); }}
         .prop-row:last-child {{ border-bottom: none; }}
-        .prop-name {{ font-size: 13px; color: #555; flex: 1; }}
-        .prop-value {{ font-size: 13px; font-weight: 600; color: #111; text-align: right; }}
-        .prop-unit {{ font-size: 12px; color: #888; margin-left: 4px; font-weight: 400; }}
-        .bsdd-link {{ display: inline-block; margin-left: 6px; padding: 1px 6px; background: #f0f7ff; border: 1px solid #c5d9ed; border-radius: 3px; font-size: 10px; color: #2563eb; text-decoration: none; font-weight: 600; letter-spacing: 0.3px; }}
+        .prop-name {{ font-size: 13px; color: var(--ink-soft); flex: 1; }}
+        .prop-value {{ font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; }}
+        .prop-unit {{ font-size: 12px; color: var(--muted); margin-left: 4px; font-weight: 400; }}
+        .bsdd-link {{ display: inline-block; margin-left: 6px; padding: 1px 6px; background: #f0f7ff; border: 1px solid #c5d9ed; border-radius: 4px; font-size: 10px; color: #2563eb; text-decoration: none; font-weight: 600; letter-spacing: 0.3px; }}
         .bsdd-link:hover {{ background: #dbeafe; }}
-        .dopc-header {{ background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 16px; margin-bottom: 14px; }}
+        .dopc-header {{ background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }}
         .dopc-header strong {{ color: #1e40af; font-size: 14px; }}
-        .dopc-meta {{ font-size: 13px; color: #555; line-height: 1.8; }}
-        .doc-item {{ display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 6px; text-decoration: none; color: #1a1a1a; transition: border-color 0.15s; }}
-        .doc-item:hover {{ border-color: #999; }}
-        .doc-badge {{ font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 3px; white-space: nowrap; }}
+        .dopc-meta {{ font-size: 13px; color: var(--ink-soft); line-height: 1.8; }}
+        .doc-item {{ display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 6px; text-decoration: none; color: var(--ink); transition: border-color 0.15s; }}
+        .doc-item:hover {{ border-color: var(--oak-muted); }}
+        .doc-badge {{ font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }}
         .doc-badge-dop {{ background: #fef3c7; color: #92400e; }}
         .doc-badge-epd {{ background: #d1fae5; color: #065f46; }}
         .doc-badge-sheet {{ background: #e0e7ff; color: #3730a3; }}
-        .doc-icon {{ font-size: 16px; color: #888; }}
+        .doc-icon {{ font-size: 16px; color: var(--muted); }}
         .doc-name {{ font-size: 13px; font-weight: 500; }}
         .indicator-table {{ width: 100%; border-collapse: collapse; }}
-        .indicator-table th {{ background: #f5f5f5; color: #555; padding: 10px 14px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; border-bottom: 2px solid #ddd; }}
-        .indicator-table td {{ padding: 9px 14px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; }}
-        .indicator-table tr:hover td {{ background: #fafafa; }}
-        .carrier-card {{ background: #fafafa; border: 1px solid #e5e5e5; border-radius: 4px; padding: 24px; text-align: center; }}
-        .carrier-card h3 {{ color: #111; margin-bottom: 12px; font-size: 14px; font-weight: 600; }}
+        .indicator-table th {{ background: #fafaf8; color: var(--ink-soft); padding: 10px 14px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; border-bottom: 2px solid var(--border); }}
+        .indicator-table td {{ padding: 9px 14px; border-bottom: 1px solid var(--border-light); font-size: 13px; color: var(--ink-soft); }}
+        .indicator-table tr:hover td {{ background: #fafaf8; }}
+        .carrier-card {{ background: #fafaf8; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; }}
+        .carrier-card h3 {{ font-family: 'Source Serif 4', Georgia, serif; color: var(--ink); margin-bottom: 12px; font-size: 15px; font-weight: 600; }}
         .carrier-card img {{ margin: 12px auto; display: block; }}
-        .carrier-card code {{ display: block; background: #f0f0f0; padding: 10px; border-radius: 3px; font-size: 11px; color: #333; margin-top: 12px; word-break: break-all; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-        .carrier-card .gs1-label {{ font-size: 11px; color: #888; margin-top: 8px; }}
-        .class-card {{ display: flex; align-items: center; gap: 16px; padding: 16px; background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; margin-bottom: 8px; }}
+        .carrier-card code {{ display: block; background: var(--border-light); padding: 10px; border-radius: 6px; font-size: 11px; color: var(--ink-soft); margin-top: 12px; word-break: break-all; font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace; }}
+        .carrier-card .gs1-label {{ font-size: 11px; color: var(--muted); margin-top: 8px; }}
+        .class-card {{ display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; }}
         .class-info {{ flex: 1; }}
-        .class-info .scheme {{ font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }}
-        .class-info .name {{ font-size: 15px; font-weight: 600; color: #111; margin: 4px 0; }}
-        .class-info a {{ color: #2563eb; font-size: 12px; text-decoration: none; }}
+        .class-info .scheme {{ font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }}
+        .class-info .name {{ font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 600; color: var(--ink); margin: 4px 0; }}
+        .class-info a {{ color: var(--oak); font-size: 12px; text-decoration: none; }}
         .class-info a:hover {{ text-decoration: underline; }}
-        .json-toggle {{ display: inline-block; margin-top: 20px; padding: 7px 16px; background: #fff; border: 1px solid #ccc; border-radius: 3px; color: #333; font-size: 13px; text-decoration: none; font-weight: 500; }}
-        .json-toggle:hover {{ background: #f5f5f5; border-color: #999; }}
-        .footer {{ text-align: center; padding: 32px 0; color: #999; font-size: 12px; margin-top: 24px; border-top: 1px solid #e5e5e5; }}
-        .footer a {{ color: #666; text-decoration: none; }}
-        .footer a:hover {{ color: #111; }}
-        a.back-link {{ color: #666; text-decoration: none; font-size: 13px; }}
-        a.back-link:hover {{ color: #111; }}
+        .json-toggle {{ display: inline-block; margin-top: 20px; padding: 7px 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); color: var(--ink-soft); font-size: 13px; text-decoration: none; font-weight: 500; transition: border-color 0.15s; }}
+        .json-toggle:hover {{ background: #fafaf8; border-color: var(--oak-muted); }}
+        .footer {{ text-align: center; padding: 28px 0; color: var(--muted); font-size: 12px; margin-top: 24px; border-top: 1px solid var(--border); font-weight: 300; }}
+        .footer a {{ color: var(--oak); text-decoration: none; font-weight: 400; }}
+        .footer a:hover {{ color: var(--ink); }}
+        a.back-link {{ color: var(--oak); text-decoration: none; font-size: 13px; font-weight: 400; }}
+        a.back-link:hover {{ color: var(--ink); }}
     </style>
 </head>
 <body>
     <div class="demo-banner">
-        DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — Not affiliated with any manufacturer — bS-Summit Porto
+        DEMO &middot; Proof of concept &middot; Sample data only &middot; buildingSMART Summit Porto
     </div>
     <div class="container">
         <a href="/" class="back-link">&larr; Back to all products</a>
@@ -545,7 +547,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                 View JSON-LD
             </a>
         </div>
-        <pre id="json-panel" style="display:none;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:4px;padding:20px;margin-top:16px;overflow-x:auto;font-size:12px;color:#333;max-height:600px;overflow-y:auto;font-family:'SF Mono',Monaco,'Cascadia Code',monospace;"><code id="json-view"></code></pre>
+        <pre id="json-panel" style="display:none;background:#fafaf8;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:16px;overflow-x:auto;font-size:12px;color:var(--ink-soft);max-height:600px;overflow-y:auto;font-family:'JetBrains Mono','SF Mono',Monaco,monospace;"><code id="json-view"></code></pre>
         <div class="footer">
             <a href="/">Home</a> &middot;
             <a href="/docs">API Docs</a> &middot;
