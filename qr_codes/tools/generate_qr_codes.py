@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, Optional, List
 
 # Base URL — deployed API by default
-BASE_URL = os.environ.get("DPP_API_URL", "https://lignum-dpp-bsdd.vercel.app").rstrip("/")
+BASE_URL = os.environ.get("DPP_API_URL", "https://opendpp.buildingsmart.org").rstrip("/")
 
 
 def generate_qr_code(uri: str, filename: str, box_size: int = 10, border: int = 4) -> None:
@@ -174,11 +174,11 @@ def generate_html_viewer(output_dir: Path, cards: List[Dict[str, str]]):
             <code>{BASE_URL}/id/01/04012345678901/21/KI-AB-2025-001?linkType=dpp</code>
 
             <p style="margin-top: 12px;"><strong>DID Resolver:</strong></p>
-            <code>{BASE_URL}/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001</code>
+            <code>{BASE_URL}/dpps/did:web:bsi-dpp.org:dpp:knauf-acoustic-batt-2025-001</code>
         </div>
 
         <div class="note">
-            Lignum DPP Demo &mdash; bS-Summit Porto &mdash; buildingSMART International
+            buildingSMART DPP Demo &mdash; bS-Summit Porto &mdash; buildingSMART International
         </div>
     </div>
 </body>

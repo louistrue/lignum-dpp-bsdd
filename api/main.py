@@ -1,5 +1,5 @@
 """
-Lignum DPP API Server [DEMO]
+buildingSMART DPP API Server [DEMO]
 Proof-of-concept conforming to prEN 18222:2025 - API specification
 NOT an official Digital Product Passport server.
 """
@@ -41,7 +41,7 @@ DEMO_PROTECTED = os.getenv("DEMO_PROTECTED", "true").lower() != "false"
 # IDs of seed DPPs loaded from disk — populated by load_sample_dpps()
 _seed_dpp_ids: set = set()
 
-# SVG favicon — stylised tree-ring cross-section (wood = "lignum")
+# SVG favicon — stylised tree-ring cross-section
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <rect width="32" height="32" rx="6" fill="#fff"/>
   <circle cx="16" cy="16" r="11" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".35"/>
@@ -82,7 +82,7 @@ tags_metadata = [
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Lignum DPP API [DEMO] — bS-Summit Porto",
+    title="buildingSMART DPP API [DEMO] — bS-Summit Porto",
     description=(
         "## DEMO / PROOF OF CONCEPT\n\n"
         "**This is NOT an official Digital Product Passport server.**\n"
@@ -623,7 +623,7 @@ async def root(request: Request):
             qr_code_widget=QR_CODE_WIDGET,
         ))
     return {
-        "name": "Lignum DPP API [DEMO]",
+        "name": "buildingSMART DPP API [DEMO]",
         "disclaimer": DEMO_DISCLAIMER,
         "version": "0.1.0-demo",
         "endpoints": {
@@ -648,7 +648,7 @@ async def create_dpp(request: Request, response: Response):
         
         # Validate required fields
         if "id" not in dpp_data:
-            dpp_data["id"] = f"did:web:lignum.dev:dpp:{uuid.uuid4()}"
+            dpp_data["id"] = f"did:web:bsi-dpp.org:dpp:{uuid.uuid4()}"
         
         dpp_id = dpp_data["id"]
         
@@ -781,9 +781,9 @@ async def read_dpp_by_id(dpp_id: str, request: Request):
     or **JSON-LD** when requested via `Accept: application/ld+json`.
 
     **Try these IDs:**
-    - `did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001`
-    - `did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001`
-    - `did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001`
+    - `did:web:bsi-dpp.org:dpp:knauf-acoustic-batt-2025-001`
+    - `did:web:bsi-dpp.org:dpp:schilliger-bsh-gl24h-2022-001`
+    - `did:web:bsi-dpp.org:dpp:pvc-sewage-dn110-2025-001`
     """
     # URL decode the ID
     dpp_id = unquote(dpp_id)
@@ -1317,12 +1317,10 @@ async def reload_dpps():
 # Mount static files AFTER all routes (mount is a catch-all)
 _api_path = Path(__file__).parent
 _base_path = _api_path.parent
-# Serve PDFs: check api/data/files (Vercel), then project root data/, then legacy vLignum/
+# Serve PDFs: check api/data/files (Vercel), then project root data/
 _files_dir = _api_path / "data" / "files"
 if not _files_dir.exists():
     _files_dir = _base_path / "data"
-if not _files_dir.exists():
-    _files_dir = _base_path / "vLignum"
 if _files_dir.exists():
     app.mount("/files", StaticFiles(directory=str(_files_dir)), name="files")
 
