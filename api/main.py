@@ -603,17 +603,17 @@ async def root(request: Request):
                 a:hover {{ text-decoration: underline; }}
                 code {{ font-family: 'JetBrains Mono', monospace; }}
 
-                /* Demo banner */
-                .demo-banner {{ background: #b91c1c; color: #fff; text-align: center; padding: 6px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }}
-
-                /* Author bar */
-                .authorbar {{ background: var(--ink); color: #aaa; padding: 7px 32px; font-size: 12px; display: flex; align-items: center; gap: 14px; }}
-                .authorbar strong {{ color: #fff; font-weight: 600; }}
-                .authorbar a {{ color: var(--wood-light); font-weight: 500; }}
-                .authorbar a:hover {{ color: #fff; text-decoration: none; }}
-                .authorbar-icons {{ display: flex; align-items: center; gap: 10px; margin-left: 2px; }}
-                .authorbar-icons a {{ color: #666; display: inline-flex; transition: color 0.15s; }}
-                .authorbar-icons a:hover {{ color: #fff; text-decoration: none; }}
+                /* Header bar */
+                .headerbar {{ display: flex; align-items: stretch; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }}
+                .headerbar-demo {{ background: #b91c1c; color: #fff; flex: 1; padding: 7px 24px; display: flex; align-items: center; }}
+                .headerbar-author {{ background: var(--ink); color: #aaa; padding: 7px 20px; display: flex; align-items: center; gap: 12px; white-space: nowrap; font-weight: 500; }}
+                .headerbar-author strong {{ color: #fff; font-weight: 600; }}
+                .headerbar-author a {{ color: var(--wood-light); font-weight: 500; }}
+                .headerbar-author a:hover {{ color: #fff; text-decoration: none; }}
+                .headerbar-author svg {{ display: block; }}
+                .headerbar-icons {{ display: flex; align-items: center; gap: 8px; }}
+                .headerbar-icons a {{ color: #666; display: inline-flex; transition: color 0.15s; }}
+                .headerbar-icons a:hover {{ color: #fff; text-decoration: none; }}
 
                 /* Layout */
                 .page {{ max-width: 1080px; margin: 0 auto; padding: 32px 32px 40px; }}
@@ -625,7 +625,6 @@ async def root(request: Request):
                 .hero-desc {{ font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; max-width: 680px; }}
                 .hero-chips {{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }}
                 .hero-chips span {{ background: var(--card); border: 1px solid var(--border); padding: 4px 12px; font-size: 11px; color: #666; font-weight: 500; border-radius: 20px; }}
-                .disclaimer {{ font-size: 12px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: 10px 16px; line-height: 1.5; max-width: 680px; }}
 
                 /* Sections */
                 .section-label {{ font-size: 11px; font-weight: 700; color: var(--wood); text-transform: uppercase; letter-spacing: 1.2px; margin: 32px 0 14px; }}
@@ -698,13 +697,15 @@ async def root(request: Request):
             </style>
         </head>
         <body>
-            <div class="demo-banner">DEMO / PROOF OF CONCEPT &mdash; NOT an official DPP server &mdash; Sample data only &mdash; bS-Summit Porto</div>
-            <div class="authorbar">
-                <strong>Louis True</strong> &middot;
-                <a href="https://www.lt.plus/">lt.plus</a>
-                <div class="authorbar-icons">
-                    <a href="https://github.com/louistrue/lignum-dpp-bsdd" title="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
-                    <a href="https://www.linkedin.com/in/louistrue" title="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+            <div class="headerbar">
+                <div class="headerbar-demo">DEMO / PROOF OF CONCEPT · NOT an official DPP server · Sample data only · buildingSMART Summit Porto</div>
+                <div class="headerbar-author">
+                    <strong>Louis True</strong>
+                    <a href="https://www.lt.plus/">lt.plus</a>
+                    <div class="headerbar-icons">
+                        <a href="https://github.com/louistrue/lignum-dpp-bsdd" title="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                        <a href="https://www.linkedin.com/in/louistrue" title="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                    </div>
                 </div>
             </div>
             <div class="page">
@@ -721,9 +722,6 @@ async def root(request: Request):
                         <span>bSDD</span>
                         <span>OWL + SHACL</span>
                         <span>EU CPR / DoPC</span>
-                    </div>
-                    <div class="disclaimer">
-                        <strong>Disclaimer:</strong> PoC demo presented at bS-Summit Porto. Not an official DPP system. Sample data only. Not affiliated with any manufacturer.
                     </div>
                 </div>
 
@@ -840,13 +838,14 @@ async def root(request: Request):
 
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
+                function removeRow(btn) {{ btn.closest('.prop-row').remove(); }}
                 function addPropertyRow() {{
                     var html = '<div class="form-row prop-row" style="margin-bottom:8px;">'
                         + '<div class="form-group"><input type="text" placeholder="Property name" class="form-input prop-name" maxlength="80"></div>'
                         + '<div class="form-group" style="display:flex;gap:8px;">'
                         + '<input type="text" placeholder="Value" class="form-input prop-val" style="flex:1;" maxlength="40">'
                         + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">'
-                        + '<button type="button" onclick="this.closest(\'.prop-row\').remove();" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:18px;padding:0 6px;line-height:1;" title="Remove">&times;</button>'
+                        + '<button type="button" onclick="removeRow(this)" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:18px;padding:0 6px;line-height:1;" title="Remove">&times;</button>'
                         + '</div></div>';
                     document.getElementById('cf-props').insertAdjacentHTML('beforeend', html);
                 }}
@@ -936,7 +935,7 @@ async def root(request: Request):
                     <a href="/docs">API Docs</a> &middot;
                     <a href="/ontology">Ontology</a> &middot;
                     <a href="/ontology/shacl">SHACL</a>
-                    &middot; bS-Summit Porto
+                    &middot; buildingSMART Summit Porto
                 </div>
             </div>
         </body>
