@@ -594,92 +594,120 @@ async def root(request: Request):
             <meta property="og:type" content="website">
             <link rel="icon" type="image/svg+xml" href="/favicon.svg">
             <title>Lignum DPP — Digital Product Passport Demo</title>
+            <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
             <style>
+                :root {{ --wood: #8b6f47; --wood-light: #c8a87c; --wood-bg: #faf7f4; --ink: #1a1a1a; --muted: #777; --border: #e5e0da; --card: #fff; --radius: 8px; }}
                 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-                body {{ font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #f8f8f8; color: #1a1a1a; line-height: 1.55; }}
-                a {{ color: #2563eb; text-decoration: none; }}
+                body {{ font-family: 'DM Sans', sans-serif; background: var(--wood-bg); color: var(--ink); line-height: 1.55; }}
+                a {{ color: var(--wood); text-decoration: none; font-weight: 500; }}
                 a:hover {{ text-decoration: underline; }}
+                code {{ font-family: 'JetBrains Mono', monospace; }}
 
-                /* Banner */
-                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 5px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }}
+                /* Top bar — identity + demo notice */
+                .topbar {{ background: var(--ink); color: #ccc; padding: 0; font-size: 12px; display: flex; align-items: stretch; }}
+                .topbar-identity {{ display: flex; align-items: center; gap: 12px; padding: 8px 24px; border-right: 1px solid #333; white-space: nowrap; }}
+                .topbar-identity strong {{ color: #fff; font-weight: 600; letter-spacing: -0.01em; }}
+                .topbar-identity a {{ color: var(--wood-light); font-weight: 500; }}
+                .topbar-identity a:hover {{ color: #fff; text-decoration: none; }}
+                .topbar-icons {{ display: flex; align-items: center; gap: 10px; padding: 0 16px; border-right: 1px solid #333; }}
+                .topbar-icons a {{ color: #888; display: inline-flex; transition: color 0.15s; }}
+                .topbar-icons a:hover {{ color: #fff; text-decoration: none; }}
+                .topbar-demo {{ flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px 24px; font-size: 11px; font-weight: 600; color: #ef9a9a; letter-spacing: 0.3px; }}
 
                 /* Layout */
-                .page {{ max-width: 1040px; margin: 0 auto; padding: 44px 32px 40px; }}
-                @media (max-width: 640px) {{ .page {{ padding: 44px 16px 32px; }} }}
+                .page {{ max-width: 1080px; margin: 0 auto; padding: 32px 32px 40px; }}
+                @media (max-width: 640px) {{ .page {{ padding: 24px 16px 32px; }} }}
 
-                /* Header */
-                .hero {{ margin-bottom: 28px; }}
-                .hero h1 {{ font-size: 22px; font-weight: 700; color: #111; letter-spacing: -0.03em; margin-bottom: 6px; }}
-                .hero-desc {{ font-size: 14px; color: #555; line-height: 1.55; margin-bottom: 10px; }}
-                .hero-chips {{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }}
-                .hero-chips span {{ background: #fff; border: 1px solid #e0e0e0; padding: 3px 10px; font-size: 11px; color: #444; font-weight: 500; border-radius: 4px; }}
-                .disclaimer {{ font-size: 12px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 14px; line-height: 1.45; }}
+                /* Hero */
+                .hero {{ margin-bottom: 32px; }}
+                .hero h1 {{ font-size: 26px; font-weight: 700; color: var(--ink); letter-spacing: -0.03em; margin-bottom: 6px; }}
+                .hero-desc {{ font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; max-width: 680px; }}
+                .hero-chips {{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }}
+                .hero-chips span {{ background: var(--card); border: 1px solid var(--border); padding: 4px 12px; font-size: 11px; color: #666; font-weight: 500; border-radius: 20px; }}
+                .disclaimer {{ font-size: 12px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius); padding: 10px 16px; line-height: 1.5; max-width: 680px; }}
 
-                /* Section titles */
-                .section-label {{ font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.8px; margin: 28px 0 12px; }}
+                /* Sections */
+                .section-label {{ font-size: 11px; font-weight: 700; color: var(--wood); text-transform: uppercase; letter-spacing: 1.2px; margin: 32px 0 14px; }}
 
                 /* Product cards */
-                .product-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }}
-                @media (max-width: 820px) {{ .product-grid {{ grid-template-columns: 1fr; }} }}
-                .product-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; display: flex; flex-direction: column; transition: box-shadow 0.15s, border-color 0.15s; }}
-                .product-card:hover {{ border-color: #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }}
-                .product-header {{ padding: 16px 18px 10px; }}
-                .product-header h3 {{ font-size: 15px; color: #111; font-weight: 700; margin-bottom: 2px; line-height: 1.3; }}
-                .operator {{ font-size: 12px; color: #999; }}
-                .product-body {{ padding: 4px 18px 14px; flex: 1; }}
-                .product-meta {{ font-size: 12px; color: #666; line-height: 1.7; }}
-                .product-meta code {{ background: #f5f5f5; padding: 2px 5px; border-radius: 3px; font-size: 11px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; word-break: break-all; }}
-                .tags {{ margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap; }}
-                .tag {{ background: #f3f4f6; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-                .product-actions {{ padding: 12px 18px 16px; display: flex; gap: 8px; border-top: 1px solid #f0f0f0; }}
-                .btn {{ display: inline-flex; align-items: center; gap: 4px; padding: 7px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.12s; cursor: pointer; border: none; font-family: inherit; }}
-                .btn-primary {{ background: #111; color: #fff; }}
+                .product-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }}
+                @media (max-width: 860px) {{ .product-grid {{ grid-template-columns: 1fr 1fr; }} }}
+                @media (max-width: 540px) {{ .product-grid {{ grid-template-columns: 1fr; }} }}
+                .product-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; transition: box-shadow 0.2s, border-color 0.2s; }}
+                .product-card:hover {{ border-color: var(--wood-light); box-shadow: 0 4px 16px rgba(139,111,71,0.08); }}
+                .product-header {{ padding: 18px 20px 10px; }}
+                .product-header h3 {{ font-size: 15px; color: var(--ink); font-weight: 700; margin-bottom: 2px; line-height: 1.3; }}
+                .operator {{ font-size: 12px; color: #aaa; font-weight: 400; }}
+                .product-body {{ padding: 4px 20px 16px; flex: 1; }}
+                .product-meta {{ font-size: 12px; color: #666; line-height: 1.8; }}
+                .product-meta code {{ background: #f5f3f0; padding: 2px 6px; border-radius: 3px; font-size: 10.5px; color: #444; word-break: break-all; }}
+                .tags {{ margin-top: 10px; display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tag {{ background: #f0ece6; color: #7a6a52; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .product-actions {{ padding: 14px 20px; display: flex; gap: 8px; border-top: 1px solid #f0ece6; }}
+
+                /* Buttons */
+                .btn {{ display: inline-flex; align-items: center; gap: 5px; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.15s; cursor: pointer; border: none; font-family: inherit; }}
+                .btn-primary {{ background: var(--ink); color: #fff; }}
                 .btn-primary:hover {{ background: #333; text-decoration: none; }}
-                .btn-outline {{ background: #fff; color: #333; border: 1px solid #d5d5d5; }}
-                .btn-outline:hover {{ border-color: #999; background: #fafafa; text-decoration: none; }}
+                .btn-outline {{ background: var(--card); color: #555; border: 1px solid var(--border); }}
+                .btn-outline:hover {{ border-color: var(--wood-light); color: var(--ink); text-decoration: none; }}
+                .btn-gs1 {{ background: var(--card); color: var(--wood); border: 1px solid var(--border); }}
+                .btn-gs1:hover {{ border-color: var(--wood-light); background: var(--wood-bg); text-decoration: none; }}
+
+                /* Tool cards */
+                .tools-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }}
+                @media (max-width: 640px) {{ .tools-grid {{ grid-template-columns: 1fr; }} }}
+                .tool-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.2s, border-color 0.2s; }}
+                .tool-card:hover {{ border-color: var(--wood-light); box-shadow: 0 4px 16px rgba(139,111,71,0.08); }}
+                .tool-card h3 {{ font-size: 15px; font-weight: 700; color: var(--ink); margin: 0; display: flex; align-items: center; gap: 10px; }}
+                .tool-card p {{ font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; flex: 1; }}
+                .tool-tags {{ display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tool-tag {{ background: #f0ece6; color: #7a6a52; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
 
                 /* Create form */
-                .create-form {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 24px; }}
-                .create-form h3 {{ font-size: 15px; font-weight: 700; color: #111; margin-bottom: 2px; }}
-                .create-form .form-hint {{ font-size: 12px; color: #999; margin-bottom: 18px; }}
+                .create-form {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }}
+                .create-form h3 {{ font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }}
+                .create-form .form-hint {{ font-size: 13px; color: #999; }}
+                .form-section {{ font-size: 11px; font-weight: 700; color: var(--wood); text-transform: uppercase; letter-spacing: 0.8px; margin: 22px 0 10px; display: flex; align-items: center; justify-content: space-between; }}
+                .form-section:first-of-type {{ margin-top: 20px; }}
                 .form-row {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }}
                 @media (max-width: 640px) {{ .form-row {{ grid-template-columns: 1fr; }} }}
-                .form-group {{ display: flex; flex-direction: column; gap: 4px; }}
-                .form-label {{ font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }}
-                .form-input {{ padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.15s; }}
-                .form-input:focus {{ border-color: #111; }}
-                .form-actions {{ display: flex; gap: 8px; margin-top: 18px; }}
+                .form-group {{ display: flex; flex-direction: column; gap: 5px; }}
+                .form-label {{ font-size: 12px; font-weight: 600; color: #666; }}
+                .form-input {{ padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: var(--card); }}
+                .form-input:focus {{ border-color: var(--wood); box-shadow: 0 0 0 3px rgba(139,111,71,0.1); }}
+                .form-actions {{ display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0ece6; }}
 
-                /* Explore + Conneg */
-                .bottom-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }}
+                /* Bottom grid */
+                .bottom-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }}
                 @media (max-width: 768px) {{ .bottom-grid {{ grid-template-columns: 1fr; }} }}
-                .explore-links {{ display: flex; gap: 14px; flex-wrap: wrap; }}
-                .explore-link {{ display: flex; flex-direction: column; gap: 2px; }}
-                .explore-link strong {{ font-size: 13px; color: #111; }}
-                .explore-link span {{ font-size: 12px; color: #888; }}
-                .conneg-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 18px; }}
-                .conneg-card p {{ font-size: 13px; color: #555; margin-bottom: 8px; }}
-                .conneg-card code {{ background: #111; color: #a0ffa0; padding: 10px 14px; border-radius: 6px; display: block; font-size: 11px; overflow-x: auto; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-                .conneg-card .hint {{ font-size: 11px; color: #999; margin-top: 8px; }}
-
-                /* Author */
-                .author {{ display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 8px 14px; background: #f8f8f8; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 12px; color: #666; }}
-                .author strong {{ color: #333; font-weight: 600; }}
-                .author-links {{ display: flex; gap: 8px; }}
-                .author-links a {{ display: inline-flex; align-items: center; color: #888; transition: color 0.15s; }}
-                .author-links a:hover {{ color: #111; text-decoration: none; }}
+                .explore-links {{ display: flex; gap: 16px; flex-wrap: wrap; }}
+                .explore-link {{ display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.15s; min-width: 120px; }}
+                .explore-link:hover {{ border-color: var(--wood-light); text-decoration: none; }}
+                .explore-link strong {{ font-size: 13px; color: var(--ink); }}
+                .explore-link span {{ font-size: 11px; color: #aaa; font-weight: 400; }}
+                .conneg-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }}
+                .conneg-card p {{ font-size: 13px; color: #555; margin-bottom: 10px; }}
+                .conneg-card code {{ background: var(--ink); color: #a0ffa0; padding: 12px 16px; border-radius: 6px; display: block; font-size: 11px; overflow-x: auto; white-space: pre; }}
+                .conneg-card .hint {{ font-size: 11px; color: #aaa; margin-top: 8px; }}
 
                 /* Footer */
-                .footer {{ text-align: center; padding: 24px 0; color: #bbb; font-size: 12px; margin-top: 36px; border-top: 1px solid #eee; }}
-                .footer a {{ color: #888; }}
-                .footer a:hover {{ color: #333; }}
-                .footer-author {{ margin-top: 6px; font-size: 11px; color: #aaa; }}
-                .footer-author a {{ color: #888; }}
+                .footer {{ text-align: center; padding: 24px 0; color: #bbb; font-size: 12px; margin-top: 40px; border-top: 1px solid var(--border); }}
+                .footer a {{ color: var(--wood-light); font-weight: 400; }}
+                .footer a:hover {{ color: var(--wood); }}
             </style>
         </head>
         <body>
-            <div class="demo-banner">
-                DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — bS-Summit Porto
+            <div class="topbar">
+                <div class="topbar-identity">
+                    <strong>Louis True</strong>
+                    <a href="https://www.lt.plus/">lt.plus</a>
+                </div>
+                <div class="topbar-icons">
+                    <a href="https://github.com/louistrue/lignum-dpp-bsdd" title="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                    <a href="https://www.linkedin.com/in/louistrue" title="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                </div>
+                <div class="topbar-demo">DEMO &mdash; NOT AN OFFICIAL DPP SERVER &mdash; SAMPLE DATA &mdash; bS-SUMMIT PORTO</div>
             </div>
             <div class="page">
                 <div class="hero">
@@ -699,42 +727,55 @@ async def root(request: Request):
                     <div class="disclaimer">
                         <strong>Disclaimer:</strong> PoC demo presented at bS-Summit Porto. Not an official DPP system. Sample data only. Not affiliated with any manufacturer.
                     </div>
-                    <div class="author">
-                        <strong>Louis True</strong> &middot; <a href="https://www.lt.plus/" style="color:#2563eb;">lt.plus</a>
-                        <div class="author-links">
-                            <a href="https://github.com/louistrue/lignum-dpp-bsdd" title="GitHub">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                            </a>
-                            <a href="https://www.linkedin.com/in/louistrue" title="LinkedIn">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                            </a>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="section-label">Products</div>
+                <div class="section-label">Sample Products</div>
                 <div id="product-grid" class="product-grid">
                     {product_cards}
-                    <div class="product-card" id="create-card" style="border-style:dashed;cursor:pointer;" onclick="openCreateForm();">
-                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            <div style="font-size:14px;font-weight:600;color:#555;margin-top:8px;">Create Your DPP</div>
-                            <div style="font-size:11px;color:#aaa;margin-top:4px;">Client-side preview &middot; gone on reload</div>
+                </div>
+
+                <div class="section-label">Demo Tools</div>
+                <div id="demo-cards" class="tools-grid">
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            Create Your DPP
+                        </h3>
+                        <p>Build a product passport from scratch with properties, identifiers, labels, and bSDD classification.</p>
+                        <div class="tool-tags">
+                            <span class="tool-tag">prEN 18223</span>
+                            <span class="tool-tag">JSON-LD</span>
+                            <span class="tool-tag">Client-side</span>
                         </div>
+                        <div><a class="btn btn-primary" onclick="openCreateForm();" style="cursor:pointer;">Get Started</a></div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Enrich IFC with DPP Data
+                        </h3>
+                        <p>Upload an IFC file and enrich building elements with property sets, bSDD classifications, EPD indicators, GS1 identifiers, and document references.</p>
+                        <div class="tool-tags">
+                            <span class="tool-tag">IFC 2x3 / 4</span>
+                            <span class="tool-tag">bSDD</span>
+                            <span class="tool-tag">EPD</span>
+                            <span class="tool-tag">GS1</span>
+                        </div>
+                        <div><a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a></div>
                     </div>
                 </div>
 
-                <div id="create-section" hidden style="margin-top:14px;">
+                <div id="create-section" hidden style="margin-top:16px;">
                     <div class="create-form">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
                             <div>
                                 <h3>New Product Passport</h3>
-                                <div class="form-hint" style="margin-bottom:0;">Client-side preview only — not persisted. Build a DPP with properties, identifiers, and classifications.</div>
+                                <div class="form-hint">Client-side preview &mdash; appears in the products grid above. Not persisted.</div>
                             </div>
-                            <button onclick="closeCreateForm();" class="btn btn-outline" style="flex-shrink:0;">Cancel</button>
+                            <button onclick="closeCreateForm();" class="btn btn-outline" style="flex-shrink:0;">&times; Close</button>
                         </div>
 
-                        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">General</div>
+                        <div class="form-section">General</div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Product name *</label>
@@ -748,7 +789,7 @@ async def root(request: Request):
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">GTIN</label>
-                                <input id="cf-gtin" type="text" placeholder="e.g. 04012345678901" maxlength="14" class="form-input" style="font-family:'SF Mono',Monaco,monospace;font-size:13px;">
+                                <input id="cf-gtin" type="text" placeholder="e.g. 04012345678901" maxlength="14" class="form-input" style="font-family:'JetBrains Mono',monospace;font-size:13px;">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Product type (IFC)</label>
@@ -765,10 +806,10 @@ async def root(request: Request):
                             </div>
                         </div>
 
-                        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.8px;margin:18px 0 8px;">Labels &amp; Classification</div>
+                        <div class="form-section">Labels &amp; Classification</div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">Labels <span style="font-weight:400;color:#aaa;">(comma-separated)</span></label>
+                                <label class="form-label">Labels <span style="font-weight:400;color:#bbb;">(comma-separated)</span></label>
                                 <input id="cf-labels" type="text" placeholder="e.g. construction, timber, structural" maxlength="200" class="form-input">
                             </div>
                             <div class="form-group">
@@ -777,27 +818,24 @@ async def root(request: Request):
                             </div>
                         </div>
 
-                        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.8px;margin:18px 0 8px;display:flex;align-items:center;justify-content:space-between;">
+                        <div class="form-section">
                             Properties
-                            <button type="button" onclick="addPropertyRow();" class="btn btn-outline" style="padding:3px 10px;font-size:11px;">+ Add</button>
+                            <button type="button" onclick="addPropertyRow();" class="btn btn-outline" style="padding:4px 12px;font-size:11px;">+ Add row</button>
                         </div>
                         <div id="cf-props">
-                            <div class="form-row prop-row" style="margin-bottom:6px;">
+                            <div class="form-row prop-row" style="margin-bottom:8px;">
                                 <div class="form-group"><input type="text" placeholder="Name, e.g. Thermal conductivity" class="form-input prop-name" maxlength="80"></div>
                                 <div class="form-group" style="display:flex;gap:8px;">
                                     <input type="text" placeholder="Value, e.g. 0.035" class="form-input prop-val" style="flex:1;" maxlength="40">
-                                    <input type="text" placeholder="Unit" class="form-input prop-unit" style="width:70px;" maxlength="20">
+                                    <input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">
                                 </div>
                             </div>
                         </div>
 
-                        <div id="cf-error" style="display:none;margin-top:12px;font-size:12px;color:#b91c1c;background:#fef2f2;padding:8px 12px;border-radius:6px;"></div>
-                        <div class="form-actions" style="margin-top:20px;padding-top:18px;border-top:1px solid #eee;">
-                            <button onclick="createLocalDpp()" class="btn btn-primary" style="padding:9px 24px;font-size:13px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M12 5v14M5 12h14"/></svg>
-                                Create DPP
-                            </button>
-                            <button onclick="closeCreateForm();" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">Cancel</button>
+                        <div id="cf-error" style="display:none;margin-top:12px;font-size:12px;color:#b91c1c;background:#fef2f2;padding:10px 14px;border-radius:6px;"></div>
+                        <div class="form-actions">
+                            <button onclick="createLocalDpp()" class="btn btn-primary" style="padding:10px 28px;font-size:13px;">Create DPP</button>
+                            <button onclick="closeCreateForm();" class="btn btn-outline" style="padding:10px 22px;font-size:13px;">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -805,23 +843,23 @@ async def root(request: Request):
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
                 function addPropertyRow() {{
-                    var html = '<div class="form-row prop-row" style="margin-bottom:6px;">'
+                    var html = '<div class="form-row prop-row" style="margin-bottom:8px;">'
                         + '<div class="form-group"><input type="text" placeholder="Property name" class="form-input prop-name" maxlength="80"></div>'
                         + '<div class="form-group" style="display:flex;gap:8px;">'
                         + '<input type="text" placeholder="Value" class="form-input prop-val" style="flex:1;" maxlength="40">'
-                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:70px;" maxlength="20">'
-                        + '<button type="button" onclick="this.closest(\'.prop-row\').remove();" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:16px;padding:0 4px;" title="Remove">&times;</button>'
+                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">'
+                        + '<button type="button" onclick="this.closest(\'.prop-row\').remove();" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:18px;padding:0 6px;line-height:1;" title="Remove">&times;</button>'
                         + '</div></div>';
                     document.getElementById('cf-props').insertAdjacentHTML('beforeend', html);
                 }}
                 function openCreateForm() {{
-                    document.getElementById('create-card').style.display = 'none';
+                    document.getElementById('demo-cards').style.display = 'none';
                     document.getElementById('create-section').hidden = false;
                     document.getElementById('cf-name').focus();
                 }}
                 function closeCreateForm() {{
                     document.getElementById('create-section').hidden = true;
-                    document.getElementById('create-card').style.display = '';
+                    document.getElementById('demo-cards').style.display = '';
                 }}
                 function createLocalDpp() {{
                     var rawName = document.getElementById('cf-name').value.trim().substring(0, 100);
@@ -835,13 +873,10 @@ async def root(request: Request):
                     if (!rawName || !rawMfr) {{ errEl.textContent = 'Product name and manufacturer are required.'; errEl.style.display = 'block'; return; }}
                     var name = esc(rawName);
                     var mfr = esc(rawMfr);
-                    var type = esc(ifcType);
 
-                    // Build label tags
                     var labels = rawLabels ? rawLabels.split(',').map(function(l) {{ return l.trim(); }}).filter(Boolean).slice(0, 8) : [ifcType];
                     var tagHtml = labels.map(function(l) {{ return '<span class="tag">' + esc(l) + '</span>'; }}).join('');
 
-                    // Collect properties
                     var propRows = document.querySelectorAll('#cf-props .prop-row');
                     var propsHtml = '';
                     propRows.forEach(function(row) {{
@@ -849,41 +884,36 @@ async def root(request: Request):
                         var pv = row.querySelector('.prop-val').value.trim();
                         var pu = row.querySelector('.prop-unit').value.trim();
                         if (pn && pv) {{
-                            propsHtml += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f5;font-size:12px;">'
-                                + '<span style="color:#555;">' + esc(pn) + '</span>'
-                                + '<span style="font-weight:600;color:#111;">' + esc(pv) + (pu ? ' <span style="color:#999;font-weight:400;">' + esc(pu) + '</span>' : '') + '</span></div>';
+                            propsHtml += '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ece6;font-size:12px;">'
+                                + '<span style="color:#666;">' + esc(pn) + '</span>'
+                                + '<span style="font-weight:600;color:var(--ink);">' + esc(pv) + (pu ? ' <span style="color:#aaa;font-weight:400;">' + esc(pu) + '</span>' : '') + '</span></div>';
                         }}
                     }});
 
-                    // Build GTIN + DPP ID meta
                     var metaHtml = '';
                     if (gtin) {{ metaHtml += '<div><strong>GTIN:</strong> <code>' + gtin + '</code></div>'; }}
                     metaHtml += '<div><strong>DPP ID:</strong> <code style="font-size:10px;">did:web:local:dpp:' + rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '</code></div>';
-
-                    // Build classification line
                     var classHtml = bsdd ? '<div style="margin-top:6px;font-size:11px;color:#666;"><strong>Classification:</strong> ' + esc(bsdd) + '</div>' : '';
 
-                    var card = '<div class="product-card" style="border-left:3px solid #16a34a;">'
+                    var card = '<div class="product-card" style="border-left:3px solid var(--wood);">'
                         + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
                         + '<div class="product-body">'
                         + '<div class="product-meta">' + metaHtml + classHtml + '</div>'
-                        + (propsHtml ? '<div style="margin-top:8px;padding:6px 0;">' + propsHtml + '</div>' : '')
+                        + (propsHtml ? '<div style="margin-top:10px;">' + propsHtml + '</div>' : '')
                         + '<div class="tags">' + tagHtml + '</div>'
                         + '</div></div>';
 
-                    // Insert before the "+ Create" card
-                    document.getElementById('create-card').insertAdjacentHTML('beforebegin', card);
-                    // Reset form
+                    document.getElementById('product-grid').insertAdjacentHTML('beforeend', card);
                     document.getElementById('cf-name').value = '';
                     document.getElementById('cf-mfr').value = '';
                     document.getElementById('cf-gtin').value = '';
                     document.getElementById('cf-labels').value = '';
                     document.getElementById('cf-bsdd').value = '';
-                    document.getElementById('cf-props').innerHTML = '<div class="form-row prop-row" style="margin-bottom:6px;">'
+                    document.getElementById('cf-props').innerHTML = '<div class="form-row prop-row" style="margin-bottom:8px;">'
                         + '<div class="form-group"><input type="text" placeholder="Name, e.g. Thermal conductivity" class="form-input prop-name" maxlength="80"></div>'
                         + '<div class="form-group" style="display:flex;gap:8px;">'
                         + '<input type="text" placeholder="Value, e.g. 0.035" class="form-input prop-val" style="flex:1;" maxlength="40">'
-                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:70px;" maxlength="20">'
+                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:80px;" maxlength="20">'
                         + '</div></div>';
                     closeCreateForm();
                 }}
@@ -914,10 +944,6 @@ async def root(request: Request):
                     <a href="/ontology">Ontology</a> &middot;
                     <a href="/ontology/shacl">SHACL</a>
                     &middot; bS-Summit Porto
-                    <div class="footer-author">
-                        Built by <a href="https://www.lt.plus/">Louis True</a> &middot;
-                        <a href="https://github.com/louistrue/lignum-dpp-bsdd">Source on GitHub</a>
-                    </div>
                 </div>
             </div>
         </body>
