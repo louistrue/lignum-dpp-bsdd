@@ -196,3 +196,132 @@ export const MATERIAL_KEYWORDS: { keywords: string[]; categories: string[]; comp
 ];
 
 export const COMPONENT_KEYS = Object.keys(COMPONENTS);
+
+// --- LCA / Emissions calculation data ---
+
+export type LifeCycleModule = 'A1-A3' | 'A4' | 'A5' | 'C1' | 'C2' | 'C3' | 'C4' | 'D';
+
+export const ALL_MODULES: LifeCycleModule[] = ['A1-A3', 'A4', 'A5', 'C1', 'C2', 'C3', 'C4', 'D'];
+
+export const MODULE_LABELS: Record<LifeCycleModule, string> = {
+  'A1-A3': 'Production',
+  'A4': 'Transport to site',
+  'A5': 'Installation',
+  'C1': 'Deconstruction',
+  'C2': 'Waste transport',
+  'C3': 'Waste processing',
+  'C4': 'Disposal',
+  'D': 'Reuse/recovery potential',
+};
+
+export interface EpdIndicatorValue {
+  indicator: string;
+  displayName: string;
+  unit: string;
+  modules: Partial<Record<LifeCycleModule, number>>;
+}
+
+export interface LcaComponentConfig {
+  label: string;
+  shortLabel: string;
+  density: number;
+  referenceUnit: 'm3' | 'm';
+  referenceQuantity: number;
+  linearDensity?: number;
+  indicators: EpdIndicatorValue[];
+}
+
+/**
+ * LCA indicator data per component, sourced from DPP JSON-LD files and EPDs.
+ * Values are per declared/reference unit (1 m3 for insulation/timber, 1 m for pipe).
+ */
+export const LCA_COMPONENTS: Record<string, LcaComponentConfig> = {
+  insulation: {
+    label: 'Insulation (Knauf Acoustic Batt)',
+    shortLabel: 'Insulation',
+    density: 85,
+    referenceUnit: 'm3',
+    referenceQuantity: 1,
+    indicators: [
+      {
+        indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
+        modules: { 'A1-A3': 7.20, 'A4': 0.152, 'A5': 0.048, 'C2': 0.030, 'C3': 0.019, 'C4': 0.010 },
+      },
+      {
+        indicator: 'AP', displayName: 'Acidification', unit: 'kg SO2e',
+        modules: { 'A1-A3': 0.005 },
+      },
+      {
+        indicator: 'EP', displayName: 'Eutrophication', unit: 'kg PO4e',
+        modules: { 'A1-A3': 0.002 },
+      },
+      {
+        indicator: 'ODP', displayName: 'Ozone Depletion', unit: 'kg CFC-11e',
+        modules: { 'A1-A3': 0.000001 },
+      },
+      {
+        indicator: 'PENRT', displayName: 'Primary Energy (non-renewable)', unit: 'MJ',
+        modules: { 'A1-A3': 85.0 },
+      },
+    ],
+  },
+  timber: {
+    label: 'Timber (Schilliger Glulam GL24h)',
+    shortLabel: 'Timber',
+    density: 410,
+    referenceUnit: 'm3',
+    referenceQuantity: 1,
+    indicators: [
+      {
+        indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
+        modules: { 'A1-A3': -615.0, 'A4': 4.12, 'A5': 5.75, 'C2': 1.37, 'C3': 686, 'C4': 0 },
+      },
+      {
+        indicator: 'AP', displayName: 'Acidification', unit: 'kg SO2e',
+        modules: { 'A1-A3': 0.581 },
+      },
+      {
+        indicator: 'EP', displayName: 'Eutrophication', unit: 'kg PO4e',
+        modules: { 'A1-A3': 0.135 },
+      },
+      {
+        indicator: 'ODP', displayName: 'Ozone Depletion', unit: 'kg CFC-11e',
+        modules: { 'A1-A3': 0.00000214 },
+      },
+      {
+        indicator: 'PENRT', displayName: 'Primary Energy (non-renewable)', unit: 'MJ',
+        modules: { 'A1-A3': 2170 },
+      },
+    ],
+  },
+  pipe: {
+    label: 'Pipe (Wavin PVC DN110)',
+    shortLabel: 'Pipe',
+    density: 1410,
+    referenceUnit: 'm',
+    referenceQuantity: 1,
+    linearDensity: 1.58,
+    indicators: [
+      {
+        indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
+        modules: { 'A1-A3': 2.85, 'A4': 0.060, 'A5': 0.047, 'C1': 0.010, 'C2': 0.020, 'C3': 0.142, 'C4': 0.045 },
+      },
+      {
+        indicator: 'AP', displayName: 'Acidification', unit: 'kg SO2e',
+        modules: { 'A1-A3': 0.012 },
+      },
+      {
+        indicator: 'EP', displayName: 'Eutrophication', unit: 'kg PO4e',
+        modules: { 'A1-A3': 0.0015 },
+      },
+      {
+        indicator: 'ODP', displayName: 'Ozone Depletion', unit: 'kg CFC-11e',
+        modules: { 'A1-A3': 0.0000012 },
+      },
+      {
+        indicator: 'PENRT', displayName: 'Primary Energy (non-renewable)', unit: 'MJ',
+        modules: { 'A1-A3': 120.0 },
+      },
+    ],
+  },
+};

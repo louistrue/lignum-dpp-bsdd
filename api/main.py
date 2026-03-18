@@ -673,7 +673,8 @@ async def root(request: Request):
                 .btn-gs1:hover {{ border-color: var(--wood-light); background: var(--wood-bg); text-decoration: none; }}
 
                 /* Tool cards */
-                .tools-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }}
+                .tools-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }}
+                @media (max-width: 900px) {{ .tools-grid {{ grid-template-columns: 1fr 1fr; }} }}
                 @media (max-width: 640px) {{ .tools-grid {{ grid-template-columns: 1fr; }} }}
                 .tool-card {{ background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.2s, border-color 0.2s; }}
                 .tool-card:hover {{ border-color: var(--wood-light); box-shadow: 0 4px 16px rgba(139,111,71,0.08); }}
@@ -775,6 +776,20 @@ async def root(request: Request):
                             <span class="tool-tag">GS1</span>
                         </div>
                         <div><a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a></div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="5" width="4" height="16"/><rect x="17" y="1" width="4" height="20"/></svg>
+                            Calculate Emissions
+                        </h3>
+                        <p>Upload an IFC model to calculate whole-building environmental impacts using EPD data from Digital Product Passports. Supports EN 15804 life cycle modules.</p>
+                        <div class="tool-tags">
+                            <span class="tool-tag">EN 15804</span>
+                            <span class="tool-tag">LCA</span>
+                            <span class="tool-tag">GWP</span>
+                            <span class="tool-tag">EPD</span>
+                        </div>
+                        <div><a href="/emissions/" class="btn btn-primary">Open Calculator</a></div>
                     </div>
                 </div>
 
@@ -1733,6 +1748,11 @@ if _files_dir.exists():
 _enrich_dir = _api_path / "static" / "enrich"
 if _enrich_dir.exists():
     app.mount("/enrich", StaticFiles(directory=str(_enrich_dir), html=True), name="enrich")
+
+# Serve emissions calculator static assets
+_emissions_dir = _api_path / "static" / "emissions"
+if _emissions_dir.exists():
+    app.mount("/emissions", StaticFiles(directory=str(_emissions_dir), html=True), name="emissions")
 
 # Load sample DPPs
 load_sample_dpps()

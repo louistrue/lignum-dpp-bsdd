@@ -9,6 +9,7 @@ const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)
 
 let currentFile: File | null = null;
 let enrichedBlob: Blob | null = null;
+let lastEnrichedText: string | null = null;
 
 // Sections
 const stepUpload = $('#step-upload');
@@ -31,6 +32,7 @@ const statsGrid = $('#stats-grid');
 const resultsSubtitle = $('#results-subtitle');
 const resultsMatchTable = $('#results-match-table');
 const downloadBtn = $('#download-btn');
+const emissionsBtn = $('#emissions-btn');
 const restartBtn = $('#restart-btn');
 
 function formatSize(bytes: number): string {
@@ -160,6 +162,7 @@ enrichBtn.addEventListener('click', async () => {
       setTimeout(() => {
         try {
           const { enrichedText, assignments } = processIfc(text, log);
+          lastEnrichedText = enrichedText;
           enrichedBlob = new Blob([enrichedText], { type: 'application/octet-stream' });
 
           // Calculate stats
@@ -224,11 +227,26 @@ downloadBtn.addEventListener('click', () => {
   URL.revokeObjectURL(url);
 });
 
+// --- Emissions handoff ---
+
+emissionsBtn.addEventListener('click', () => {
+  if (!lastEnrichedText && !currentFile) return;
+  try {
+    const text = lastEnrichedText || '';
+    sessionStorage.setItem('lca-ifc-text', text);
+    sessionStorage.setItem('lca-ifc-name', currentFile?.name || 'enriched.ifc');
+  } catch {
+    // sessionStorage full — user will need to upload manually
+  }
+  window.location.href = '/emissions/';
+});
+
 // --- Restart ---
 
 restartBtn.addEventListener('click', () => {
   currentFile = null;
   enrichedBlob = null;
+  lastEnrichedText = null;
   fileInput.value = '';
   logPre.textContent = '';
   progressFill.style.width = '0%';
