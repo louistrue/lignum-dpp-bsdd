@@ -304,6 +304,36 @@
                             "module": "A1-A3",
                             "value": 2170,
                             "unit": "MJ"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A4",
+                            "value": 4.12,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A5",
+                            "value": 5.75,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "C2",
+                            "value": 1.37,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "C3",
+                            "value": 686,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "C4",
+                            "value": 0,
+                            "unit": "kg CO2e"
                         }
                     ]
                 },

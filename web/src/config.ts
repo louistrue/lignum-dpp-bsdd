@@ -53,12 +53,22 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
       { name: 'DOPC_SoundAbsorption', value: '0.95', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/SoundAbsorption', dictionaryUri: 'https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0', standard: 'EN ISO 354', note: 'DoPC sound absorption coefficient' },
       { name: 'DOPC_TensileStrengthPerpendicular', value: '5', unit: 'kPa', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/TensileStrengthPerpendicular', dictionaryUri: 'https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0', standard: 'EN 1607', note: 'DoPC tensile strength perpendicular to faces' },
       { name: 'DOPC_ThicknessTolerance', value: 'T5', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0/prop/ThicknessTolerance', dictionaryUri: 'https://identifier.buildingsmart.org/uri/demo2025/thermal-insulation-products/1.0.0', standard: 'EN 13162', note: 'DoPC thickness tolerance class' },
-      // EPD indicators
+      // EPD indicators – A1-A3 (production)
       { name: 'GWP_total', value: '7.20', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A1-A3' },
       { name: 'AE', value: '0.005', unit: 'kgSO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/AE', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Acidification potential A1-A3' },
       { name: 'EP_freshwater', value: '0.002', unit: 'kgPO4e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/EP_freshwater', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Eutrophication potential A1-A3' },
       { name: 'ODP', value: '0.000001', unit: 'kg CFC-11e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/ODP', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Ozone depletion potential A1-A3' },
       { name: 'PENRE-with-energycontent-tot', value: '85.0', unit: 'MJ', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/non-renewableprimaryresourceswithenergycontent-tot', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Primary energy total A1-A3' },
+      // EPD indicators – A4 (transport to site, 150 km truck)
+      { name: 'GWP_total', value: '0.152', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A4' },
+      // EPD indicators – A5 (installation)
+      { name: 'GWP_total', value: '0.048', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A5' },
+      // EPD indicators – C2 (transport to disposal)
+      { name: 'GWP_total', value: '0.030', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C2' },
+      // EPD indicators – C3 (waste processing)
+      { name: 'GWP_total', value: '0.019', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C3' },
+      // EPD indicators – C4 (disposal/landfill)
+      { name: 'GWP_total', value: '0.010', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C4' },
     ],
     documents: [
       { name: 'Product Datasheet', url: `${BASE}/files/insul/Acoustic%20Batt%20Datasheet%20.pdf`, type: 'datasheet' },
@@ -92,12 +102,22 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
       { name: 'DOPC_ReactionToFire', value: 'D-s2.d0', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/reactionToFire', dictionaryUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0', standard: 'EN 13501-1', note: 'DoPC Euroclass fire rating' },
       { name: 'DOPC_FormaldehydeEmission', value: 'E1', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/formaldehydeEmission', dictionaryUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0', standard: 'EN 717-1', note: 'DoPC formaldehyde emission class' },
       { name: 'DOPC_DelaminationResistance', value: 'Pass', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0/prop/delaminationResistance', dictionaryUri: 'https://identifier.buildingsmart.org/uri/cei-bois.org/wood/1.0.0', standard: 'EN 14080', note: 'DoPC delamination resistance test result' },
-      // EPD indicators
+      // EPD indicators – A1-A3 (production)
       { name: 'GWP_total', value: '-615.0', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A1-A3 (biogenic)' },
       { name: 'AE', value: '0.004', unit: 'kgSO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/AE', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Acidification potential A1-A3' },
       { name: 'EP_freshwater', value: '0.001', unit: 'kgPO4e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/EP_freshwater', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Eutrophication potential A1-A3' },
       { name: 'ODP', value: '0.0000008', unit: 'kg CFC-11e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/ODP', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Ozone depletion potential A1-A3' },
       { name: 'PENRE-with-energycontent-tot', value: '95.0', unit: 'MJ', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/non-renewableprimaryresourceswithenergycontent-tot', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Primary energy total A1-A3' },
+      // EPD indicators – A4 (transport to site)
+      { name: 'GWP_total', value: '4.12', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A4' },
+      // EPD indicators – A5 (installation)
+      { name: 'GWP_total', value: '5.75', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A5' },
+      // EPD indicators – C2 (transport to disposal)
+      { name: 'GWP_total', value: '1.37', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C2' },
+      // EPD indicators – C3 (waste processing / incineration releases stored biogenic carbon)
+      { name: 'GWP_total', value: '686', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C3' },
+      // EPD indicators – C4 (disposal)
+      { name: 'GWP_total', value: '0', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C4' },
     ],
     documents: [
       { name: 'Declaration of Performance (DoP)', url: `${BASE}/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf`, type: 'dop' },
@@ -130,12 +150,24 @@ export const COMPONENTS: Record<string, ComponentConfig> = {
       { name: 'DOPC_ReactionToFire', value: 'E', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/reactionToFire', dictionaryUri: 'https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0', standard: 'EN 13501-1', note: 'DoPC Euroclass fire rating' },
       { name: 'DOPC_InternalPressureResistance', value: 'Pass', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/internalPressureResistance', dictionaryUri: 'https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0', standard: 'EN 1401-1', note: 'DoPC resistance to internal pressure' },
       { name: 'DOPC_CreepRatio', value: '2.0', unit: '-', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0/prop/creepRatio', dictionaryUri: 'https://identifier.buildingsmart.org/uri/demo2025/ppipes/1.0.0', standard: 'EN 1401-1', note: 'DoPC creep ratio' },
-      // EPD indicators
+      // EPD indicators – A1-A3 (production)
       { name: 'GWP_total', value: '2.85', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A1-A3' },
       { name: 'AE', value: '0.012', unit: 'kgSO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/AE', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Acidification potential A1-A3' },
       { name: 'EP_freshwater', value: '0.0015', unit: 'kgPO4e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/EP_freshwater', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Eutrophication potential A1-A3' },
       { name: 'ODP', value: '0.0000012', unit: 'kg CFC-11e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/ODP', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Ozone depletion potential A1-A3' },
       { name: 'PENRE-with-energycontent-tot', value: '120.0', unit: 'MJ', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/non-renewableprimaryresourceswithenergycontent-tot', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'Primary energy total A1-A3' },
+      // EPD indicators – A4 (transport to site, 500 km truck)
+      { name: 'GWP_total', value: '0.060', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A4' },
+      // EPD indicators – A5 (installation)
+      { name: 'GWP_total', value: '0.047', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total A5' },
+      // EPD indicators – C1 (demolition)
+      { name: 'GWP_total', value: '0.010', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C1' },
+      // EPD indicators – C2 (transport to disposal)
+      { name: 'GWP_total', value: '0.020', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C2' },
+      // EPD indicators – C3 (waste processing / recycling)
+      { name: 'GWP_total', value: '0.142', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C3' },
+      // EPD indicators – C4 (disposal/landfill)
+      { name: 'GWP_total', value: '0.045', unit: 'kgCO2e', bsddPropertyUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0/prop/GWP_total', dictionaryUri: 'https://identifier.buildingsmart.org/uri/LCA/LCA/3.0', standard: 'EN 15804', note: 'GWP total C4' },
     ],
     documents: [
       { name: 'Environmental Product Declaration (EPD)', url: `${BASE}/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf`, type: 'epd' },

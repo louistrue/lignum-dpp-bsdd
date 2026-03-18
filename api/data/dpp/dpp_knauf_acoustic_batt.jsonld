@@ -389,6 +389,42 @@
                             "module": "A1-A3",
                             "value": 0.0038,
                             "unit": "kg NMVOCe"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A4",
+                            "value": 0.152,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "A5",
+                            "value": 0.048,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "C2",
+                            "value": 0.030,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "C3",
+                            "value": 0.019,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "C4",
+                            "value": 0.010,
+                            "unit": "kg CO2e"
+                        },
+                        {
+                            "indicator": "GWP-total",
+                            "module": "D",
+                            "value": -0.178,
+                            "unit": "kg CO2e"
                         }
                     ]
                 },
