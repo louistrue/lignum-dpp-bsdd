@@ -29,7 +29,7 @@ BASE_URL = os.getenv("BASE_URL") or (
 BASE_URL = BASE_URL.rstrip("/")
 
 DEMO_DISCLAIMER = (
-    "DEMO / PROOF OF CONCEPT — This is NOT an official Digital Product Passport server. "
+    "DEMO / PROOF OF CONCEPT - This is NOT an official Digital Product Passport server. "
     "Sample data only. Not operated by or affiliated with any manufacturer. "
     "Presented at bS-Summit Porto."
 )
@@ -38,10 +38,10 @@ DEMO_DISCLAIMER = (
 # Set DEMO_PROTECTED=false to disable (e.g. for local development).
 DEMO_PROTECTED = os.getenv("DEMO_PROTECTED", "true").lower() != "false"
 
-# IDs of seed DPPs loaded from disk — populated by load_sample_dpps()
+# IDs of seed DPPs loaded from disk - populated by load_sample_dpps()
 _seed_dpp_ids: set = set()
 
-# SVG favicon — stylised tree-ring cross-section
+# SVG favicon - stylised tree-ring cross-section
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <rect width="32" height="32" rx="6" fill="#fff"/>
   <circle cx="16" cy="16" r="11" fill="none" stroke="#8b6f47" stroke-width="1.5" opacity=".35"/>
@@ -52,7 +52,7 @@ FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 
 FAVICON_DATA_URI = "data:image/svg+xml," + FAVICON_SVG.replace("#", "%23").replace("\n", "").replace("  ", "")
 
-# Floating QR code widget — dynamically encodes current page URL so demo attendees can follow along on mobile.
+# Floating QR code widget - dynamically encodes current page URL so demo attendees can follow along on mobile.
 QR_CODE_WIDGET = """
 <div id="qr-widget" style="position:fixed;bottom:20px;right:20px;z-index:9999;background:#fff;border:1px solid #e5e0da;border-radius:10px;padding:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity 0.2s;">
   <img id="qr-img" width="90" height="90" style="border-radius:4px;" alt="QR code for this page">
@@ -82,7 +82,7 @@ tags_metadata = [
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="buildingSMART DPP API [DEMO] — bS-Summit Porto",
+    title="buildingSMART DPP API [DEMO] - bS-Summit Porto",
     description=(
         "## DEMO / PROOF OF CONCEPT\n\n"
         "**This is NOT an official Digital Product Passport server.**\n"
@@ -107,7 +107,7 @@ app = FastAPI(
         "| Knauf Acoustic Batt | `04012345678901` | [`/id/01/04012345678901`](/id/01/04012345678901) |\n"
         "| Schilliger Glulam GL24h | `07640123456789` | [`/id/01/07640123456789`](/id/01/07640123456789) |\n"
         "| PVC Sewage Pipe DN110 | `05790001234561` | [`/id/01/05790001234561`](/id/01/05790001234561) |\n\n"
-        "*Presented at bS-Summit Porto — buildingSMART International*"
+        "*Presented at bS-Summit Porto - buildingSMART International*"
     ),
     version="0.1.0-demo",
     docs_url="/docs",
@@ -125,7 +125,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Demo disclaimer middleware — adds headers to every response
+# Demo disclaimer middleware - adds headers to every response
 @app.middleware("http")
 async def add_demo_headers(request: Request, call_next):
     response = await call_next(request)
@@ -276,10 +276,10 @@ def render_dpp_as_html(dpp: Dict) -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{esc(product_name)} — Digital Product Passport (prEN 18222 demo)">
+    <meta name="description" content="{esc(product_name)} - Digital Product Passport (prEN 18222 demo)">
     <meta name="theme-color" content="#2c2418">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <title>{esc(product_name)} &mdash; DPP [DEMO]</title>
+    <title>{esc(product_name)} - DPP [DEMO]</title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {{ --oak: #6b5534; --oak-light: #a68b5b; --oak-muted: #c4a97d; --ink: #1e1a14; --ink-soft: #4a4035; --muted: #8a7e70; --border: #e5e0da; --border-light: #f0ece6; --card: #fff; --radius: 8px; }}
@@ -390,7 +390,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                 html += f'<div class="prop-row"><span class="prop-name">{esc(label)}</span><span class="prop-value">{esc(str(op[k]))}</span></div>'
         html += "</div></div>"
 
-    # Data Element Collections — render order: DoPC, EPD, Documents, Carrier, Classification
+    # Data Element Collections - render order: DoPC, EPD, Documents, Carrier, Classification
     # Skip #productProperties entirely (duplicates DoPC declared values)
     for collection in collections:
         coll_id = collection.get("id", "")
@@ -427,7 +427,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                 html += f'<img src="{qr_data_uri}" alt="QR Code" width="180" height="180">'
             if qr_uri:
                 html += f'<code>{esc(qr_uri)}</code>'
-                html += '<div class="gs1-label">GS1 Digital Link — scan to access this DPP</div>'
+                html += '<div class="gs1-label">GS1 Digital Link - scan to access this DPP</div>'
             if gtin:
                 gs1_link = f"{BASE_URL}/id/01/{gtin}"
                 html += f'<div style="margin-top:12px;"><a href="{esc(gs1_link)}" class="bsdd-link" style="font-size:13px;">Open GS1 Link</a></div>'
@@ -509,7 +509,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                 html += f'<div class="prop-row"><span class="prop-name">{esc(display_name)}{bsdd_html}</span><span class="prop-value">{value}<span class="prop-unit">{unit}</span></span></div>'
                 continue
 
-            # Object values (EPD metadata etc.) — format dicts and lists nicely
+            # Object values (EPD metadata etc.) - format dicts and lists nicely
             if "dpp:value" in element and isinstance(element["dpp:value"], dict):
                 obj = element["dpp:value"]
                 if not has_props:
@@ -552,7 +552,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
             <a href="/">Home</a> &middot;
             <a href="/docs">API Docs</a> &middot;
             <a href="/ontology">Ontology</a><br>
-            bS-Summit Porto — buildingSMART International
+            bS-Summit Porto - buildingSMART International
         </div>
     </div>
 {QR_CODE_WIDGET}
@@ -739,9 +739,9 @@ async def gs1_digital_link_resolver(request: Request, gtin: str, serial: Optiona
     The URI contains the GTIN (AI 01) and optionally a serial number (AI 21) or batch (AI 10).
 
     **Try these GTINs:**
-    - `04012345678901` — Knauf Acoustic Batt
-    - `07640123456789` — Schilliger Glulam GL24h
-    - `05790001234561` — PVC Sewage Pipe DN110
+    - `04012345678901` - Knauf Acoustic Batt
+    - `07640123456789` - Schilliger Glulam GL24h
+    - `05790001234561` - PVC Sewage Pipe DN110
 
     Returns HTML in browser, JSON-LD otherwise (content negotiation).
     """
@@ -1233,7 +1233,7 @@ async def validate_dpp(request: Request):
                     if isinstance(item, dict):
                         _validate_node(item, nested_shape, full_path)
 
-            # sh:or — accept if any branch passes
+            # sh:or - accept if any branch passes
             sh_or = prop.get("sh:or")
             if sh_or and isinstance(val, list):
                 or_list = sh_or.get("@list", []) if isinstance(sh_or, dict) else []
@@ -1278,7 +1278,7 @@ async def validate_dpp(request: Request):
         "resultsCount": len(findings),
         "results": findings,
         "shapesUsed": "dpp-shacl.jsonld",
-        "disclaimer": "Lightweight SHACL validation (demo) — not a full RDF/SHACL engine."
+        "disclaimer": "Lightweight SHACL validation (demo) - not a full RDF/SHACL engine."
     }
 
 @app.get("/favicon.svg", include_in_schema=False)
@@ -1291,7 +1291,7 @@ async def favicon():
 
 @app.get("/health", tags=["System"])
 async def health_check():
-    """Health check — shows loaded DPP count."""
+    """Health check - shows loaded DPP count."""
     return {
         "status": "healthy",
         "dpps_loaded": len(dpp_storage),

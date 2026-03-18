@@ -1,5 +1,5 @@
 /**
- * Emissions Calculator UI — wizard: Upload → Configure → Results.
+ * Emissions Calculator UI: wizard (Upload > Configure > Results).
  */
 
 import { analyzeModel, type Assignment } from './enrichment';
@@ -143,7 +143,7 @@ function renderElementSummary() {
   let html = `<strong>${totalElements}</strong> elements matched to <strong>${assignments.length}</strong> DPP product${assignments.length > 1 ? 's' : ''}`;
   html += `<br><strong>${withData}</strong> elements have quantity data (volume/length)`;
   if (withoutData > 0) {
-    html += `<br><span style="color:#92400e;"><strong>${withoutData}</strong> elements missing quantity data — will be excluded</span>`;
+    html += `<br><span style="color:#92400e;"><strong>${withoutData}</strong> elements missing quantity data, will be excluded</span>`;
   }
 
   elementSummary.innerHTML = html;
@@ -234,7 +234,7 @@ function renderResults(results: LcaResults) {
 
   // Subtitle
   resultsSubtitle.textContent =
-    `${totals.elementsWithData} elements analyzed across ${components.length} material${components.length > 1 ? 's' : ''} — modules: ${results.selectedModules.join(', ')}`;
+    `${totals.elementsWithData} elements analyzed across ${components.length} material${components.length > 1 ? 's' : ''} (modules: ${results.selectedModules.join(', ')})`;
 
   // Stat cards
   const gwp = totals.indicators['GWP-total'] ?? 0;
@@ -275,7 +275,7 @@ function renderResults(results: LcaResults) {
   if (totals.elementsWithoutData > 0) {
     noDataWarning.innerHTML = `
       <div class="no-data-warning">
-        ${totals.elementsWithoutData} element${totals.elementsWithoutData > 1 ? 's' : ''} excluded — no volume/length quantity data found in the IFC model.
+        ${totals.elementsWithoutData} element${totals.elementsWithoutData > 1 ? 's' : ''} excluded: no volume/length quantity data found in the IFC model.
       </div>`;
   } else {
     noDataWarning.innerHTML = '';

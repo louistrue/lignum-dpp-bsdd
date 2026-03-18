@@ -1,5 +1,5 @@
 /**
- * IFC Enrichment orchestrator — matches elements to DPP configs and generates
+ * IFC Enrichment orchestrator - matches elements to DPP configs and generates
  * new STEP entities for property sets, classifications, documents, and GS1 IDs.
  */
 

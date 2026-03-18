@@ -1,5 +1,5 @@
 /**
- * UI entry point — wizard-style flow: Upload → Review → Enrich → Export.
+ * UI entry point: wizard-style flow (Upload > Review > Enrich > Export).
  */
 
 import { processIfc, analyzeModel, type Assignment } from './enrichment';
@@ -184,7 +184,7 @@ enrichBtn.addEventListener('click', async () => {
           progressFill.style.width = '100%';
 
           resultsSubtitle.textContent =
-            `${totalElements} elements enriched with ${productSet.size} DPP product${productSet.size > 1 ? 's' : ''} — ${formatSize(enrichedBlob.size)}`;
+            `${totalElements} elements enriched with ${productSet.size} DPP product${productSet.size > 1 ? 's' : ''} (${formatSize(enrichedBlob.size)})`;
 
           statsGrid.innerHTML = `
             <div class="stat-card"><div class="stat-value">${totalElements}</div><div class="stat-label">Elements</div></div>

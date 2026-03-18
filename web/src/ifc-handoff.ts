@@ -42,7 +42,7 @@ export async function storeHandoff(text: string, name: string): Promise<void> {
     });
     db.close();
   } catch {
-    // IndexedDB unavailable (e.g. private browsing on old Safari) — try sessionStorage
+    // IndexedDB unavailable (e.g. private browsing on old Safari) - try sessionStorage
     sessionStorage.setItem('lca-ifc-text', text);
     sessionStorage.setItem('lca-ifc-name', name);
   }

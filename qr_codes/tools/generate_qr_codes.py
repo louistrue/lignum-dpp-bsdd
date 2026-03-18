@@ -13,7 +13,7 @@ import qrcode
 from pathlib import Path
 from typing import Dict, Optional, List
 
-# Base URL — deployed API by default
+# Base URL - deployed API by default
 BASE_URL = os.environ.get("DPP_API_URL", "https://bsdd-dpp.dev").rstrip("/")
 
 
@@ -178,7 +178,7 @@ def generate_html_viewer(output_dir: Path, cards: List[Dict[str, str]]):
         </div>
 
         <div class="note">
-            buildingSMART DPP Demo &mdash; bS-Summit Porto &mdash; buildingSMART International
+            buildingSMART DPP Demo - bS-Summit Porto - buildingSMART International
         </div>
     </div>
 </body>
