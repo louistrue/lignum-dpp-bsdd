@@ -616,6 +616,15 @@ async def root(request: Request):
                 .btn-primary:hover {{ background: #333; }}
                 .btn-gs1 {{ background: #fff; color: #333; border: 1px solid #ccc; }}
                 .btn-gs1:hover {{ border-color: #999; background: #fafafa; }}
+                .demo-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }}
+                .demo-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 3px; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.15s; }}
+                .demo-card:hover {{ border-color: #999; }}
+                .demo-card-icon {{ width: 40px; height: 40px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }}
+                .demo-card h3 {{ font-size: 15px; font-weight: 700; color: #111; margin: 0; }}
+                .demo-card p {{ font-size: 13px; color: #666; line-height: 1.5; flex: 1; margin: 0; }}
+                .demo-card .demo-tags {{ display: flex; gap: 4px; flex-wrap: wrap; }}
+                .demo-card .demo-tag {{ background: #f5f5f5; border: 1px solid #eee; color: #555; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .demo-card .btn {{ display: inline-block; margin-top: 4px; }}
                 .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }}
                 .feature-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; }}
                 .feature-card h4 {{ color: #111; margin-bottom: 6px; font-size: 13px; font-weight: 700; }}
@@ -663,37 +672,74 @@ async def root(request: Request):
                 <h2 class="section-title">Sample Products</h2>
                 <div class="product-grid">
                     {product_cards}
-                    <div class="product-card" id="create-card" style="border-style:dashed;">
-                        <div id="create-prompt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;cursor:pointer;" onclick="document.getElementById('create-prompt').style.display='none';document.getElementById('create-form').style.display='block';">
-                            <div style="font-size:28px;color:#ccc;margin-bottom:8px;">+</div>
-                            <div style="font-size:14px;font-weight:600;color:#333;">Create your DPP</div>
-                            <div style="font-size:11px;color:#999;margin-top:4px;">Client-side only — gone on page reload</div>
+                </div>
+
+                <h2 class="section-title">Demo Tools</h2>
+                <div class="demo-grid">
+                    <div class="demo-card">
+                        <div class="demo-card-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                         </div>
-                        <div id="create-form" style="display:none;padding:16px;">
-                            <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:12px;">New Product Passport</div>
-                            <div style="font-size:10px;color:#999;background:#fafafa;border:1px solid #eee;border-radius:3px;padding:6px 8px;margin-bottom:12px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product name</label>
-                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Manufacturer</label>
-                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:10px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product type</label>
-                            <select id="cf-type" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;margin-bottom:14px;font-family:inherit;background:#fff;outline:none;">
-                                <option value="IfcBuildingElementProxy">General building element</option>
-                                <option value="IfcSlab">Slab / panel</option>
-                                <option value="IfcBeam">Beam / column</option>
-                                <option value="IfcWall">Wall element</option>
-                                <option value="IfcWindow">Window</option>
-                                <option value="IfcDoor">Door</option>
-                                <option value="IfcCovering">Insulation / covering</option>
-                                <option value="IfcPipeSegment">Pipe segment</option>
-                            </select>
-                            <div style="display:flex;gap:8px;">
-                                <button onclick="createLocalDpp()" style="flex:1;padding:7px 14px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
-                                <button onclick="document.getElementById('create-form').style.display='none';document.getElementById('create-prompt').style.display='flex';" style="padding:7px 14px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
-                            </div>
-                            <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
+                        <h3>Create Your DPP</h3>
+                        <p>Build a product passport from scratch. Define product properties, assign classifications, and generate a standards-compliant DPP.</p>
+                        <div class="demo-tags">
+                            <span class="demo-tag">prEN 18223</span>
+                            <span class="demo-tag">JSON-LD</span>
+                            <span class="demo-tag">Client-side</span>
+                        </div>
+                        <div>
+                            <a class="btn btn-primary" onclick="document.getElementById('create-section').hidden=false;this.closest('.demo-card').style.display='none';" style="cursor:pointer;">Get Started</a>
                         </div>
                     </div>
+                    <div class="demo-card">
+                        <div class="demo-card-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <h3>Enrich IFC with DPP Data</h3>
+                        <p>Upload an IFC file and enrich building elements with DPP data — property sets, bSDD classifications, EPD indicators, GS1 identifiers, and document references.</p>
+                        <div class="demo-tags">
+                            <span class="demo-tag">IFC 2x3 / 4</span>
+                            <span class="demo-tag">bSDD</span>
+                            <span class="demo-tag">EPD</span>
+                            <span class="demo-tag">GS1</span>
+                        </div>
+                        <div>
+                            <a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="create-section" hidden style="margin-top:20px;background:#fff;border:1px solid #e5e5e5;border-radius:3px;padding:24px;">
+                    <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:4px;">New Product Passport</div>
+                    <div style="font-size:11px;color:#999;margin-bottom:16px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div>
+                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product name</label>
+                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Manufacturer</label>
+                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product type</label>
+                        <select id="cf-type" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;font-family:inherit;background:#fff;outline:none;">
+                            <option value="IfcBuildingElementProxy">General building element</option>
+                            <option value="IfcSlab">Slab / panel</option>
+                            <option value="IfcBeam">Beam / column</option>
+                            <option value="IfcWall">Wall element</option>
+                            <option value="IfcWindow">Window</option>
+                            <option value="IfcDoor">Door</option>
+                            <option value="IfcCovering">Insulation / covering</option>
+                            <option value="IfcPipeSegment">Pipe segment</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:16px;">
+                        <button onclick="createLocalDpp()" style="padding:8px 20px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
+                        <button onclick="document.getElementById('create-section').hidden=true;document.querySelector('.demo-grid .demo-card').style.display='flex';" style="padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
+                    </div>
+                    <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
                 </div>
                 <div id="user-dpps"></div>
 
@@ -709,15 +755,13 @@ async def root(request: Request):
                     var name = esc(rawName);
                     var mfr = esc(rawMfr);
                     var type = esc(ifcType);
-                    var card = '<div class="product-card" style="border-left:3px solid #999;">'
+                    var card = '<div class="product-card" style="border-left:3px solid #16a34a;">'
                         + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
                         + '<div class="product-body"><div class="product-meta">'
                         + '<div style="font-size:11px;color:#999;">Client-side preview only</div>'
                         + '</div><div class="tags"><span class="tag">' + type + '</span><span class="tag">local preview</span></div></div>'
                         + '</div>';
                     document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
-                    document.getElementById('create-form').style.display = 'none';
-                    document.getElementById('create-prompt').style.display = 'flex';
                     document.getElementById('cf-name').value = '';
                     document.getElementById('cf-mfr').value = '';
                 }}
@@ -744,11 +788,6 @@ async def root(request: Request):
                         <h4>API Documentation</h4>
                         <p>Full interactive Swagger UI with examples you can execute directly.</p>
                         <a href="/docs">Open Swagger</a>
-                    </div>
-                    <div class="feature-card">
-                        <h4>IFC Enrichment</h4>
-                        <p>Upload an IFC file and enrich it with DPP data: property sets, bSDD classifications, EPD indicators, documents.</p>
-                        <a href="/enrich/">Enrich IFC</a>
                     </div>
                 </div>
 
