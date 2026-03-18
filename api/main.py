@@ -431,7 +431,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
                     eid = str(element.get("id", ""))
                     fl = fname.lower()
                     el = eid.lower()
-                    if "dop" in el or "dop" in fl or "leistungserkl" in fl:
+                    if "dop" in el or "declaration" in el or "dop" in fl or "leistungserkl" in fl:
                         docs_by_cat.append(("DoP", "doc-badge-dop", fname, url))
                     elif "epd" in el or "epd" in fl or "nepd" in fl:
                         docs_by_cat.append(("EPD", "doc-badge-epd", fname, url))
