@@ -125,5 +125,13 @@
       <a href="/docs">API Docs</a>
     </footer>
   </main>
+<div id="qr-widget" style="position:fixed;bottom:20px;right:20px;z-index:9999;background:#fff;border:1px solid #e5e0da;border-radius:10px;padding:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity 0.2s;">
+  <img id="qr-img" width="90" height="90" style="border-radius:4px;" alt="QR code for this page">
+  <span style="font-size:9px;color:#999;font-family:sans-serif;">Scan to follow along</span>
+  <button onclick="this.parentElement.style.display='none'" style="position:absolute;top:2px;right:6px;background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;line-height:1;">&times;</button>
+</div>
+<script>
+(function(){var q=document.getElementById('qr-img');if(q){var u=encodeURIComponent(location.href);q.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+u;}})();
+</script>
 </body>
 </html>

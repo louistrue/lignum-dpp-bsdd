@@ -51,6 +51,18 @@ FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 
 FAVICON_DATA_URI = "data:image/svg+xml," + FAVICON_SVG.replace("#", "%23").replace("\n", "").replace("  ", "")
 
+# Floating QR code widget — dynamically encodes current page URL so demo attendees can follow along on mobile.
+QR_CODE_WIDGET = """
+<div id="qr-widget" style="position:fixed;bottom:20px;right:20px;z-index:9999;background:#fff;border:1px solid #e5e0da;border-radius:10px;padding:10px;box-shadow:0 4px 20px rgba(0,0,0,0.12);display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity 0.2s;">
+  <img id="qr-img" width="90" height="90" style="border-radius:4px;" alt="QR code for this page">
+  <span style="font-size:9px;color:#999;font-family:sans-serif;">Scan to follow along</span>
+  <button onclick="this.parentElement.style.display='none'" style="position:absolute;top:2px;right:6px;background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;line-height:1;">&times;</button>
+</div>
+<script>
+(function(){var q=document.getElementById('qr-img');if(q){var u=encodeURIComponent(location.href);q.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+u;}})();
+</script>
+"""
+
 META_DESCRIPTION = (
     "Proof-of-concept Digital Product Passport (DPP) API for construction products, "
     "conforming to prEN 18222:2025 with GS1 Digital Link, bSDD references, and SHACL validation."
@@ -540,6 +552,7 @@ def render_dpp_as_html(dpp: Dict) -> str:
             bS-Summit Porto — buildingSMART International
         </div>
     </div>
+{QR_CODE_WIDGET}
 </body>
 </html>"""
     return html
@@ -1037,6 +1050,7 @@ async def root(request: Request):
                     &middot; buildingSMART Summit Porto
                 </div>
             </div>
+        {QR_CODE_WIDGET}
         </body>
         </html>
         """)
