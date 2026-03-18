@@ -33,6 +33,22 @@ DEMO_DISCLAIMER = (
     "Presented at bS-Summit Porto."
 )
 
+# SVG favicon — stylised tree-ring cross-section (wood = "lignum")
+FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#111"/>
+  <circle cx="16" cy="16" r="11" fill="none" stroke="#c8a87c" stroke-width="1.5" opacity=".35"/>
+  <circle cx="16" cy="16" r="8" fill="none" stroke="#c8a87c" stroke-width="1.5" opacity=".5"/>
+  <circle cx="16" cy="16" r="5" fill="none" stroke="#c8a87c" stroke-width="1.5" opacity=".7"/>
+  <circle cx="16" cy="16" r="2" fill="#c8a87c"/>
+</svg>"""
+
+FAVICON_DATA_URI = "data:image/svg+xml," + FAVICON_SVG.replace("#", "%23").replace("\n", "").replace("  ", "")
+
+META_DESCRIPTION = (
+    "Proof-of-concept Digital Product Passport (DPP) API for construction products, "
+    "conforming to prEN 18222:2025 with GS1 Digital Link, bSDD references, and SHACL validation."
+)
+
 # Tag metadata controls ordering in Swagger UI
 tags_metadata = [
     {"name": "Demo Landing", "description": "Interactive landing page with product cards and QR codes"},
@@ -239,6 +255,9 @@ def render_dpp_as_html(dpp: Dict) -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{esc(product_name)} — Digital Product Passport (prEN 18222 demo)">
+    <meta name="theme-color" content="#111">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>{esc(product_name)} &mdash; DPP [DEMO]</title>
     <style>
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -560,7 +579,13 @@ async def root(request: Request):
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Lignum DPP Demo — bS-Summit Porto</title>
+            <meta name="description" content="{META_DESCRIPTION}">
+            <meta name="theme-color" content="#111">
+            <meta property="og:title" content="Lignum DPP — Digital Product Passport Demo">
+            <meta property="og:description" content="{META_DESCRIPTION}">
+            <meta property="og:type" content="website">
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+            <title>Lignum DPP — Digital Product Passport Demo</title>
             <style>
                 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
                 body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
@@ -1383,6 +1408,14 @@ async def validate_dpp(request: Request):
         "shapesUsed": "dpp-shacl.jsonld",
         "disclaimer": "Lightweight SHACL validation (demo) — not a full RDF/SHACL engine."
     }
+
+@app.get("/favicon.svg", include_in_schema=False)
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """Serve SVG favicon for browsers."""
+    return Response(content=FAVICON_SVG, media_type="image/svg+xml",
+                    headers={"Cache-Control": "public, max-age=604800"})
+
 
 @app.get("/health", tags=["System"])
 async def health_check():
