@@ -603,16 +603,17 @@ async def root(request: Request):
                 a:hover {{ text-decoration: underline; }}
                 code {{ font-family: 'JetBrains Mono', monospace; }}
 
-                /* Top bar — identity + demo notice */
-                .topbar {{ background: var(--ink); color: #ccc; padding: 0; font-size: 12px; display: flex; align-items: stretch; }}
-                .topbar-identity {{ display: flex; align-items: center; gap: 12px; padding: 8px 24px; border-right: 1px solid #333; white-space: nowrap; }}
-                .topbar-identity strong {{ color: #fff; font-weight: 600; letter-spacing: -0.01em; }}
-                .topbar-identity a {{ color: var(--wood-light); font-weight: 500; }}
-                .topbar-identity a:hover {{ color: #fff; text-decoration: none; }}
-                .topbar-icons {{ display: flex; align-items: center; gap: 10px; padding: 0 16px; border-right: 1px solid #333; }}
-                .topbar-icons a {{ color: #888; display: inline-flex; transition: color 0.15s; }}
-                .topbar-icons a:hover {{ color: #fff; text-decoration: none; }}
-                .topbar-demo {{ flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px 24px; font-size: 11px; font-weight: 600; color: #ef9a9a; letter-spacing: 0.3px; }}
+                /* Demo banner */
+                .demo-banner {{ background: #b91c1c; color: #fff; text-align: center; padding: 6px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }}
+
+                /* Author bar */
+                .authorbar {{ background: var(--ink); color: #aaa; padding: 7px 32px; font-size: 12px; display: flex; align-items: center; gap: 14px; }}
+                .authorbar strong {{ color: #fff; font-weight: 600; }}
+                .authorbar a {{ color: var(--wood-light); font-weight: 500; }}
+                .authorbar a:hover {{ color: #fff; text-decoration: none; }}
+                .authorbar-icons {{ display: flex; align-items: center; gap: 10px; margin-left: 2px; }}
+                .authorbar-icons a {{ color: #666; display: inline-flex; transition: color 0.15s; }}
+                .authorbar-icons a:hover {{ color: #fff; text-decoration: none; }}
 
                 /* Layout */
                 .page {{ max-width: 1080px; margin: 0 auto; padding: 32px 32px 40px; }}
@@ -678,11 +679,10 @@ async def root(request: Request):
                 .form-input:focus {{ border-color: var(--wood); box-shadow: 0 0 0 3px rgba(139,111,71,0.1); }}
                 .form-actions {{ display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0ece6; }}
 
-                /* Bottom grid */
-                .bottom-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }}
-                @media (max-width: 768px) {{ .bottom-grid {{ grid-template-columns: 1fr; }} }}
-                .explore-links {{ display: flex; gap: 16px; flex-wrap: wrap; }}
-                .explore-link {{ display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.15s; min-width: 120px; }}
+                /* Explore + Conneg */
+                .explore-links {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }}
+                @media (max-width: 640px) {{ .explore-links {{ grid-template-columns: repeat(2, 1fr); }} }}
+                .explore-link {{ display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.15s; }}
                 .explore-link:hover {{ border-color: var(--wood-light); text-decoration: none; }}
                 .explore-link strong {{ font-size: 13px; color: var(--ink); }}
                 .explore-link span {{ font-size: 11px; color: #aaa; font-weight: 400; }}
@@ -698,16 +698,14 @@ async def root(request: Request):
             </style>
         </head>
         <body>
-            <div class="topbar">
-                <div class="topbar-identity">
-                    <strong>Louis True</strong>
-                    <a href="https://www.lt.plus/">lt.plus</a>
-                </div>
-                <div class="topbar-icons">
+            <div class="demo-banner">DEMO / PROOF OF CONCEPT &mdash; NOT an official DPP server &mdash; Sample data only &mdash; bS-Summit Porto</div>
+            <div class="authorbar">
+                <strong>Louis True</strong> &middot;
+                <a href="https://www.lt.plus/">lt.plus</a>
+                <div class="authorbar-icons">
                     <a href="https://github.com/louistrue/lignum-dpp-bsdd" title="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
                     <a href="https://www.linkedin.com/in/louistrue" title="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
                 </div>
-                <div class="topbar-demo">DEMO &mdash; NOT AN OFFICIAL DPP SERVER &mdash; SAMPLE DATA &mdash; bS-SUMMIT PORTO</div>
             </div>
             <div class="page">
                 <div class="hero">
@@ -747,7 +745,7 @@ async def root(request: Request):
                             <span class="tool-tag">JSON-LD</span>
                             <span class="tool-tag">Client-side</span>
                         </div>
-                        <div><a class="btn btn-primary" onclick="openCreateForm();" style="cursor:pointer;">Get Started</a></div>
+                        <div><button class="btn btn-primary" onclick="openCreateForm();">Get Started</button></div>
                     </div>
                     <div class="tool-card">
                         <h3>
@@ -919,24 +917,19 @@ async def root(request: Request):
                 }}
                 </script>
 
-                <div class="bottom-grid">
-                    <div>
-                        <div class="section-label" style="margin-top:0;">Explore</div>
-                        <div class="explore-links">
-                            <a class="explore-link" href="/enrich/"><strong>Enrich IFC</strong><span>Add DPP data to IFC files</span></a>
-                            <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes &amp; properties</span></a>
-                            <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Validation constraints</span></a>
-                            <a class="explore-link" href="/docs"><strong>API Docs</strong><span>Swagger UI</span></a>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="section-label" style="margin-top:0;">Content Negotiation</div>
-                        <div class="conneg-card">
-                            <p>Same URL returns <strong>HTML</strong> in browser or <strong>JSON-LD</strong> via curl:</p>
-                            <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
-                            <div class="hint">Open in browser for HTML view with bSDD links and QR codes.</div>
-                        </div>
-                    </div>
+                <div class="section-label">Explore</div>
+                <div class="explore-links">
+                    <a class="explore-link" href="/enrich/"><strong>Enrich IFC</strong><span>Add DPP data to IFC files</span></a>
+                    <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes &amp; properties</span></a>
+                    <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Validation constraints</span></a>
+                    <a class="explore-link" href="/docs"><strong>API Docs</strong><span>Swagger UI</span></a>
+                </div>
+
+                <div class="section-label">Content Negotiation</div>
+                <div class="conneg-card">
+                    <p>Same URL returns <strong>HTML</strong> in browser or <strong>JSON-LD</strong> via curl:</p>
+                    <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
+                    <div class="hint">Open in browser for HTML view with bSDD links and QR codes.</div>
                 </div>
 
                 <div class="footer">
