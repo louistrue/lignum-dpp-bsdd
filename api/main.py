@@ -648,7 +648,7 @@ async def create_dpp(request: Request, response: Response):
         
         # Validate required fields
         if "id" not in dpp_data:
-            dpp_data["id"] = f"did:web:bsi-dpp.org:dpp:{uuid.uuid4()}"
+            dpp_data["id"] = f"did:web:bsdd-dpp.dev:dpp:{uuid.uuid4()}"
         
         dpp_id = dpp_data["id"]
         
@@ -781,9 +781,9 @@ async def read_dpp_by_id(dpp_id: str, request: Request):
     or **JSON-LD** when requested via `Accept: application/ld+json`.
 
     **Try these IDs:**
-    - `did:web:bsi-dpp.org:dpp:knauf-acoustic-batt-2025-001`
-    - `did:web:bsi-dpp.org:dpp:schilliger-bsh-gl24h-2022-001`
-    - `did:web:bsi-dpp.org:dpp:pvc-sewage-dn110-2025-001`
+    - `did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001`
+    - `did:web:bsdd-dpp.dev:dpp:schilliger-bsh-gl24h-2022-001`
+    - `did:web:bsdd-dpp.dev:dpp:pvc-sewage-dn110-2025-001`
     """
     # URL decode the ID
     dpp_id = unquote(dpp_id)

@@ -736,9 +736,9 @@ def build_landing_html(
         </div>
         <script>
         const DPP_IDS = {{
-            timber: 'did:web:bsi-dpp.org:dpp:schilliger-bsh-gl24h-2022-001',
-            insulation: 'did:web:bsi-dpp.org:dpp:knauf-acoustic-batt-2025-001',
-            pipe: 'did:web:bsi-dpp.org:dpp:pvc-sewage-dn110-2025-001'
+            timber: 'did:web:bsdd-dpp.dev:dpp:schilliger-bsh-gl24h-2022-001',
+            insulation: 'did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001',
+            pipe: 'did:web:bsdd-dpp.dev:dpp:pvc-sewage-dn110-2025-001'
         }};
         async function loadDpp(key) {{
             const ta = document.getElementById('validate-input');

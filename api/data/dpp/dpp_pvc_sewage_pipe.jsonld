@@ -9,7 +9,7 @@
         "id": "@id",
         "type": "@type"
     },
-    "id": "did:web:bsi-dpp.org:dpp:pvc-sewage-dn110-2025-001",
+    "id": "did:web:bsdd-dpp.dev:dpp:pvc-sewage-dn110-2025-001",
     "type": "dpp:DigitalProductPassport",
     "dcterms:conformsTo": [
         "prEN 18223:2025 - System Interoperability and Data Model",
@@ -21,7 +21,7 @@
     ],
     "dpp:registry": {
         "id": "urn:eu-dpp-reg:wavin-001-2025",
-        "schema:url": "https://opendpp.buildingsmart.org/registry/wavin-001-2025"
+        "schema:url": "https://bsdd-dpp.dev/registry/wavin-001-2025"
     },
     "dpp:status": "active",
     "dcterms:created": "2025-09-19T09:00:00Z",
@@ -98,7 +98,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -121,7 +121,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -144,7 +144,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -167,7 +167,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "NEPD-3589-2252-EN PVC Sewage Pipe EPD",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -211,7 +211,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -233,7 +233,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -256,7 +256,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Product Datasheet",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 }
@@ -657,7 +657,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -680,7 +680,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -704,7 +704,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -727,7 +727,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -750,7 +750,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -773,7 +773,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -796,7 +796,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -820,7 +820,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -843,7 +843,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 },
@@ -866,7 +866,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "WV-DN110-DoP-2025-001 Declaration of Performance",
-                            "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf"
                         }
                     }
                 }
@@ -882,7 +882,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "https://opendpp.buildingsmart.org/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
+                    "schema:url": "https://bsdd-dpp.dev/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
                     "dpp:language": "en"
@@ -899,8 +899,8 @@
                     "type": "dpp:DataElement",
                     "dpp:path": "carrier/qr",
                     "dpp:value": {
-                        "uri": "https://opendpp.buildingsmart.org/id/01/05790001234561/21/WV-DN110-2025-001?linkType=dpp",
-                        "resolverUri": "https://opendpp.buildingsmart.org/dpps/did:web:bsi-dpp.org:dpp:pvc-sewage-dn110-2025-001"
+                        "uri": "https://bsdd-dpp.dev/id/01/05790001234561/21/WV-DN110-2025-001?linkType=dpp",
+                        "resolverUri": "https://bsdd-dpp.dev/dpps/did:web:bsdd-dpp.dev:dpp:pvc-sewage-dn110-2025-001"
                     }
                 }
             ]
