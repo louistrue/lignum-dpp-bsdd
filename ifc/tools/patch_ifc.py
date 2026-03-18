@@ -573,14 +573,21 @@ def _extract_modules_from_text(*texts: Optional[str]) -> List[str]:
     joined = re.sub(r"\b(a)(\d)(a)(\d)\b", r"\1\2-\3\4", joined)
     pattern = re.compile(r"\b(a\d(?:-a?\d)?|b\d|c\d|d)\b")
     mods = set(m.upper() for m in pattern.findall(joined))
-    # unify 'A1-A3' variants
-    normalized = set()
-    for m in mods:
-        if m.startswith("A") and "-A" in m:
-            normalized.add(m.replace("-A", "-"))
-        else:
-            normalized.add(m)
-    return sorted(normalized)
+    return sorted(mods)
+
+
+def _disambiguate_epd_name(base_name: str, modules: List[str]) -> str:
+    """Apply Option A (name concatenation) from buildingSMART forum recommendation
+    for storing environmental impact values in IFC.
+    See: https://forums.buildingsmart.org/t/storing-environmental-impact-values-in-ifc/5239
+    Concatenates lifecycle module suffix to avoid duplicate property names in a pset.
+    e.g. GWP_total + [A1-3] -> GWP_total_A1-A3
+         GWP_total + [A4]   -> GWP_total_A4
+    """
+    if not modules:
+        return base_name
+    suffix = "_".join(modules)
+    return f"{base_name}_{suffix}"
 
 def _should_include_epd_modules(modules: List[str]) -> bool:
     """Decide whether a single EPD row should be included in aggregation.
@@ -983,6 +990,11 @@ def main():
 
             if args.mode == "values_and_refs":
                 name = (row_name or "").strip()
+                # Option A (name concatenation) per buildingSMART forum recommendation:
+                # disambiguate EPD properties that share the same base name (e.g. GWP_total)
+                # by appending lifecycle module suffixes (e.g. GWP_total_A1-A3, GWP_total_A4)
+                if is_epd and row_modules:
+                    name = _disambiguate_epd_name(name, row_modules)
                 measure = ifc_measure(ifc, row_unit, row_val)
                 description = row_bsdd_uri if row_bsdd_uri else None
                 prop = upsert_single_value(ifc, pset, name, measure, description=description)
@@ -1026,6 +1038,13 @@ def main():
         class_info = dpp_classes.get(comp)
         ref_uri = class_info.get("uri") if class_info and class_info.get("uri") else dict_uri
         ref_name = class_info.get("label") if class_info and class_info.get("label") else name
+        # When the DPP class URI points to a different dictionary than the CSV
+        # (e.g. class in cei-bois.org/wood but CSV says demo2025/timber),
+        # update dict_uri to the correct parent derived from the class URI
+        if "/class/" in (ref_uri or ""):
+            derived_root = _parse_dictionary_root_from_uri(ref_uri)
+            if derived_root and derived_root != dict_uri:
+                dict_uri = derived_root
         ext_ref = get_or_create_external_ref(ifc, location=ref_uri, identification=None, name=ref_name)
 
         targets = find_target_elements(ifc, comp)
