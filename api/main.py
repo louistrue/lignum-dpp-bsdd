@@ -685,8 +685,9 @@ async def root(request: Request):
                     {product_cards}
                 </div>
 
+                <div id="demo-tools-section">
                 <h2 class="section-title">Demo Tools</h2>
-                <div id="demo-grid" class="demo-grid">
+                <div class="demo-grid">
                     <div class="demo-card">
                         <div class="demo-card-icon">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
@@ -719,8 +720,9 @@ async def root(request: Request):
                         </div>
                     </div>
                 </div>
+                </div>
 
-                <div id="create-section" hidden style="background:#fff;border:1px solid #e5e5e5;border-radius:3px;padding:24px;">
+                <div id="create-section" hidden style="background:#fff;border:1px solid #e5e5e5;border-radius:4px;padding:24px;">
                     <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:4px;">New Product Passport</div>
                     <div style="font-size:11px;color:#999;margin-bottom:16px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -757,12 +759,12 @@ async def root(request: Request):
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
                 function openCreateForm() {{
-                    document.getElementById('demo-grid').hidden = true;
+                    document.getElementById('demo-tools-section').hidden = true;
                     document.getElementById('create-section').hidden = false;
                 }}
                 function closeCreateForm() {{
                     document.getElementById('create-section').hidden = true;
-                    document.getElementById('demo-grid').hidden = false;
+                    document.getElementById('demo-tools-section').hidden = false;
                 }}
                 function createLocalDpp() {{
                     var rawName = document.getElementById('cf-name').value.trim().substring(0, 80);
