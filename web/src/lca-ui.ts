@@ -17,7 +17,8 @@ let currentFileSize = 0;
 let parsedModel: ParsedModel | null = null;
 let assignments: Assignment[] | null = null;
 let lastResults: LcaResults | null = null;
-const selectedModules = new Set<LifeCycleModule>(['A1-A3']);
+// EN 15978 / EU Level(s) normative modules for whole-building LCA
+const selectedModules = new Set<LifeCycleModule>(['A1-A3', 'C1', 'C2', 'C3', 'C4', 'D']);
 
 // Sections
 const stepUpload = $('#step-upload');
