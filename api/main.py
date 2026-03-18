@@ -683,7 +683,7 @@ async def root(request: Request):
                 </div>
 
                 <h2 class="section-title">Demo Tools</h2>
-                <div class="demo-grid">
+                <div id="demo-grid" class="demo-grid">
                     <div class="demo-card">
                         <div class="demo-card-icon">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
@@ -696,7 +696,7 @@ async def root(request: Request):
                             <span class="demo-tag">Client-side</span>
                         </div>
                         <div>
-                            <a class="btn btn-primary" onclick="document.getElementById('create-section').hidden=!document.getElementById('create-section').hidden;this.textContent=document.getElementById('create-section').hidden?'Get Started':'Close';" style="cursor:pointer;">Get Started</a>
+                            <a class="btn btn-primary" onclick="openCreateForm();" style="cursor:pointer;">Get Started</a>
                         </div>
                     </div>
                     <div class="demo-card">
@@ -717,7 +717,7 @@ async def root(request: Request):
                     </div>
                 </div>
 
-                <div id="create-section" hidden style="margin-top:20px;background:#fff;border:1px solid #e5e5e5;border-radius:3px;padding:24px;">
+                <div id="create-section" hidden style="background:#fff;border:1px solid #e5e5e5;border-radius:3px;padding:24px;">
                     <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:4px;">New Product Passport</div>
                     <div style="font-size:11px;color:#999;margin-bottom:16px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -745,7 +745,7 @@ async def root(request: Request):
                     </div>
                     <div style="display:flex;gap:8px;margin-top:16px;">
                         <button onclick="createLocalDpp()" style="padding:8px 20px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
-                        <button onclick="document.getElementById('create-section').hidden=true;document.querySelector('.demo-card a.btn').textContent='Get Started';" style="padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
+                        <button onclick="closeCreateForm();" style="padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
                     </div>
                     <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
                 </div>
@@ -753,6 +753,14 @@ async def root(request: Request):
 
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
+                function openCreateForm() {{
+                    document.getElementById('demo-grid').hidden = true;
+                    document.getElementById('create-section').hidden = false;
+                }}
+                function closeCreateForm() {{
+                    document.getElementById('create-section').hidden = true;
+                    document.getElementById('demo-grid').hidden = false;
+                }}
                 function createLocalDpp() {{
                     var rawName = document.getElementById('cf-name').value.trim().substring(0, 80);
                     var rawMfr = document.getElementById('cf-mfr').value.trim().substring(0, 80);
@@ -772,6 +780,7 @@ async def root(request: Request):
                     document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
                     document.getElementById('cf-name').value = '';
                     document.getElementById('cf-mfr').value = '';
+                    closeCreateForm();
                 }}
                 </script>
 
