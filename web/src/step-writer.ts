@@ -29,7 +29,7 @@ function stepStr(s: string): string {
 /** Determine IFC measure type from unit string */
 function ifcMeasure(value: string, unit: string): string {
   const v = value.trim();
-  const u = unit.trim().toLowerCase().replace(/³/g, '3').replace(/·/g, '/');
+  const u = unit.trim().toLowerCase().replace(/²/g, '2').replace(/³/g, '3').replace(/·/g, '/');
   const isNum = !isNaN(parseFloat(v));
 
   if ((u === 'w/mk' || u === 'w/m/k') && isNum) return `IFCTHERMALCONDUCTIVITYMEASURE(${parseFloat(v)})`;
@@ -39,7 +39,7 @@ function ifcMeasure(value: string, unit: string): string {
 
   // EPD units → IfcReal
   const epdUnits = ['kgco2e', 'kgso2e', 'kgcfc-11e', 'kgpo4e', 'mj', 'kj', 'kpa', 'kn/m2',
-    'kpa·s/m2', 'kpas/m2', '%', '%-', 'm2k/w', 'm²k/w', 'bar'];
+    'kpa/s/m2', 'kpas/m2', '%', '%-', 'm2k/w', 'bar'];
   if (epdUnits.includes(u.replace(/ /g, '')) && isNum) return `IFCREAL(${parseFloat(v)})`;
 
   if ((u === '-' || u === '') && isNum) return `IFCREAL(${parseFloat(v)})`;
@@ -211,8 +211,9 @@ export class StepWriter {
     const edition = uriIdx >= 0 && parts.length > uriIdx + 3 ? parts[uriIdx + 3] : '';
 
     const clsId = this.newId();
+    // IFC4 IfcClassification: Source, Edition, EditionDate, Name, Description, Specification(Location), ReferenceTokens
     this.emit(clsId, 'IFCCLASSIFICATION',
-      `${stepStr(scheme)},${stepStr(edition)},$,${stepStr(dictName)},$,$,${stepStr(config.dictionaryRootUri)}`);
+      `${stepStr(scheme)},${stepStr(edition)},$,${stepStr(dictName)},$,${stepStr(config.dictionaryRootUri)},$`);
 
     // Extract identification from class URI
     let ident = '$';
@@ -222,8 +223,9 @@ export class StepWriter {
     }
 
     const refId = this.newId();
+    // IFC4 IfcClassificationReference: Location, Identification, Name, ReferencedSource, Description, Sort
     this.emit(refId, 'IFCCLASSIFICATIONREFERENCE',
-      `${stepStr(config.classificationUri)},${ident},${stepStr('Classification concept: ' + config.classificationLabel)},#${clsId},$,$`);
+      `${stepStr(config.classificationUri)},${ident},${stepStr(config.classificationLabel)},#${clsId},${stepStr('Classification concept: ' + config.classificationLabel)},$`);
 
     const elemList = elementIds.map(id => `#${id}`).join(',');
     const relId = this.newId();
@@ -239,12 +241,16 @@ export class StepWriter {
   ): void {
     for (const doc of documents) {
       const infoId = this.newId();
+      // IFC4 IfcDocumentInformation: Identification, Name, Description, Location, Purpose,
+      // IntendedUse, Scope, Revision, DocumentOwner, Editors, CreationTime, LastRevisionTime,
+      // ElectronicFormat, ValidFrom, ValidUntil, Confidentiality, Status
       this.emit(infoId, 'IFCDOCUMENTINFORMATION',
-        `${stepStr(doc.name)},${stepStr(doc.name)},$,$,$,$,$,$,$,$,${stepStr(doc.url)},$,$,$,$`);
+        `${stepStr(doc.name)},${stepStr(doc.name)},$,${stepStr(doc.url)},$,$,$,$,$,$,$,$,$,$,$,$,$`);
 
       const refId = this.newId();
+      // IFC4 IfcDocumentReference: Location, Identification, Name, Description, ReferencedDocument
       this.emit(refId, 'IFCDOCUMENTREFERENCE',
-        `${stepStr(doc.url)},${stepStr(doc.name)},$,#${infoId},$`);
+        `${stepStr(doc.url)},${stepStr(doc.name)},$,$,#${infoId}`);
 
       const elemList = elementIds.map(id => `#${id}`).join(',');
       const relId = this.newId();
@@ -260,12 +266,14 @@ export class StepWriter {
     elementIds: number[],
   ): void {
     const infoId = this.newId();
+    // IFC4 IfcDocumentInformation: Identification, Name, Description, Location, ...13 more optional attrs
     this.emit(infoId, 'IFCDOCUMENTINFORMATION',
-      `'Digital Product Passport (resolver)','Digital Product Passport (resolver)',$,$,$,$,$,$,$,$,${stepStr(digitalLink)},$,$,$,$`);
+      `'Digital Product Passport (resolver)','Digital Product Passport (resolver)',$,${stepStr(digitalLink)},$,$,$,$,$,$,$,$,$,$,$,$,$`);
 
     const refId = this.newId();
     this.emit(refId, 'IFCDOCUMENTREFERENCE',
-      `${stepStr(digitalLink)},'Digital Product Passport (resolver)',$,#${infoId},$`);
+      // IFC4 IfcDocumentReference: Location, Identification, Name, Description, ReferencedDocument
+      `${stepStr(digitalLink)},'Digital Product Passport (resolver)',$,$,#${infoId}`);
 
     const elemList = elementIds.map(id => `#${id}`).join(',');
     const relId = this.newId();
