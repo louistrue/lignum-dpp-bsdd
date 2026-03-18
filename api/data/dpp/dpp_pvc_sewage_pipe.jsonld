@@ -635,7 +635,7 @@
                 "dpp:notifiedBody": "N/A (System 3)",
                 "dpp:intendedUse": "Underground non-pressure drainage and sewerage",
                 "dpp:declaredUnit": "1 meter",
-                "dpp:documentReference": "#declarationOfPerformance"
+                "dpp:documentReference": "#epdDocument"
             },
             "dpp:elements": [
                 {
@@ -885,16 +885,6 @@
                     "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
-                    "dpp:language": "en"
-                },
-                {
-                    "id": "#declarationOfPerformance",
-                    "type": "dpp:Document",
-                    "dpp:fileName": "NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
-                    "dpp:mediaType": "application/pdf",
-                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/pipe/NEPD-3589-2252_PVC-Sewage-Pipe.pdf",
-                    "dpp:hashAlgorithm": "sha256",
-                    "dpp:hashValue": "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
                     "dpp:language": "en"
                 }
             ]
