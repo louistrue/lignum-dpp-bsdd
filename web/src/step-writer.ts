@@ -79,7 +79,7 @@ export class StepWriter {
     const personId = this.newId();
     this.emit(personId, 'IFCPERSON', "$,$,'DPPEnrich',$,$,$,$,$");
     const orgId = this.newId();
-    this.emit(orgId, 'IFCORGANIZATION', "$,'Lignum DPP',$,$,$");
+    this.emit(orgId, 'IFCORGANIZATION', "$,'buildingSMART DPP',$,$,$");
     const poId = this.newId();
     this.emit(poId, 'IFCPERSONANDORGANIZATION', `#${personId},#${orgId},$`);
     const appId = this.newId();

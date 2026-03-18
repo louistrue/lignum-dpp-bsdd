@@ -18,7 +18,7 @@
       "dcterms:title": "DPP Ontology for Construction Products",
       "dcterms:description": "Formal OWL ontology for the Digital Product Passport data model conforming to prEN 18216-18223:2025, with bSDD integration for construction products.",
       "owl:versionInfo": "1.0.0",
-      "dcterms:creator": "Lignum DPP Project",
+      "dcterms:creator": "buildingSMART DPP Project",
       "dcterms:license": "MIT"
     },
 

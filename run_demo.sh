@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Lignum DPP PoC – End-to-End Demo Runner
+# buildingSMART DPP PoC – End-to-End Demo Runner
 # Works with BOTH the deployed Vercel API and local dev.
 # Set DPP_API_URL to override (defaults to the Vercel production deployment).
 
@@ -9,10 +9,10 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 API_DIR="$ROOT_DIR/api"
 
 # Default to deployed Vercel API; override with DPP_API_URL=http://localhost:8000 for local
-API_URL="${DPP_API_URL:-https://lignum-dpp-bsdd.vercel.app}"
+API_URL="${DPP_API_URL:-https://bsdd-dpp.dev}"
 API_URL="${API_URL%/}"  # strip trailing slash
 
-echo "\n=== Lignum DPP Demo ==="
+echo "\n=== buildingSMART DPP Demo ==="
 echo "API: $API_URL"
 echo "(Set DPP_API_URL=http://localhost:8000 to use local server instead)\n"
 
@@ -50,11 +50,11 @@ curl -s "$API_URL/dpps" | python3 -m json.tool | sed -n '1,30p'
 
 echo "\n=== 4) Read DPP (JSON-LD + HTML) ==="
 curl -s -H 'Accept: application/ld+json' \
-  "$API_URL/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001" \
+  "$API_URL/dpps/did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001" \
   | python3 -m json.tool | sed -n '1,20p'
 
 echo "Open human view in browser (optional)"
-open "$API_URL/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001" >/dev/null 2>&1 || true
+open "$API_URL/dpps/did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001" >/dev/null 2>&1 || true
 
 echo "\n=== 5) Resolve via GS1 Digital Link (QR target) ==="
 curl -s -H 'Accept: application/ld+json' \

@@ -30,7 +30,7 @@ export interface ComponentConfig {
   };
 }
 
-const BASE = 'https://lignum-dpp-bsdd.vercel.app';
+const BASE = 'https://bsdd-dpp.dev';
 
 export const COMPONENTS: Record<string, ComponentConfig> = {
   insulation: {

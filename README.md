@@ -44,7 +44,7 @@ This PoC implements:
 ## 📁 Project Structure
 
 ```
-lignum-dpp/
+openDPP/
 ├── api/
 │   ├── main.py                      # FastAPI server
 │   └── requirements.txt             # Python dependencies
@@ -201,14 +201,14 @@ curl -X POST http://localhost:8000/dpps \
 ### Read a DPP (JSON-LD)
 
 ```bash
-curl http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001 \
+curl http://localhost:8000/dpps/did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001 \
   -H "Accept: application/ld+json"
 ```
 
 ### Read a DPP (HTML)
 
 ```bash
-curl http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001 \
+curl http://localhost:8000/dpps/did:web:bsdd-dpp.dev:dpp:knauf-acoustic-batt-2025-001 \
   -H "Accept: text/html"
 ```
 
@@ -218,7 +218,7 @@ curl http://localhost:8000/dpps/did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-
 curl -X POST http://localhost:8000/registerDPP \
   -H "Content-Type: application/json" \
   -d '{
-    "dppId": "did:web:lignum.dev:dpp:example-001",
+    "dppId": "did:web:bsdd-dpp.dev:dpp:example-001",
     "productIdentifiers": [{"scheme": "gtin", "value": "04012345678901"}],
     "economicOperatorId": "did:web:example.com"
   }'

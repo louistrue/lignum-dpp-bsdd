@@ -9,7 +9,7 @@
         "id": "@id",
         "type": "@type"
     },
-    "id": "did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001",
+    "id": "did:web:bsdd-dpp.dev:dpp:schilliger-bsh-gl24h-2022-001",
     "type": "dpp:DigitalProductPassport",
     "dcterms:conformsTo": [
         "prEN 18223:2025 - System Interoperability and Data Model",
@@ -21,7 +21,7 @@
     ],
     "dpp:registry": {
         "id": "urn:eu-dpp-reg:schilliger-001-2022",
-        "schema:url": "https://lignum-dpp-bsdd.vercel.app/registry/schilliger-001-2022"
+        "schema:url": "https://bsdd-dpp.dev/registry/schilliger-001-2022"
     },
     "dpp:status": "active",
     "dcterms:created": "2025-09-19T09:00:00Z",
@@ -98,7 +98,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -122,7 +122,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "EPD Schilliger Glulam",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf"
                         }
                     }
                 },
@@ -494,7 +494,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -518,7 +518,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -542,7 +542,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -565,7 +565,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -589,7 +589,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -613,7 +613,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -636,7 +636,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -660,7 +660,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -684,7 +684,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -708,7 +708,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -731,7 +731,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -754,7 +754,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 },
@@ -777,7 +777,7 @@
                         "dpp:hasDocument": {
                             "type": "dpp:Document",
                             "schema:name": "Leistungserklärung BSH-SHI-01",
-                            "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
+                            "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf"
                         }
                     }
                 }
@@ -793,7 +793,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
+                    "schema:url": "https://bsdd-dpp.dev/files/bsh/01-Leistungserklaerung_BSH-SHI-01-01062022.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "c3d4e5f678901234567890123456789012345678901234567890123456789012",
                     "dpp:language": "de"
@@ -803,7 +803,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "EPD_Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
+                    "schema:url": "https://bsdd-dpp.dev/files/bsh/EPD%20Schilliger_glued_laminated_timber_Glulam_as_per_EN_140802013.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "d4e5f6789012345678901234567890123456789012345678901234567890123",
                     "dpp:language": "en"
@@ -813,7 +813,7 @@
                     "type": "dpp:Document",
                     "dpp:fileName": "BSH-Brettschichtholz.pdf",
                     "dpp:mediaType": "application/pdf",
-                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/BSH-Brettschichtholz.pdf",
+                    "schema:url": "https://bsdd-dpp.dev/files/bsh/BSH-Brettschichtholz.pdf",
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
                     "dpp:language": "de"
@@ -830,8 +830,8 @@
                     "type": "dpp:DataElement",
                     "dpp:path": "carrier/qr",
                     "dpp:value": {
-                        "uri": "https://lignum-dpp-bsdd.vercel.app/id/01/07640123456789/10/BSH2022?linkType=dpp",
-                        "resolverUri": "https://lignum-dpp-bsdd.vercel.app/dpps/did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001"
+                        "uri": "https://bsdd-dpp.dev/id/01/07640123456789/10/BSH2022?linkType=dpp",
+                        "resolverUri": "https://bsdd-dpp.dev/dpps/did:web:bsdd-dpp.dev:dpp:schilliger-bsh-gl24h-2022-001"
                     }
                 }
             ]
@@ -861,7 +861,7 @@
             "dpp:timestamp": "2025-09-19T09:00:00Z",
             "dpp:actor": {
                 "type": "dpp:Agent",
-                "schema:name": "Lignum DPP System"
+                "schema:name": "buildingSMART DPP System"
             },
             "dpp:changeObject": "dpp:DigitalProductPassport",
             "dpp:changedProperties": [

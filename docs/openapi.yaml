@@ -11,7 +11,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://lignum-dpp-bsdd.vercel.app
+  - url: https://bsdd-dpp.dev
     description: Deployed demo (Vercel)
   - url: http://localhost:8000
     description: Local development
@@ -93,7 +93,7 @@ paths:
               schema:
                 type: string
                 format: uri
-                example: https://api.lignum.dev/dpps/did:web:lignum.dev:dpp:example-001
+                example: https://api.bsdd-dpp.dev/dpps/did:web:bsdd-dpp.dev:dpp:example-001
           content:
             application/ld+json:
               schema:
@@ -157,7 +157,7 @@ paths:
           required: true
           schema:
             type: string
-            example: did:web:lignum.dev:dpp:example-001
+            example: did:web:bsdd-dpp.dev:dpp:example-001
       responses:
         '200':
           description: DPP retrieved successfully
@@ -324,7 +324,7 @@ paths:
                   registryUrl:
                     type: string
                     format: uri
-                    example: https://lignum-dpp-bsdd.vercel.app/registry/123e4567-e89b-12d3-a456-426614174000
+                    example: https://bsdd-dpp.dev/registry/123e4567-e89b-12d3-a456-426614174000
 
   /id/01/{gtin}:
     get:
@@ -523,8 +523,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://auth.lignum.dev/oauth/authorize
-          tokenUrl: https://auth.lignum.dev/oauth/token
+          authorizationUrl: https://auth.bsdd-dpp.dev/oauth/authorize
+          tokenUrl: https://auth.bsdd-dpp.dev/oauth/token
           scopes:
             read:dpp: Read DPP data
             write:dpp: Create and update DPPs
