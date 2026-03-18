@@ -916,11 +916,58 @@ async def root(request: Request):
 
                 <div class="section-label">Explore</div>
                 <div class="explore-links">
-                    <a class="explore-link" href="/enrich/"><strong>Enrich IFC</strong><span>Add DPP data to IFC files</span></a>
+                    <a class="explore-link" href="/validate" onclick="event.preventDefault(); document.getElementById('validate-section').scrollIntoView({{behavior:'smooth'}})"><strong>Validate DPP</strong><span>SHACL conformance check</span></a>
                     <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes &amp; properties</span></a>
-                    <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Validation constraints</span></a>
+                    <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Constraint definitions</span></a>
                     <a class="explore-link" href="/docs"><strong>API Docs</strong><span>Swagger UI</span></a>
                 </div>
+
+                <div id="validate-section" class="conneg-card" style="margin-top: 12px;">
+                    <p><strong>SHACL Validation</strong> &mdash; paste a DPP JSON-LD and check conformance against the shapes graph:</p>
+                    <textarea id="validate-input" rows="4" placeholder='Paste DPP JSON-LD here or click &ldquo;Load Sample&rdquo;' style="width:100%; font-family: monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical; background: var(--card);"></textarea>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button onclick="loadSampleDpp()" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px;">Load Sample</button>
+                        <button onclick="runValidation()" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;">Validate</button>
+                    </div>
+                    <pre id="validate-result" style="display:none; margin-top: 10px; padding: 10px; background: #1a1a1a; color: #e0e0e0; border-radius: var(--radius); font-size: 11px; max-height: 240px; overflow-y: auto; white-space: pre-wrap;"></pre>
+                </div>
+                <script>
+                async function loadSampleDpp() {{
+                    const ta = document.getElementById('validate-input');
+                    try {{
+                        const res = await fetch('/dpps/', {{headers: {{'Accept': 'application/json'}}}});
+                        const list = await res.json();
+                        const ids = list.dpps || list;
+                        if (ids.length > 0) {{
+                            const id = typeof ids[0] === 'string' ? ids[0] : ids[0].id;
+                            const dppRes = await fetch('/dpps/' + encodeURIComponent(id), {{headers: {{'Accept': 'application/ld+json'}}}});
+                            const dpp = await dppRes.json();
+                            ta.value = JSON.stringify(dpp, null, 2);
+                        }}
+                    }} catch(e) {{ ta.value = 'Error loading sample: ' + e.message; }}
+                }}
+                async function runValidation() {{
+                    const ta = document.getElementById('validate-input');
+                    const out = document.getElementById('validate-result');
+                    out.style.display = 'block';
+                    if (!ta.value.trim()) {{ out.textContent = 'Paste a DPP JSON-LD first.'; return; }}
+                    try {{
+                        const body = JSON.parse(ta.value);
+                        const res = await fetch('/validate', {{method:'POST', headers:{{'Content-Type':'application/json'}}, body: JSON.stringify(body)}});
+                        const result = await res.json();
+                        const conforms = result.conforms;
+                        const count = (result.results || []).length;
+                        let summary = conforms ? '\u2705 Conforms! No violations found.' : '\u274c ' + count + ' violation(s) found:';
+                        if (!conforms) {{
+                            for (const r of result.results || []) {{
+                                summary += '\\n\\n\u2022 ' + (r.message || r.detail || JSON.stringify(r));
+                            }}
+                        }}
+                        out.textContent = summary;
+                        out.style.color = conforms ? '#4ade80' : '#f87171';
+                    }} catch(e) {{ out.textContent = 'Error: ' + e.message; out.style.color = '#f87171'; }}
+                }}
+                </script>
 
                 <div class="section-label">Content Negotiation</div>
                 <div class="conneg-card">
