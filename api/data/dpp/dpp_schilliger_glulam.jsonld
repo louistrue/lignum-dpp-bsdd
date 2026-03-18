@@ -807,6 +807,16 @@
                     "dpp:hashAlgorithm": "sha256",
                     "dpp:hashValue": "d4e5f6789012345678901234567890123456789012345678901234567890123",
                     "dpp:language": "en"
+                },
+                {
+                    "id": "#productInfo",
+                    "type": "dpp:Document",
+                    "dpp:fileName": "BSH-Brettschichtholz.pdf",
+                    "dpp:mediaType": "application/pdf",
+                    "schema:url": "https://lignum-dpp-bsdd.vercel.app/files/bsh/BSH-Brettschichtholz.pdf",
+                    "dpp:hashAlgorithm": "sha256",
+                    "dpp:hashValue": "e5f67890123456789012345678901234567890123456789012345678901234",
+                    "dpp:language": "de"
                 }
             ]
         },
