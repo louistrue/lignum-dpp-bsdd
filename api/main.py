@@ -1416,6 +1416,11 @@ if not _files_dir.exists():
 if _files_dir.exists():
     app.mount("/files", StaticFiles(directory=str(_files_dir)), name="files")
 
+# Serve IFC enrichment tool static assets
+_enrich_dir = _api_path / "static" / "enrich"
+if _enrich_dir.exists():
+    app.mount("/enrich", StaticFiles(directory=str(_enrich_dir), html=True), name="enrich")
+
 # Load sample DPPs
 load_sample_dpps()
 print(f"DPP API initialized with {len(dpp_storage)} sample DPPs (BASE_URL={BASE_URL})")

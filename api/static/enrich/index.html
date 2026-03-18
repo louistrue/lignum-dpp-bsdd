@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IFC DPP Enrichment — Lignum Demo</title>
+  <script type="module" crossorigin src="/enrich/assets/index-D0-8stJ2.js"></script>
+  <link rel="stylesheet" crossorigin href="/enrich/assets/index-EcEvja8a.css">
+</head>
+<body>
+  <div class="banner">DEMO — IFC enrichment with Digital Product Passport data (bSDD, EPD, GS1)</div>
+  <main>
+    <h1>IFC Enrichment</h1>
+    <p class="subtitle">
+      Upload an IFC file to enrich it with DPP data: property sets, bSDD classifications,
+      EPD indicators, document references, and GS1 identifiers.
+    </p>
+
+    <div id="dropzone" class="dropzone">
+      <div class="dropzone-content">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p>Drop <strong>.ifc</strong> file here or <label for="file-input" class="file-label">browse</label></p>
+        <input type="file" id="file-input" accept=".ifc" hidden />
+      </div>
+    </div>
+
+    <div id="file-info" class="file-info" hidden>
+      <span id="file-name"></span>
+      <span id="file-size"></span>
+      <button id="clear-file" class="btn-small">&times;</button>
+    </div>
+
+    <div id="match-section" class="match-section" hidden>
+      <h2>Element → DPP Assignment</h2>
+      <div id="match-table"></div>
+      <button id="enrich-btn" class="btn-primary">Enrich IFC</button>
+    </div>
+
+    <div id="log-section" class="log-section" hidden>
+      <h2>Progress</h2>
+      <pre id="log"></pre>
+    </div>
+
+    <div id="download-section" class="download-section" hidden>
+      <button id="download-btn" class="btn-primary btn-download">Download Enriched IFC</button>
+    </div>
+
+    <footer>
+      <a href="/">← Back to DPP Demo</a>
+      <span class="sep">|</span>
+      <a href="/docs">API Docs</a>
+    </footer>
+  </main>
+</body>
+</html>
