@@ -9,6 +9,7 @@ import {
   ALL_MODULES, MODULE_LABELS, LCA_COMPONENTS,
   type LifeCycleModule,
 } from './config';
+import { consumeHandoff } from './ifc-handoff';
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
@@ -204,16 +205,12 @@ clearBtn.addEventListener('click', () => {
 
 // --- Check for data from enrich flow ---
 
-(function checkSessionStorage() {
-  const ifcText = sessionStorage.getItem('lca-ifc-text');
-  const ifcName = sessionStorage.getItem('lca-ifc-name');
-  if (ifcText) {
-    sessionStorage.removeItem('lca-ifc-text');
-    sessionStorage.removeItem('lca-ifc-name');
-    const name = ifcName || 'enriched.ifc';
+(async function checkHandoff() {
+  const payload = await consumeHandoff();
+  if (payload) {
     const fromMsg = document.getElementById('from-enrich-msg');
     if (fromMsg) fromMsg.hidden = false;
-    processFile(ifcText, name, new Blob([ifcText]).size);
+    processFile(payload.text, payload.name, new Blob([payload.text]).size);
   }
 })();
 

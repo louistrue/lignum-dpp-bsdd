@@ -4,6 +4,7 @@
 
 import { processIfc, analyzeModel, type Assignment } from './enrichment';
 import { parseIfcStep } from './step-parser';
+import { storeHandoff } from './ifc-handoff';
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
@@ -229,15 +230,11 @@ downloadBtn.addEventListener('click', () => {
 
 // --- Emissions handoff ---
 
-emissionsBtn.addEventListener('click', () => {
+emissionsBtn.addEventListener('click', async () => {
   if (!lastEnrichedText && !currentFile) return;
-  try {
-    const text = lastEnrichedText || '';
-    sessionStorage.setItem('lca-ifc-text', text);
-    sessionStorage.setItem('lca-ifc-name', currentFile?.name || 'enriched.ifc');
-  } catch {
-    // sessionStorage full — user will need to upload manually
-  }
+  const text = lastEnrichedText || '';
+  const name = currentFile?.name || 'enriched.ifc';
+  await storeHandoff(text, name);
   window.location.href = '/emissions/';
 });
 
