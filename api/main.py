@@ -596,62 +596,87 @@ async def root(request: Request):
             <title>Lignum DPP — Digital Product Passport Demo</title>
             <style>
                 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-                body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
-                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 6px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }}
-                .page {{ max-width: 960px; margin: 0 auto; padding: 38px 24px 48px; }}
-                .header {{ display: flex; align-items: flex-start; gap: 20px; margin-bottom: 16px; }}
-                .header-text {{ flex: 1; }}
-                .header h1 {{ font-size: 1.5em; font-weight: 700; color: #111; letter-spacing: -0.02em; margin-bottom: 4px; }}
-                .header p {{ font-size: 13px; color: #666; line-height: 1.5; max-width: 600px; }}
-                .standards {{ display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }}
-                .standards span {{ background: #fff; border: 1px solid #ddd; padding: 2px 8px; font-size: 10px; color: #555; font-weight: 500; border-radius: 3px; }}
-                .disclaimer-inline {{ font-size: 11px; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; border-radius: 3px; padding: 8px 12px; margin-bottom: 20px; line-height: 1.4; }}
-                .section-title {{ font-size: 11px; font-weight: 700; color: #888; margin: 24px 0 10px; text-transform: uppercase; letter-spacing: 1px; }}
-                .product-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }}
-                @media (max-width: 768px) {{ .product-grid {{ grid-template-columns: 1fr; }} }}
-                .product-card {{ background: #fff; border: 1px solid #e5e5e5; overflow: hidden; transition: border-color 0.15s; border-radius: 4px; display: flex; flex-direction: column; }}
-                .product-card:hover {{ border-color: #999; }}
-                .product-header {{ padding: 12px 14px 8px; }}
-                .product-header h3 {{ font-size: 13px; color: #111; margin-bottom: 1px; font-weight: 600; line-height: 1.3; }}
-                .operator {{ font-size: 11px; color: #999; }}
-                .product-body {{ padding: 6px 14px 10px; flex: 1; }}
-                .product-meta {{ font-size: 11px; color: #666; line-height: 1.6; }}
-                .product-meta code {{ background: #f5f5f5; padding: 1px 4px; border-radius: 2px; font-size: 10px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; word-break: break-all; }}
-                .tags {{ margin-top: 6px; display: flex; gap: 3px; flex-wrap: wrap; }}
-                .tag {{ background: #f5f5f5; color: #666; padding: 1px 6px; border-radius: 2px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-                .product-actions {{ padding: 8px 14px 12px; display: flex; gap: 6px; }}
-                .btn {{ padding: 5px 12px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 11px; transition: all 0.1s; }}
+                body {{ font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #f8f8f8; color: #1a1a1a; line-height: 1.55; }}
+                a {{ color: #2563eb; text-decoration: none; }}
+                a:hover {{ text-decoration: underline; }}
+
+                /* Banner */
+                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 5px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }}
+
+                /* Layout */
+                .page {{ max-width: 1040px; margin: 0 auto; padding: 44px 32px 40px; }}
+                @media (max-width: 640px) {{ .page {{ padding: 44px 16px 32px; }} }}
+
+                /* Header */
+                .hero {{ margin-bottom: 28px; }}
+                .hero h1 {{ font-size: 22px; font-weight: 700; color: #111; letter-spacing: -0.03em; margin-bottom: 6px; }}
+                .hero-desc {{ font-size: 14px; color: #555; line-height: 1.55; margin-bottom: 10px; }}
+                .hero-chips {{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }}
+                .hero-chips span {{ background: #fff; border: 1px solid #e0e0e0; padding: 3px 10px; font-size: 11px; color: #444; font-weight: 500; border-radius: 4px; }}
+                .disclaimer {{ font-size: 12px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 14px; line-height: 1.45; }}
+
+                /* Section titles */
+                .section-label {{ font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.8px; margin: 28px 0 12px; }}
+
+                /* Product cards */
+                .product-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }}
+                @media (max-width: 820px) {{ .product-grid {{ grid-template-columns: 1fr; }} }}
+                .product-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; display: flex; flex-direction: column; transition: box-shadow 0.15s, border-color 0.15s; }}
+                .product-card:hover {{ border-color: #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }}
+                .product-header {{ padding: 16px 18px 10px; }}
+                .product-header h3 {{ font-size: 15px; color: #111; font-weight: 700; margin-bottom: 2px; line-height: 1.3; }}
+                .operator {{ font-size: 12px; color: #999; }}
+                .product-body {{ padding: 4px 18px 14px; flex: 1; }}
+                .product-meta {{ font-size: 12px; color: #666; line-height: 1.7; }}
+                .product-meta code {{ background: #f5f5f5; padding: 2px 5px; border-radius: 3px; font-size: 11px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; word-break: break-all; }}
+                .tags {{ margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tag {{ background: #f3f4f6; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .product-actions {{ padding: 12px 18px 16px; display: flex; gap: 8px; border-top: 1px solid #f0f0f0; }}
+                .btn {{ display: inline-flex; align-items: center; gap: 4px; padding: 7px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.12s; cursor: pointer; border: none; font-family: inherit; }}
                 .btn-primary {{ background: #111; color: #fff; }}
-                .btn-primary:hover {{ background: #333; }}
-                .btn-gs1 {{ background: #fff; color: #333; border: 1px solid #ccc; }}
-                .btn-gs1:hover {{ border-color: #999; background: #f5f5f5; }}
-                .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }}
-                @media (max-width: 640px) {{ .two-col {{ grid-template-columns: 1fr; }} }}
-                .demo-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
-                @media (max-width: 640px) {{ .demo-grid {{ grid-template-columns: 1fr; }} }}
-                .demo-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s; }}
-                .demo-card:hover {{ border-color: #999; }}
-                .demo-card-icon {{ width: 32px; height: 32px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; }}
-                .demo-card h3 {{ font-size: 13px; font-weight: 700; color: #111; margin: 0; }}
-                .demo-card p {{ font-size: 12px; color: #666; line-height: 1.4; flex: 1; margin: 0; }}
-                .demo-card .demo-tags {{ display: flex; gap: 3px; flex-wrap: wrap; }}
-                .demo-card .demo-tag {{ background: #f5f5f5; border: 1px solid #eee; color: #555; padding: 1px 6px; border-radius: 2px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-                .demo-card .btn {{ display: inline-block; }}
-                .features {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }}
-                @media (max-width: 768px) {{ .features {{ grid-template-columns: repeat(2, 1fr); }} }}
-                .feature-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 12px; }}
-                .feature-card h4 {{ color: #111; margin-bottom: 4px; font-size: 12px; font-weight: 700; }}
-                .feature-card p {{ font-size: 11px; color: #666; line-height: 1.4; margin-bottom: 6px; }}
-                .feature-card a {{ color: #2563eb; text-decoration: none; font-size: 11px; font-weight: 500; }}
-                .feature-card a:hover {{ text-decoration: underline; }}
-                .try-it {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 12px 14px; }}
-                .try-it p {{ font-size: 12px; color: #555; }}
-                .try-it strong {{ color: #111; }}
-                .try-it code {{ background: #111; color: #a0ffa0; padding: 8px 12px; border-radius: 3px; display: block; font-size: 11px; overflow-x: auto; margin: 8px 0 4px; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-                .try-it .hint {{ font-size: 10px; color: #999; }}
-                .footer {{ text-align: center; padding: 24px 0; color: #999; font-size: 11px; border-top: 1px solid #e5e5e5; margin-top: 32px; }}
-                .footer a {{ color: #666; text-decoration: none; }}
-                .footer a:hover {{ color: #111; }}
+                .btn-primary:hover {{ background: #333; text-decoration: none; }}
+                .btn-outline {{ background: #fff; color: #333; border: 1px solid #d5d5d5; }}
+                .btn-outline:hover {{ border-color: #999; background: #fafafa; text-decoration: none; }}
+
+                /* Demo tools */
+                .tools-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }}
+                @media (max-width: 640px) {{ .tools-grid {{ grid-template-columns: 1fr; }} }}
+                .tool-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.15s, border-color 0.15s; }}
+                .tool-card:hover {{ border-color: #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }}
+                .tool-card h3 {{ font-size: 14px; font-weight: 700; color: #111; margin: 0; display: flex; align-items: center; gap: 8px; }}
+                .tool-card h3 svg {{ flex-shrink: 0; }}
+                .tool-card p {{ font-size: 13px; color: #666; line-height: 1.5; margin: 0; flex: 1; }}
+                .tool-tags {{ display: flex; gap: 4px; flex-wrap: wrap; }}
+                .tool-tag {{ background: #f3f4f6; border: 1px solid #e5e5e5; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+
+                /* Create form */
+                .create-form {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 24px; }}
+                .create-form h3 {{ font-size: 15px; font-weight: 700; color: #111; margin-bottom: 2px; }}
+                .create-form .form-hint {{ font-size: 12px; color: #999; margin-bottom: 18px; }}
+                .form-row {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }}
+                @media (max-width: 640px) {{ .form-row {{ grid-template-columns: 1fr; }} }}
+                .form-group {{ display: flex; flex-direction: column; gap: 4px; }}
+                .form-label {{ font-size: 11px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }}
+                .form-input {{ padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.15s; }}
+                .form-input:focus {{ border-color: #111; }}
+                .form-actions {{ display: flex; gap: 8px; margin-top: 18px; }}
+
+                /* Explore + Conneg */
+                .bottom-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }}
+                @media (max-width: 768px) {{ .bottom-grid {{ grid-template-columns: 1fr; }} }}
+                .explore-links {{ display: flex; gap: 14px; flex-wrap: wrap; }}
+                .explore-link {{ display: flex; flex-direction: column; gap: 2px; }}
+                .explore-link strong {{ font-size: 13px; color: #111; }}
+                .explore-link span {{ font-size: 12px; color: #888; }}
+                .conneg-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 18px; }}
+                .conneg-card p {{ font-size: 13px; color: #555; margin-bottom: 8px; }}
+                .conneg-card code {{ background: #111; color: #a0ffa0; padding: 10px 14px; border-radius: 6px; display: block; font-size: 11px; overflow-x: auto; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
+                .conneg-card .hint {{ font-size: 11px; color: #999; margin-top: 8px; }}
+
+                /* Footer */
+                .footer {{ text-align: center; padding: 20px 0; color: #bbb; font-size: 12px; margin-top: 36px; }}
+                .footer a {{ color: #888; }}
+                .footer a:hover {{ color: #333; }}
             </style>
         </head>
         <body>
@@ -659,112 +684,106 @@ async def root(request: Request):
                 DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — bS-Summit Porto
             </div>
             <div class="page">
-                <div class="header">
-                    <div class="header-text">
-                        <h1>Digital Product Passport</h1>
-                        <p>
-                            Proof-of-concept <strong>prEN 18222:2025</strong> DPP API for construction products
-                            — GS1 Digital Link, bSDD references, SHACL validation.
-                        </p>
-                        <div class="standards">
-                            <span>prEN 18222</span>
-                            <span>prEN 18223</span>
-                            <span>GS1 Digital Link</span>
-                            <span>bSDD</span>
-                            <span>OWL + SHACL</span>
-                            <span>EU CPR / DoPC</span>
-                        </div>
+                <div class="hero">
+                    <h1>Digital Product Passport</h1>
+                    <p class="hero-desc">
+                        Proof-of-concept <strong>prEN 18222:2025</strong> DPP API for construction products
+                        with GS1 Digital Link resolution, bSDD property references, and SHACL validation.
+                    </p>
+                    <div class="hero-chips">
+                        <span>prEN 18222</span>
+                        <span>prEN 18223</span>
+                        <span>GS1 Digital Link</span>
+                        <span>bSDD</span>
+                        <span>OWL + SHACL</span>
+                        <span>EU CPR / DoPC</span>
+                    </div>
+                    <div class="disclaimer">
+                        <strong>Disclaimer:</strong> PoC demo presented at bS-Summit Porto. Not an official DPP system. Sample data only. Not affiliated with any manufacturer.
                     </div>
                 </div>
-                <div class="disclaimer-inline">
-                    <strong>Disclaimer:</strong> PoC demo (bS-Summit Porto). Not an official DPP system. Sample data only. Not affiliated with any manufacturer.
-                </div>
 
-                <h2 class="section-title">Sample Products</h2>
+                <div class="section-label">Sample Products</div>
                 <div class="product-grid">
                     {product_cards}
                 </div>
 
-                <div id="demo-tools-section">
-                <h2 class="section-title">Demo Tools</h2>
-                <div class="demo-grid">
-                    <div class="demo-card">
-                        <div class="demo-card-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                        </div>
-                        <h3>Create Your DPP</h3>
+                <div class="section-label">Demo Tools</div>
+                <div id="demo-cards" class="tools-grid">
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            Create Your DPP
+                        </h3>
                         <p>Build a product passport from scratch. Define product properties, assign classifications, and generate a standards-compliant DPP.</p>
-                        <div class="demo-tags">
-                            <span class="demo-tag">prEN 18223</span>
-                            <span class="demo-tag">JSON-LD</span>
-                            <span class="demo-tag">Client-side</span>
+                        <div class="tool-tags">
+                            <span class="tool-tag">prEN 18223</span>
+                            <span class="tool-tag">JSON-LD</span>
+                            <span class="tool-tag">Client-side</span>
                         </div>
-                        <div>
-                            <a class="btn btn-primary" onclick="openCreateForm();" style="cursor:pointer;">Get Started</a>
-                        </div>
+                        <div><a class="btn btn-primary" onclick="openCreateForm();" style="cursor:pointer;">Get Started</a></div>
                     </div>
-                    <div class="demo-card">
-                        <div class="demo-card-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        </div>
-                        <h3>Enrich IFC with DPP Data</h3>
+                    <div class="tool-card">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Enrich IFC with DPP Data
+                        </h3>
                         <p>Upload an IFC file and enrich building elements with DPP data — property sets, bSDD classifications, EPD indicators, GS1 identifiers, and document references.</p>
-                        <div class="demo-tags">
-                            <span class="demo-tag">IFC 2x3 / 4</span>
-                            <span class="demo-tag">bSDD</span>
-                            <span class="demo-tag">EPD</span>
-                            <span class="demo-tag">GS1</span>
+                        <div class="tool-tags">
+                            <span class="tool-tag">IFC 2x3 / 4</span>
+                            <span class="tool-tag">bSDD</span>
+                            <span class="tool-tag">EPD</span>
+                            <span class="tool-tag">GS1</span>
                         </div>
-                        <div>
-                            <a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a>
-                        </div>
+                        <div><a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a></div>
                     </div>
-                </div>
                 </div>
 
-                <div id="create-section" hidden style="background:#fff;border:1px solid #e5e5e5;border-radius:4px;padding:24px;">
-                    <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:4px;">New Product Passport</div>
-                    <div style="font-size:11px;color:#999;margin-bottom:16px;">Preview only. Runs in your browser, never sent to the server. Gone on reload.</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                        <div>
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product name</label>
-                            <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                <div id="create-section" hidden>
+                    <div class="create-form">
+                        <h3>New Product Passport</h3>
+                        <div class="form-hint">Preview only — runs in your browser, never sent to the server. Gone on reload.</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Product name</label>
+                                <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Manufacturer</label>
+                                <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" class="form-input">
+                            </div>
                         </div>
-                        <div>
-                            <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Manufacturer</label>
-                            <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#999'" onblur="this.style.borderColor='#ddd'">
+                        <div class="form-group">
+                            <label class="form-label">Product type</label>
+                            <select id="cf-type" class="form-input">
+                                <option value="IfcBuildingElementProxy">General building element</option>
+                                <option value="IfcSlab">Slab / panel</option>
+                                <option value="IfcBeam">Beam / column</option>
+                                <option value="IfcWall">Wall element</option>
+                                <option value="IfcWindow">Window</option>
+                                <option value="IfcDoor">Door</option>
+                                <option value="IfcCovering">Insulation / covering</option>
+                                <option value="IfcPipeSegment">Pipe segment</option>
+                            </select>
+                        </div>
+                        <div id="cf-error" style="display:none;margin-top:8px;font-size:12px;color:#b91c1c;"></div>
+                        <div class="form-actions">
+                            <button onclick="createLocalDpp()" class="btn btn-primary">Create</button>
+                            <button onclick="closeCreateForm();" class="btn btn-outline">Cancel</button>
                         </div>
                     </div>
-                    <div style="margin-top:12px;">
-                        <label style="display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px;">Product type</label>
-                        <select id="cf-type" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:3px;font-size:13px;font-family:inherit;background:#fff;outline:none;">
-                            <option value="IfcBuildingElementProxy">General building element</option>
-                            <option value="IfcSlab">Slab / panel</option>
-                            <option value="IfcBeam">Beam / column</option>
-                            <option value="IfcWall">Wall element</option>
-                            <option value="IfcWindow">Window</option>
-                            <option value="IfcDoor">Door</option>
-                            <option value="IfcCovering">Insulation / covering</option>
-                            <option value="IfcPipeSegment">Pipe segment</option>
-                        </select>
-                    </div>
-                    <div style="display:flex;gap:8px;margin-top:16px;">
-                        <button onclick="createLocalDpp()" style="padding:8px 20px;background:#111;color:#fff;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Create</button>
-                        <button onclick="closeCreateForm();" style="padding:8px 20px;background:#fff;color:#666;border:1px solid #ddd;border-radius:3px;font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
-                    </div>
-                    <div id="cf-error" style="display:none;margin-top:8px;font-size:11px;color:#b91c1c;"></div>
                 </div>
-                <div id="user-dpps"></div>
+                <div id="user-dpps" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;"></div>
 
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
                 function openCreateForm() {{
-                    document.getElementById('demo-tools-section').hidden = true;
+                    document.getElementById('demo-cards').hidden = true;
                     document.getElementById('create-section').hidden = false;
                 }}
                 function closeCreateForm() {{
                     document.getElementById('create-section').hidden = true;
-                    document.getElementById('demo-tools-section').hidden = false;
+                    document.getElementById('demo-cards').hidden = false;
                 }}
                 function createLocalDpp() {{
                     var rawName = document.getElementById('cf-name').value.trim().substring(0, 80);
@@ -779,7 +798,7 @@ async def root(request: Request):
                     var card = '<div class="product-card" style="border-left:3px solid #16a34a;">'
                         + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
                         + '<div class="product-body"><div class="product-meta">'
-                        + '<div style="font-size:11px;color:#999;">Client-side preview only</div>'
+                        + '<div style="font-size:12px;color:#999;">Client-side preview only</div>'
                         + '</div><div class="tags"><span class="tag">' + type + '</span><span class="tag">local preview</span></div></div>'
                         + '</div>';
                     document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
@@ -789,44 +808,28 @@ async def root(request: Request):
                 }}
                 </script>
 
-                <div class="two-col">
+                <div class="bottom-grid">
                     <div>
-                        <h2 class="section-title">Explore</h2>
-                        <div class="features" style="grid-template-columns:1fr 1fr;">
-                            <div class="feature-card">
-                                <h4>OWL Ontology</h4>
-                                <p>Formal DPP ontology — classes, properties, relationships.</p>
-                                <a href="/ontology">View ontology</a>
-                            </div>
-                            <div class="feature-card">
-                                <h4>SHACL Shapes</h4>
-                                <p>Validation constraints for DPP data.</p>
-                                <a href="/ontology/shacl">View shapes</a>
-                            </div>
-                            <div class="feature-card">
-                                <h4>SHACL Validator</h4>
-                                <p>Check DPP conformance against shapes.</p>
-                                <a href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post">Try validator</a>
-                            </div>
-                            <div class="feature-card">
-                                <h4>API Documentation</h4>
-                                <p>Interactive Swagger UI with examples.</p>
-                                <a href="/docs">Open Swagger</a>
-                            </div>
+                        <div class="section-label" style="margin-top:0;">Explore</div>
+                        <div class="explore-links">
+                            <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes, properties, relationships</span></a>
+                            <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Validation constraints</span></a>
+                            <a class="explore-link" href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post"><strong>Validator</strong><span>Check conformance</span></a>
+                            <a class="explore-link" href="/docs"><strong>API Docs</strong><span>Swagger UI</span></a>
                         </div>
                     </div>
                     <div>
-                        <h2 class="section-title">Content Negotiation</h2>
-                        <div class="try-it">
+                        <div class="section-label" style="margin-top:0;">Content Negotiation</div>
+                        <div class="conneg-card">
                             <p>Same URL returns <strong>HTML</strong> in browser or <strong>JSON-LD</strong> via curl:</p>
                             <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
-                            <p class="hint">Open in your browser for the HTML view with bSDD links and QR codes.</p>
+                            <div class="hint">Open in browser for HTML view with bSDD links and QR codes.</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="footer">
-                    bS-Summit Porto — buildingSMART International &middot;
+                    bS-Summit Porto &middot; buildingSMART International &middot;
                     <a href="/docs">API Docs</a> &middot;
                     <a href="/ontology">Ontology</a> &middot;
                     <a href="/ontology/shacl">SHACL</a>
