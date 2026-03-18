@@ -596,87 +596,90 @@ async def root(request: Request):
             <title>Lignum DPP — Digital Product Passport Demo</title>
             <style>
                 * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-                body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
-                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 8px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }}
-                .top {{ padding: 56px 24px 0; max-width: 960px; margin: 0 auto; }}
-                .intro {{ padding: 40px 0 32px; border-bottom: 1px solid #e5e5e5; }}
-                .intro h1 {{ font-size: 1.75em; font-weight: 700; color: #111; letter-spacing: -0.02em; margin-bottom: 10px; }}
-                .intro p {{ font-size: 15px; color: #555; max-width: 640px; line-height: 1.6; }}
-                .standards {{ display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }}
-                .standards span {{ background: #f5f5f5; border: 1px solid #ddd; padding: 4px 12px; font-size: 12px; color: #444; font-weight: 500; border-radius: 3px; }}
-                .disclaimer-box {{ margin: 20px 0 0; background: #fef2f2; border: 1px solid #fecaca; border-radius: 3px; padding: 12px 16px; font-size: 12px; color: #991b1b; line-height: 1.5; }}
-                .main {{ max-width: 960px; margin: 0 auto; padding: 0 24px 48px; }}
-                .section-title {{ font-size: 0.8em; font-weight: 700; color: #444; margin: 40px 0 16px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #111; padding-bottom: 8px; }}
-                .product-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }}
-                .product-card {{ background: #fff; border: 1px solid #e5e5e5; overflow: hidden; transition: border-color 0.15s; border-radius: 3px; }}
+                body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; line-height: 1.5; }}
+                .demo-banner {{ position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #b91c1c; color: white; text-align: center; padding: 6px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }}
+                .page {{ max-width: 960px; margin: 0 auto; padding: 38px 24px 48px; }}
+                .header {{ display: flex; align-items: flex-start; gap: 20px; margin-bottom: 16px; }}
+                .header-text {{ flex: 1; }}
+                .header h1 {{ font-size: 1.5em; font-weight: 700; color: #111; letter-spacing: -0.02em; margin-bottom: 4px; }}
+                .header p {{ font-size: 13px; color: #666; line-height: 1.5; max-width: 600px; }}
+                .standards {{ display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }}
+                .standards span {{ background: #fff; border: 1px solid #ddd; padding: 2px 8px; font-size: 10px; color: #555; font-weight: 500; border-radius: 3px; }}
+                .disclaimer-inline {{ font-size: 11px; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; border-radius: 3px; padding: 8px 12px; margin-bottom: 20px; line-height: 1.4; }}
+                .section-title {{ font-size: 11px; font-weight: 700; color: #888; margin: 24px 0 10px; text-transform: uppercase; letter-spacing: 1px; }}
+                .product-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }}
+                @media (max-width: 768px) {{ .product-grid {{ grid-template-columns: 1fr; }} }}
+                .product-card {{ background: #fff; border: 1px solid #e5e5e5; overflow: hidden; transition: border-color 0.15s; border-radius: 4px; display: flex; flex-direction: column; }}
                 .product-card:hover {{ border-color: #999; }}
-                .product-header {{ padding: 16px 16px 10px; border-bottom: 1px solid #f0f0f0; }}
-                .product-header h3 {{ font-size: 1em; color: #111; margin-bottom: 2px; font-weight: 600; }}
-                .operator {{ font-size: 12px; color: #888; }}
-                .product-body {{ padding: 12px 16px; }}
-                .product-meta {{ font-size: 12px; color: #666; line-height: 1.8; }}
-                .product-meta code {{ background: #f5f5f5; padding: 1px 5px; border-radius: 3px; font-size: 11px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-                .tags {{ margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap; }}
-                .tag {{ background: #f5f5f5; color: #555; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-                .product-actions {{ padding: 10px 16px 14px; display: flex; gap: 8px; }}
-                .btn {{ padding: 6px 14px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 12px; transition: all 0.1s; }}
+                .product-header {{ padding: 12px 14px 8px; }}
+                .product-header h3 {{ font-size: 13px; color: #111; margin-bottom: 1px; font-weight: 600; line-height: 1.3; }}
+                .operator {{ font-size: 11px; color: #999; }}
+                .product-body {{ padding: 6px 14px 10px; flex: 1; }}
+                .product-meta {{ font-size: 11px; color: #666; line-height: 1.6; }}
+                .product-meta code {{ background: #f5f5f5; padding: 1px 4px; border-radius: 2px; font-size: 10px; color: #333; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; word-break: break-all; }}
+                .tags {{ margin-top: 6px; display: flex; gap: 3px; flex-wrap: wrap; }}
+                .tag {{ background: #f5f5f5; color: #666; padding: 1px 6px; border-radius: 2px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .product-actions {{ padding: 8px 14px 12px; display: flex; gap: 6px; }}
+                .btn {{ padding: 5px 12px; border-radius: 3px; text-decoration: none; font-weight: 600; font-size: 11px; transition: all 0.1s; }}
                 .btn-primary {{ background: #111; color: #fff; }}
                 .btn-primary:hover {{ background: #333; }}
                 .btn-gs1 {{ background: #fff; color: #333; border: 1px solid #ccc; }}
-                .btn-gs1:hover {{ border-color: #999; background: #fafafa; }}
-                .demo-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }}
-                .demo-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 3px; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.15s; }}
+                .btn-gs1:hover {{ border-color: #999; background: #f5f5f5; }}
+                .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }}
+                @media (max-width: 640px) {{ .two-col {{ grid-template-columns: 1fr; }} }}
+                .demo-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
+                @media (max-width: 640px) {{ .demo-grid {{ grid-template-columns: 1fr; }} }}
+                .demo-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s; }}
                 .demo-card:hover {{ border-color: #999; }}
-                .demo-card-icon {{ width: 40px; height: 40px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }}
-                .demo-card h3 {{ font-size: 15px; font-weight: 700; color: #111; margin: 0; }}
-                .demo-card p {{ font-size: 13px; color: #666; line-height: 1.5; flex: 1; margin: 0; }}
-                .demo-card .demo-tags {{ display: flex; gap: 4px; flex-wrap: wrap; }}
-                .demo-card .demo-tag {{ background: #f5f5f5; border: 1px solid #eee; color: #555; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-                .demo-card .btn {{ display: inline-block; margin-top: 4px; }}
-                .features {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }}
-                .feature-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; }}
-                .feature-card h4 {{ color: #111; margin-bottom: 6px; font-size: 13px; font-weight: 700; }}
-                .feature-card p {{ font-size: 12px; color: #666; line-height: 1.5; }}
-                .feature-card a {{ color: #2563eb; text-decoration: none; font-size: 12px; font-weight: 500; }}
+                .demo-card-icon {{ width: 32px; height: 32px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; }}
+                .demo-card h3 {{ font-size: 13px; font-weight: 700; color: #111; margin: 0; }}
+                .demo-card p {{ font-size: 12px; color: #666; line-height: 1.4; flex: 1; margin: 0; }}
+                .demo-card .demo-tags {{ display: flex; gap: 3px; flex-wrap: wrap; }}
+                .demo-card .demo-tag {{ background: #f5f5f5; border: 1px solid #eee; color: #555; padding: 1px 6px; border-radius: 2px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
+                .demo-card .btn {{ display: inline-block; }}
+                .features {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }}
+                @media (max-width: 768px) {{ .features {{ grid-template-columns: repeat(2, 1fr); }} }}
+                .feature-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 12px; }}
+                .feature-card h4 {{ color: #111; margin-bottom: 4px; font-size: 12px; font-weight: 700; }}
+                .feature-card p {{ font-size: 11px; color: #666; line-height: 1.4; margin-bottom: 6px; }}
+                .feature-card a {{ color: #2563eb; text-decoration: none; font-size: 11px; font-weight: 500; }}
                 .feature-card a:hover {{ text-decoration: underline; }}
-                .try-it {{ background: #fafafa; border: 1px solid #e5e5e5; border-radius: 3px; padding: 16px; margin: 16px 0; }}
-                .try-it p {{ font-size: 13px; color: #555; }}
+                .try-it {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 4px; padding: 12px 14px; }}
+                .try-it p {{ font-size: 12px; color: #555; }}
                 .try-it strong {{ color: #111; }}
-                .try-it code {{ background: #f0f0f0; padding: 10px 14px; border-radius: 3px; display: block; font-size: 12px; color: #333; overflow-x: auto; margin: 10px 0; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
-                .try-it .hint {{ font-size: 11px; color: #999; margin-top: 6px; }}
-                .footer {{ text-align: center; padding: 32px 0; color: #999; font-size: 12px; border-top: 1px solid #e5e5e5; margin-top: 40px; }}
+                .try-it code {{ background: #111; color: #a0ffa0; padding: 8px 12px; border-radius: 3px; display: block; font-size: 11px; overflow-x: auto; margin: 8px 0 4px; white-space: pre; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; }}
+                .try-it .hint {{ font-size: 10px; color: #999; }}
+                .footer {{ text-align: center; padding: 24px 0; color: #999; font-size: 11px; border-top: 1px solid #e5e5e5; margin-top: 32px; }}
                 .footer a {{ color: #666; text-decoration: none; }}
                 .footer a:hover {{ color: #111; }}
             </style>
         </head>
         <body>
             <div class="demo-banner">
-                DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — Not affiliated with any manufacturer — bS-Summit Porto
+                DEMO / PROOF OF CONCEPT — NOT an official DPP server — Sample data only — bS-Summit Porto
             </div>
-            <div class="top">
-                <div class="intro">
-                    <h1>Digital Product Passport</h1>
-                    <p>
-                        A proof-of-concept implementation of the <strong>prEN 18222:2025</strong> DPP API for construction products,
-                        with GS1 Digital Link resolution, bSDD property references, and SHACL validation.
-                    </p>
-                    <div class="standards">
-                        <span>prEN 18222 API</span>
-                        <span>prEN 18223 Data Model</span>
-                        <span>GS1 Digital Link</span>
-                        <span>bSDD</span>
-                        <span>OWL + SHACL</span>
-                        <span>EU CPR / DoPC</span>
-                    </div>
-                    <div class="disclaimer-box">
-                        <strong>Disclaimer:</strong> This is a proof-of-concept demonstration presented at bS-Summit Porto.
-                        This server is not an official Digital Product Passport system.
-                        All product data shown is illustrative sample data only.
-                        Not operated by or affiliated with any manufacturer.
+            <div class="page">
+                <div class="header">
+                    <div class="header-text">
+                        <h1>Digital Product Passport</h1>
+                        <p>
+                            Proof-of-concept <strong>prEN 18222:2025</strong> DPP API for construction products
+                            — GS1 Digital Link, bSDD references, SHACL validation.
+                        </p>
+                        <div class="standards">
+                            <span>prEN 18222</span>
+                            <span>prEN 18223</span>
+                            <span>GS1 Digital Link</span>
+                            <span>bSDD</span>
+                            <span>OWL + SHACL</span>
+                            <span>EU CPR / DoPC</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="main">
+                <div class="disclaimer-inline">
+                    <strong>Disclaimer:</strong> PoC demo (bS-Summit Porto). Not an official DPP system. Sample data only. Not affiliated with any manufacturer.
+                </div>
+
                 <h2 class="section-title">Sample Products</h2>
                 <div class="product-grid">
                     {product_cards}
@@ -784,42 +787,48 @@ async def root(request: Request):
                 }}
                 </script>
 
-                <h2 class="section-title">Explore</h2>
-                <div class="features">
-                    <div class="feature-card">
-                        <h4>OWL Ontology</h4>
-                        <p>Formal DPP ontology in JSON-LD. Classes, properties, and relationships for digital product passports.</p>
-                        <a href="/ontology">View ontology</a>
+                <div class="two-col">
+                    <div>
+                        <h2 class="section-title">Explore</h2>
+                        <div class="features" style="grid-template-columns:1fr 1fr;">
+                            <div class="feature-card">
+                                <h4>OWL Ontology</h4>
+                                <p>Formal DPP ontology — classes, properties, relationships.</p>
+                                <a href="/ontology">View ontology</a>
+                            </div>
+                            <div class="feature-card">
+                                <h4>SHACL Shapes</h4>
+                                <p>Validation constraints for DPP data.</p>
+                                <a href="/ontology/shacl">View shapes</a>
+                            </div>
+                            <div class="feature-card">
+                                <h4>SHACL Validator</h4>
+                                <p>Check DPP conformance against shapes.</p>
+                                <a href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post">Try validator</a>
+                            </div>
+                            <div class="feature-card">
+                                <h4>API Documentation</h4>
+                                <p>Interactive Swagger UI with examples.</p>
+                                <a href="/docs">Open Swagger</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <h4>SHACL Shapes</h4>
-                        <p>Validation shapes that define constraints on DPP data. Use with the /validate endpoint.</p>
-                        <a href="/ontology/shacl">View shapes</a>
-                    </div>
-                    <div class="feature-card">
-                        <h4>SHACL Validator</h4>
-                        <p>POST any DPP JSON-LD to check conformance against SHACL shapes. Try it from the Swagger UI.</p>
-                        <a href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post">Try validator</a>
-                    </div>
-                    <div class="feature-card">
-                        <h4>API Documentation</h4>
-                        <p>Full interactive Swagger UI with examples you can execute directly.</p>
-                        <a href="/docs">Open Swagger</a>
+                    <div>
+                        <h2 class="section-title">Content Negotiation</h2>
+                        <div class="try-it">
+                            <p>Same URL returns <strong>HTML</strong> in browser or <strong>JSON-LD</strong> via curl:</p>
+                            <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
+                            <p class="hint">Open in your browser for the HTML view with bSDD links and QR codes.</p>
+                        </div>
                     </div>
                 </div>
 
-                <h2 class="section-title">Content Negotiation</h2>
-                <div class="try-it">
-                    <p>The same DPP URL returns <strong>HTML</strong> in your browser or <strong>JSON-LD</strong> via curl:</p>
-                    <code>curl -H "Accept: application/ld+json" {BASE_URL}/id/01/04012345678901</code>
-                    <p class="hint">Open the same URL in your browser to see the HTML view with bSDD links and QR codes.</p>
+                <div class="footer">
+                    bS-Summit Porto — buildingSMART International &middot;
+                    <a href="/docs">API Docs</a> &middot;
+                    <a href="/ontology">Ontology</a> &middot;
+                    <a href="/ontology/shacl">SHACL</a>
                 </div>
-            </div>
-            <div class="footer">
-                Presented at bS-Summit Porto — buildingSMART International<br>
-                <a href="/docs">API Docs</a> &middot;
-                <a href="/ontology">Ontology</a> &middot;
-                <a href="/ontology/shacl">SHACL Shapes</a>
             </div>
         </body>
         </html>
