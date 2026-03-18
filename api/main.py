@@ -923,34 +923,54 @@ async def root(request: Request):
                 </div>
 
                 <div id="validate-section" class="conneg-card" style="margin-top: 12px;">
-                    <p><strong>SHACL Validation</strong> &mdash; paste a DPP JSON-LD and check conformance against the shapes graph:</p>
-                    <textarea id="validate-input" rows="4" placeholder='Paste DPP JSON-LD here or click &ldquo;Load Sample&rdquo;' style="width:100%; font-family: monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical; background: var(--card);"></textarea>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button onclick="loadSampleDpp()" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px;">Load Sample</button>
+                    <p><strong>SHACL Validation</strong> &mdash; load a sample DPP or paste your own JSON-LD to check conformance:</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <button onclick="loadDpp('timber')" class="btn btn-outline validate-sample-btn" data-key="timber" style="font-size: 11px; padding: 5px 12px;">Timber (Glulam)</button>
+                        <button onclick="loadDpp('insulation')" class="btn btn-outline validate-sample-btn" data-key="insulation" style="font-size: 11px; padding: 5px 12px;">Insulation (Knauf)</button>
+                        <button onclick="loadDpp('pipe')" class="btn btn-outline validate-sample-btn" data-key="pipe" style="font-size: 11px; padding: 5px 12px;">Pipe (PVC DN110)</button>
+                    </div>
+                    <textarea id="validate-input" rows="5" placeholder='Select a sample above or paste your own DPP JSON-LD here&hellip;' style="width:100%; font-family: monospace; font-size: 12px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical; background: var(--card);"></textarea>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
                         <button onclick="runValidation()" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;">Validate</button>
+                        <button onclick="clearValidation()" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px;">Clear</button>
+                        <span id="validate-loaded" style="font-size: 11px; color: #888; margin-left: auto;"></span>
                     </div>
                     <pre id="validate-result" style="display:none; margin-top: 10px; padding: 10px; background: #1a1a1a; color: #e0e0e0; border-radius: var(--radius); font-size: 11px; max-height: 240px; overflow-y: auto; white-space: pre-wrap;"></pre>
                 </div>
                 <script>
-                async function loadSampleDpp() {{
+                const DPP_IDS = {{
+                    timber: 'did:web:lignum.dev:dpp:schilliger-bsh-gl24h-2022-001',
+                    insulation: 'did:web:lignum.dev:dpp:knauf-acoustic-batt-2025-001',
+                    pipe: 'did:web:lignum.dev:dpp:pvc-sewage-dn110-2025-001'
+                }};
+                async function loadDpp(key) {{
                     const ta = document.getElementById('validate-input');
+                    const label = document.getElementById('validate-loaded');
+                    const out = document.getElementById('validate-result');
+                    out.style.display = 'none';
+                    document.querySelectorAll('.validate-sample-btn').forEach(b => b.style.borderColor = '');
+                    const btn = document.querySelector('[data-key="'+key+'"]');
+                    if (btn) btn.style.borderColor = 'var(--wood)';
+                    ta.value = 'Loading\u2026';
                     try {{
-                        const res = await fetch('/dpps/', {{headers: {{'Accept': 'application/json'}}}});
-                        const list = await res.json();
-                        const ids = list.dpps || list;
-                        if (ids.length > 0) {{
-                            const id = typeof ids[0] === 'string' ? ids[0] : ids[0].id;
-                            const dppRes = await fetch('/dpps/' + encodeURIComponent(id), {{headers: {{'Accept': 'application/ld+json'}}}});
-                            const dpp = await dppRes.json();
-                            ta.value = JSON.stringify(dpp, null, 2);
-                        }}
-                    }} catch(e) {{ ta.value = 'Error loading sample: ' + e.message; }}
+                        const id = DPP_IDS[key];
+                        const res = await fetch('/dpps/' + encodeURIComponent(id), {{headers: {{'Accept': 'application/ld+json'}}}});
+                        const dpp = await res.json();
+                        ta.value = JSON.stringify(dpp, null, 2);
+                        label.textContent = 'Loaded: ' + (dpp['dcterms:title'] || dpp.id || key);
+                    }} catch(e) {{ ta.value = 'Error loading: ' + e.message; label.textContent = ''; }}
+                }}
+                function clearValidation() {{
+                    document.getElementById('validate-input').value = '';
+                    document.getElementById('validate-result').style.display = 'none';
+                    document.getElementById('validate-loaded').textContent = '';
+                    document.querySelectorAll('.validate-sample-btn').forEach(b => b.style.borderColor = '');
                 }}
                 async function runValidation() {{
                     const ta = document.getElementById('validate-input');
                     const out = document.getElementById('validate-result');
                     out.style.display = 'block';
-                    if (!ta.value.trim()) {{ out.textContent = 'Paste a DPP JSON-LD first.'; return; }}
+                    if (!ta.value.trim()) {{ out.textContent = 'Select a sample or paste DPP JSON-LD first.'; out.style.color = '#888'; return; }}
                     try {{
                         const body = JSON.parse(ta.value);
                         const res = await fetch('/validate', {{method:'POST', headers:{{'Content-Type':'application/json'}}, body: JSON.stringify(body)}});
