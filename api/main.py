@@ -720,6 +720,11 @@ async def root(request: Request):
                         <p>Full interactive Swagger UI with examples you can execute directly.</p>
                         <a href="/docs">Open Swagger</a>
                     </div>
+                    <div class="feature-card">
+                        <h4>IFC Enrichment</h4>
+                        <p>Upload an IFC file and enrich it with DPP data: property sets, bSDD classifications, EPD indicators, documents.</p>
+                        <a href="/enrich/">Enrich IFC</a>
+                    </div>
                 </div>
 
                 <h2 class="section-title">Content Negotiation</h2>

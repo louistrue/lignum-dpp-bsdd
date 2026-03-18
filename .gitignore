@@ -4,3 +4,5 @@ __pycache__/
 tmp_new_dpp.json
 .vercel
 .DS_Store
+web/node_modules/
+public/enrich/
