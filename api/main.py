@@ -638,17 +638,6 @@ async def root(request: Request):
                 .btn-outline {{ background: #fff; color: #333; border: 1px solid #d5d5d5; }}
                 .btn-outline:hover {{ border-color: #999; background: #fafafa; text-decoration: none; }}
 
-                /* Demo tools */
-                .tools-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }}
-                @media (max-width: 640px) {{ .tools-grid {{ grid-template-columns: 1fr; }} }}
-                .tool-card {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.15s, border-color 0.15s; }}
-                .tool-card:hover {{ border-color: #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }}
-                .tool-card h3 {{ font-size: 14px; font-weight: 700; color: #111; margin: 0; display: flex; align-items: center; gap: 8px; }}
-                .tool-card h3 svg {{ flex-shrink: 0; }}
-                .tool-card p {{ font-size: 13px; color: #666; line-height: 1.5; margin: 0; flex: 1; }}
-                .tool-tags {{ display: flex; gap: 4px; flex-wrap: wrap; }}
-                .tool-tag {{ background: #f3f4f6; border: 1px solid #e5e5e5; color: #555; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }}
-
                 /* Create form */
                 .create-form {{ background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 24px; }}
                 .create-form h3 {{ font-size: 15px; font-weight: 700; color: #111; margin-bottom: 2px; }}
@@ -723,107 +712,179 @@ async def root(request: Request):
                     </div>
                 </div>
 
-                <div class="section-label">Sample Products</div>
-                <div class="product-grid">
+                <div class="section-label">Products</div>
+                <div id="product-grid" class="product-grid">
                     {product_cards}
-                </div>
-
-                <div class="section-label">Demo Tools</div>
-                <div id="demo-cards" class="tools-grid">
-                    <div class="tool-card">
-                        <h3>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                            Create Your DPP
-                        </h3>
-                        <p>Build a product passport from scratch. Define product properties, assign classifications, and generate a standards-compliant DPP.</p>
-                        <div class="tool-tags">
-                            <span class="tool-tag">prEN 18223</span>
-                            <span class="tool-tag">JSON-LD</span>
-                            <span class="tool-tag">Client-side</span>
+                    <div class="product-card" id="create-card" style="border-style:dashed;cursor:pointer;" onclick="openCreateForm();">
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <div style="font-size:14px;font-weight:600;color:#555;margin-top:8px;">Create Your DPP</div>
+                            <div style="font-size:11px;color:#aaa;margin-top:4px;">Client-side preview &middot; gone on reload</div>
                         </div>
-                        <div><a class="btn btn-primary" onclick="openCreateForm();" style="cursor:pointer;">Get Started</a></div>
-                    </div>
-                    <div class="tool-card">
-                        <h3>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            Enrich IFC with DPP Data
-                        </h3>
-                        <p>Upload an IFC file and enrich building elements with DPP data — property sets, bSDD classifications, EPD indicators, GS1 identifiers, and document references.</p>
-                        <div class="tool-tags">
-                            <span class="tool-tag">IFC 2x3 / 4</span>
-                            <span class="tool-tag">bSDD</span>
-                            <span class="tool-tag">EPD</span>
-                            <span class="tool-tag">GS1</span>
-                        </div>
-                        <div><a href="/enrich/" class="btn btn-primary">Open Enrichment Tool</a></div>
                     </div>
                 </div>
 
-                <div id="create-section" hidden>
+                <div id="create-section" hidden style="margin-top:14px;">
                     <div class="create-form">
-                        <h3>New Product Passport</h3>
-                        <div class="form-hint">Preview only — runs in your browser, never sent to the server. Gone on reload.</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <div>
+                                <h3>New Product Passport</h3>
+                                <div class="form-hint" style="margin-bottom:0;">Client-side preview only — not persisted. Build a DPP with properties, identifiers, and classifications.</div>
+                            </div>
+                            <button onclick="closeCreateForm();" class="btn btn-outline" style="flex-shrink:0;">Cancel</button>
+                        </div>
+
+                        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">General</div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">Product name</label>
-                                <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="80" class="form-input">
+                                <label class="form-label">Product name *</label>
+                                <input id="cf-name" type="text" placeholder="e.g. CLT Panel 200mm" maxlength="100" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Manufacturer</label>
-                                <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="80" class="form-input">
+                                <label class="form-label">Manufacturer *</label>
+                                <input id="cf-mfr" type="text" placeholder="e.g. Stora Enso" maxlength="100" class="form-input">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Product type</label>
-                            <select id="cf-type" class="form-input">
-                                <option value="IfcBuildingElementProxy">General building element</option>
-                                <option value="IfcSlab">Slab / panel</option>
-                                <option value="IfcBeam">Beam / column</option>
-                                <option value="IfcWall">Wall element</option>
-                                <option value="IfcWindow">Window</option>
-                                <option value="IfcDoor">Door</option>
-                                <option value="IfcCovering">Insulation / covering</option>
-                                <option value="IfcPipeSegment">Pipe segment</option>
-                            </select>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">GTIN</label>
+                                <input id="cf-gtin" type="text" placeholder="e.g. 04012345678901" maxlength="14" class="form-input" style="font-family:'SF Mono',Monaco,monospace;font-size:13px;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product type (IFC)</label>
+                                <select id="cf-type" class="form-input">
+                                    <option value="IfcBuildingElementProxy">General building element</option>
+                                    <option value="IfcSlab">Slab / panel</option>
+                                    <option value="IfcBeam">Beam / column</option>
+                                    <option value="IfcWall">Wall element</option>
+                                    <option value="IfcWindow">Window</option>
+                                    <option value="IfcDoor">Door</option>
+                                    <option value="IfcCovering">Insulation / covering</option>
+                                    <option value="IfcPipeSegment">Pipe segment</option>
+                                </select>
+                            </div>
                         </div>
-                        <div id="cf-error" style="display:none;margin-top:8px;font-size:12px;color:#b91c1c;"></div>
-                        <div class="form-actions">
-                            <button onclick="createLocalDpp()" class="btn btn-primary">Create</button>
-                            <button onclick="closeCreateForm();" class="btn btn-outline">Cancel</button>
+
+                        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.8px;margin:18px 0 8px;">Labels &amp; Classification</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Labels <span style="font-weight:400;color:#aaa;">(comma-separated)</span></label>
+                                <input id="cf-labels" type="text" placeholder="e.g. construction, timber, structural" maxlength="200" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">bSDD classification</label>
+                                <input id="cf-bsdd" type="text" placeholder="e.g. Cross Laminated Timber" maxlength="100" class="form-input">
+                            </div>
+                        </div>
+
+                        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.8px;margin:18px 0 8px;display:flex;align-items:center;justify-content:space-between;">
+                            Properties
+                            <button type="button" onclick="addPropertyRow();" class="btn btn-outline" style="padding:3px 10px;font-size:11px;">+ Add</button>
+                        </div>
+                        <div id="cf-props">
+                            <div class="form-row prop-row" style="margin-bottom:6px;">
+                                <div class="form-group"><input type="text" placeholder="Name, e.g. Thermal conductivity" class="form-input prop-name" maxlength="80"></div>
+                                <div class="form-group" style="display:flex;gap:8px;">
+                                    <input type="text" placeholder="Value, e.g. 0.035" class="form-input prop-val" style="flex:1;" maxlength="40">
+                                    <input type="text" placeholder="Unit" class="form-input prop-unit" style="width:70px;" maxlength="20">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="cf-error" style="display:none;margin-top:12px;font-size:12px;color:#b91c1c;background:#fef2f2;padding:8px 12px;border-radius:6px;"></div>
+                        <div class="form-actions" style="margin-top:20px;padding-top:18px;border-top:1px solid #eee;">
+                            <button onclick="createLocalDpp()" class="btn btn-primary" style="padding:9px 24px;font-size:13px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M12 5v14M5 12h14"/></svg>
+                                Create DPP
+                            </button>
+                            <button onclick="closeCreateForm();" class="btn btn-outline" style="padding:9px 20px;font-size:13px;">Cancel</button>
                         </div>
                     </div>
                 </div>
-                <div id="user-dpps" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;"></div>
 
                 <script>
                 function esc(s) {{ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }}
+                function addPropertyRow() {{
+                    var html = '<div class="form-row prop-row" style="margin-bottom:6px;">'
+                        + '<div class="form-group"><input type="text" placeholder="Property name" class="form-input prop-name" maxlength="80"></div>'
+                        + '<div class="form-group" style="display:flex;gap:8px;">'
+                        + '<input type="text" placeholder="Value" class="form-input prop-val" style="flex:1;" maxlength="40">'
+                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:70px;" maxlength="20">'
+                        + '<button type="button" onclick="this.closest(\'.prop-row\').remove();" style="background:none;border:none;color:#bbb;cursor:pointer;font-size:16px;padding:0 4px;" title="Remove">&times;</button>'
+                        + '</div></div>';
+                    document.getElementById('cf-props').insertAdjacentHTML('beforeend', html);
+                }}
                 function openCreateForm() {{
-                    document.getElementById('demo-cards').hidden = true;
+                    document.getElementById('create-card').style.display = 'none';
                     document.getElementById('create-section').hidden = false;
+                    document.getElementById('cf-name').focus();
                 }}
                 function closeCreateForm() {{
                     document.getElementById('create-section').hidden = true;
-                    document.getElementById('demo-cards').hidden = false;
+                    document.getElementById('create-card').style.display = '';
                 }}
                 function createLocalDpp() {{
-                    var rawName = document.getElementById('cf-name').value.trim().substring(0, 80);
-                    var rawMfr = document.getElementById('cf-mfr').value.trim().substring(0, 80);
+                    var rawName = document.getElementById('cf-name').value.trim().substring(0, 100);
+                    var rawMfr = document.getElementById('cf-mfr').value.trim().substring(0, 100);
+                    var gtin = esc(document.getElementById('cf-gtin').value.trim().substring(0, 14));
                     var ifcType = document.getElementById('cf-type').value;
+                    var rawLabels = document.getElementById('cf-labels').value.trim();
+                    var bsdd = esc(document.getElementById('cf-bsdd').value.trim().substring(0, 100));
                     var errEl = document.getElementById('cf-error');
                     errEl.style.display = 'none';
                     if (!rawName || !rawMfr) {{ errEl.textContent = 'Product name and manufacturer are required.'; errEl.style.display = 'block'; return; }}
                     var name = esc(rawName);
                     var mfr = esc(rawMfr);
                     var type = esc(ifcType);
+
+                    // Build label tags
+                    var labels = rawLabels ? rawLabels.split(',').map(function(l) {{ return l.trim(); }}).filter(Boolean).slice(0, 8) : [ifcType];
+                    var tagHtml = labels.map(function(l) {{ return '<span class="tag">' + esc(l) + '</span>'; }}).join('');
+
+                    // Collect properties
+                    var propRows = document.querySelectorAll('#cf-props .prop-row');
+                    var propsHtml = '';
+                    propRows.forEach(function(row) {{
+                        var pn = row.querySelector('.prop-name').value.trim();
+                        var pv = row.querySelector('.prop-val').value.trim();
+                        var pu = row.querySelector('.prop-unit').value.trim();
+                        if (pn && pv) {{
+                            propsHtml += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f5;font-size:12px;">'
+                                + '<span style="color:#555;">' + esc(pn) + '</span>'
+                                + '<span style="font-weight:600;color:#111;">' + esc(pv) + (pu ? ' <span style="color:#999;font-weight:400;">' + esc(pu) + '</span>' : '') + '</span></div>';
+                        }}
+                    }});
+
+                    // Build GTIN + DPP ID meta
+                    var metaHtml = '';
+                    if (gtin) {{ metaHtml += '<div><strong>GTIN:</strong> <code>' + gtin + '</code></div>'; }}
+                    metaHtml += '<div><strong>DPP ID:</strong> <code style="font-size:10px;">did:web:local:dpp:' + rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '</code></div>';
+
+                    // Build classification line
+                    var classHtml = bsdd ? '<div style="margin-top:6px;font-size:11px;color:#666;"><strong>Classification:</strong> ' + esc(bsdd) + '</div>' : '';
+
                     var card = '<div class="product-card" style="border-left:3px solid #16a34a;">'
                         + '<div class="product-header"><h3>' + name + '</h3><span class="operator">' + mfr + '</span></div>'
-                        + '<div class="product-body"><div class="product-meta">'
-                        + '<div style="font-size:12px;color:#999;">Client-side preview only</div>'
-                        + '</div><div class="tags"><span class="tag">' + type + '</span><span class="tag">local preview</span></div></div>'
-                        + '</div>';
-                    document.getElementById('user-dpps').insertAdjacentHTML('beforeend', card);
+                        + '<div class="product-body">'
+                        + '<div class="product-meta">' + metaHtml + classHtml + '</div>'
+                        + (propsHtml ? '<div style="margin-top:8px;padding:6px 0;">' + propsHtml + '</div>' : '')
+                        + '<div class="tags">' + tagHtml + '</div>'
+                        + '</div></div>';
+
+                    // Insert before the "+ Create" card
+                    document.getElementById('create-card').insertAdjacentHTML('beforebegin', card);
+                    // Reset form
                     document.getElementById('cf-name').value = '';
                     document.getElementById('cf-mfr').value = '';
+                    document.getElementById('cf-gtin').value = '';
+                    document.getElementById('cf-labels').value = '';
+                    document.getElementById('cf-bsdd').value = '';
+                    document.getElementById('cf-props').innerHTML = '<div class="form-row prop-row" style="margin-bottom:6px;">'
+                        + '<div class="form-group"><input type="text" placeholder="Name, e.g. Thermal conductivity" class="form-input prop-name" maxlength="80"></div>'
+                        + '<div class="form-group" style="display:flex;gap:8px;">'
+                        + '<input type="text" placeholder="Value, e.g. 0.035" class="form-input prop-val" style="flex:1;" maxlength="40">'
+                        + '<input type="text" placeholder="Unit" class="form-input prop-unit" style="width:70px;" maxlength="20">'
+                        + '</div></div>';
                     closeCreateForm();
                 }}
                 </script>
@@ -832,9 +893,9 @@ async def root(request: Request):
                     <div>
                         <div class="section-label" style="margin-top:0;">Explore</div>
                         <div class="explore-links">
-                            <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes, properties, relationships</span></a>
+                            <a class="explore-link" href="/enrich/"><strong>Enrich IFC</strong><span>Add DPP data to IFC files</span></a>
+                            <a class="explore-link" href="/ontology"><strong>OWL Ontology</strong><span>Classes &amp; properties</span></a>
                             <a class="explore-link" href="/ontology/shacl"><strong>SHACL Shapes</strong><span>Validation constraints</span></a>
-                            <a class="explore-link" href="/docs#/Linked%20Data%20%26%20Ontology/validate_dpp_validate_post"><strong>Validator</strong><span>Check conformance</span></a>
                             <a class="explore-link" href="/docs"><strong>API Docs</strong><span>Swagger UI</span></a>
                         </div>
                     </div>
