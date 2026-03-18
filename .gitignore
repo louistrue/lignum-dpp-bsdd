@@ -6,3 +6,4 @@ tmp_new_dpp.json
 .DS_Store
 web/node_modules/
 public/enrich/
+public/emissions/
