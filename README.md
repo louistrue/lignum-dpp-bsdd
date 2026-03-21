@@ -2,7 +2,7 @@
 
 **A demonstration implementation of Digital Product Passports for construction products.**
 
-Proof-of-concept conforming to draft European standards prEN 18216--18223 and ISO 22057:2022, developed in the context of the [DPP Keystone](https://dpp-keystone.org/) initiative. All product properties are linked to the [buildingSMART Data Dictionary (bSDD)](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/) and identified using [GS1](https://www.gs1.org/standards/gs1-digital-link) identifiers.
+Proof-of-concept conforming to draft European standards prEN 18216--18223 and ISO 22057:2022, developed in the context of the [DPP Keystone](https://dpp-keystone.org/) initiative. Product properties are linked to the [buildingSMART Data Dictionary (bSDD)](https://www.buildingsmart.org/users/services/buildingsmart-data-dictionary/) and identified using [GS1](https://www.gs1.org/standards/gs1-digital-link) identifiers.
 
 > **Disclaimer:** This is a demonstration project. All product data is illustrative. The prEN standards are drafts under CEN enquiry and may change before final publication. This implementation is not affiliated with or endorsed by CEN, ISO, or the European Commission.
 
