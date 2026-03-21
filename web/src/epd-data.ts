@@ -76,35 +76,29 @@ interface JsonLdIndicator {
 }
 
 function extractIndicators(dpp: Record<string, unknown>): JsonLdIndicator[] {
-  const graph = (dpp as { '@graph'?: unknown[] })['@graph'];
-  if (!Array.isArray(graph)) return [];
-
   const results: JsonLdIndicator[] = [];
 
-  for (const node of graph) {
-    const n = node as Record<string, unknown>;
-    // Look for data element collections
-    const collections = n['dpp:dataElementCollections'] as unknown[] | undefined;
-    if (!Array.isArray(collections)) continue;
+  // Collections are at the root level (flat JSON-LD, not @graph)
+  const collections = dpp['dpp:dataElementCollections'] as unknown[] | undefined;
+  if (!Array.isArray(collections)) return [];
 
-    for (const coll of collections) {
-      const c = coll as Record<string, unknown>;
-      const elements = c['dpp:elements'] as unknown[] | undefined;
-      if (!Array.isArray(elements)) continue;
+  for (const coll of collections) {
+    const c = coll as Record<string, unknown>;
+    const elements = c['dpp:elements'] as unknown[] | undefined;
+    if (!Array.isArray(elements)) continue;
 
-      for (const elem of elements) {
-        const e = elem as Record<string, unknown>;
-        const val = e['dpp:value'];
-        if (!Array.isArray(val)) continue;
-        // Check if this is an indicator array
-        const first = val[0] as Record<string, unknown> | undefined;
-        if (!first || !('indicator' in first)) continue;
+    for (const elem of elements) {
+      const e = elem as Record<string, unknown>;
+      const val = e['dpp:value'];
+      if (!Array.isArray(val)) continue;
+      // Check if this is an indicator array
+      const first = val[0] as Record<string, unknown> | undefined;
+      if (!first || !('indicator' in first)) continue;
 
-        for (const item of val) {
-          const i = item as JsonLdIndicator;
-          if (i.indicator && i.module !== undefined && i.value !== undefined) {
-            results.push(i);
-          }
+      for (const item of val) {
+        const i = item as JsonLdIndicator;
+        if (i.indicator && i.module !== undefined && i.value !== undefined) {
+          results.push(i);
         }
       }
     }
