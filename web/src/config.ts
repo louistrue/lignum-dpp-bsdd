@@ -274,7 +274,7 @@ export const LCA_COMPONENTS: Record<string, LcaComponentConfig> = {
     indicators: [
       {
         indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
-        modules: { 'A1-A3': -615.0, 'A4': 4.12, 'A5': 5.75, 'C2': 1.37, 'C3': 686, 'C4': 0 },
+        modules: { 'A1-A3': -671, 'A4': 4.12, 'A5': 5.75, 'C2': 1.37, 'C3': 686, 'C4': 0 },
       },
       {
         indicator: 'AP', displayName: 'Acidification', unit: 'kg SO2e',

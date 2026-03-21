@@ -390,6 +390,30 @@ def render_dpp_as_html(dpp: Dict) -> str:
                 html += f'<div class="prop-row"><span class="prop-name">{esc(label)}</span><span class="prop-value">{esc(str(op[k]))}</span></div>'
         html += "</div></div>"
 
+    # EN 15804 indicator categories for proper table splitting
+    _LCIA_INDICATORS = {
+        "GWP-total", "GWP-fossil", "GWP-biogenic", "GWP-luluc",
+        "ODP", "AP", "EP", "EP-freshwater", "EP-marine", "EP-terrestrial",
+        "POCP", "ADPE", "ADPF",
+    }
+    _RESOURCE_USE_INDICATORS = {
+        "PERE", "PERM", "PERT", "PENRE", "PENRM", "PENRT",
+        "SM", "RSF", "NRSF", "FW",
+    }
+    _WASTE_OUTPUT_INDICATORS = {
+        "HWD", "NHWD", "RWD", "CRU", "MFR", "MER", "EEE", "EET",
+    }
+
+    def _render_indicator_table(rows, title):
+        if not rows:
+            return ""
+        t = f'<div class="card"><h4 style="margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;font-weight:600;">{esc(title)}</h4>'
+        t += '<table class="indicator-table"><thead><tr><th>Indicator</th><th>Module</th><th>Value</th><th>Unit</th></tr></thead><tbody>'
+        for ind in rows:
+            t += f'<tr><td>{esc(str(ind.get("indicator","")))}</td><td>{esc(str(ind.get("module","")))}</td><td>{esc(str(ind.get("value","")))}</td><td>{esc(str(ind.get("unit","")))}</td></tr>'
+        t += "</tbody></table></div>"
+        return t
+
     # Data Element Collections - render order: DoPC, EPD, Documents, Carrier, Classification
     # Skip #productProperties entirely (duplicates DoPC declared values)
     for collection in collections:
@@ -478,14 +502,22 @@ def render_dpp_as_html(dpp: Dict) -> str:
         # Render elements
         has_props = False
         for element in elements:
-            # Indicator table (EPD LCIA)
+            # Indicator tables — split per EN 15804: LCIA / Resource Use / Waste & Output
             if "dpp:value" in element and isinstance(element["dpp:value"], list):
                 items = element["dpp:value"]
                 if items and isinstance(items[0], dict) and "indicator" in items[0]:
-                    html += '<div class="card"><table class="indicator-table"><thead><tr><th>Indicator</th><th>Module</th><th>Value</th><th>Unit</th></tr></thead><tbody>'
-                    for ind in items:
-                        html += f'<tr><td>{esc(str(ind.get("indicator","")))}</td><td>{esc(str(ind.get("module","")))}</td><td>{esc(str(ind.get("value","")))}</td><td>{esc(str(ind.get("unit","")))}</td></tr>'
-                    html += "</tbody></table></div>"
+                    # Classify indicators into EN 15804 tables
+                    lcia_rows = [i for i in items if i.get("indicator", "") in _LCIA_INDICATORS]
+                    resource_rows = [i for i in items if i.get("indicator", "") in _RESOURCE_USE_INDICATORS]
+                    waste_rows = [i for i in items if i.get("indicator", "") in _WASTE_OUTPUT_INDICATORS]
+                    # Fallback: indicators not matching any category
+                    classified = _LCIA_INDICATORS | _RESOURCE_USE_INDICATORS | _WASTE_OUTPUT_INDICATORS
+                    other_rows = [i for i in items if i.get("indicator", "") not in classified]
+
+                    html += _render_indicator_table(lcia_rows, "Environmental Impact \u2014 LCIA Indicators (EN 15804 Table 3)")
+                    html += _render_indicator_table(resource_rows, "Resource Use \u2014 LCI Indicators (EN 15804 Table 4)")
+                    html += _render_indicator_table(waste_rows, "Waste & Output Flows (EN 15804 Table 5)")
+                    html += _render_indicator_table(other_rows, "Other Indicators")
                 continue
 
             # Single value property with optional bSDD link
