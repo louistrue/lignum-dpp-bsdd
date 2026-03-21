@@ -4,7 +4,7 @@ export default defineConfig({
   root: '.',
   base: '/enrich/',
   build: {
-    outDir: '../public/enrich',
+    outDir: '../api/static/enrich',
     emptyOutDir: true,
   },
 });

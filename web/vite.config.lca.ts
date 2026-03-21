@@ -5,7 +5,7 @@ export default defineConfig({
   root: '.',
   base: '/emissions/',
   build: {
-    outDir: '../public/emissions',
+    outDir: '../api/static/emissions',
     emptyOutDir: true,
     rollupOptions: {
       input: resolve(__dirname, 'lca.html'),
