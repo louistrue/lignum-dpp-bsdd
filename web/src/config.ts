@@ -242,26 +242,39 @@ export const LCA_COMPONENTS: Record<string, LcaComponentConfig> = {
     density: 85,
     referenceUnit: 'm3',
     referenceQuantity: 1,
+    // EN 15804+A2:2019 — EPD S-P-05678 (EPD International)
     indicators: [
       {
         indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
-        modules: { 'A1-A3': 7.20, 'A4': 0.152, 'A5': 0.048, 'C2': 0.030, 'C3': 0.019, 'C4': 0.010 },
+        modules: { 'A1-A3': 1.23, 'A4': 0.152, 'A5': 0.048, 'C2': 0.030, 'C3': 0.019, 'C4': 0.010, 'D': -0.178 },
       },
       {
-        indicator: 'AP', displayName: 'Acidification', unit: 'kg SO2e',
-        modules: { 'A1-A3': 0.005 },
+        indicator: 'AP', displayName: 'Acidification', unit: 'mol H+e',
+        modules: { 'A1-A3': 0.0045 },
       },
       {
-        indicator: 'EP', displayName: 'Eutrophication', unit: 'kg PO4e',
-        modules: { 'A1-A3': 0.002 },
+        indicator: 'EP-freshwater', displayName: 'Eutrophication (freshwater)', unit: 'kg PO4e',
+        modules: { 'A1-A3': 0.00012 },
+      },
+      {
+        indicator: 'EP-marine', displayName: 'Eutrophication (marine)', unit: 'kg Ne',
+        modules: { 'A1-A3': 0.0013 },
+      },
+      {
+        indicator: 'EP-terrestrial', displayName: 'Eutrophication (terrestrial)', unit: 'mol Ne',
+        modules: { 'A1-A3': 0.014 },
       },
       {
         indicator: 'ODP', displayName: 'Ozone Depletion', unit: 'kg CFC-11e',
-        modules: { 'A1-A3': 0.000001 },
+        modules: { 'A1-A3': 1.2e-08 },
+      },
+      {
+        indicator: 'POCP', displayName: 'Photochemical Ozone Creation', unit: 'kg NMVOCe',
+        modules: { 'A1-A3': 0.0038 },
       },
       {
         indicator: 'PENRT', displayName: 'Primary Energy (non-renewable)', unit: 'MJ',
-        modules: { 'A1-A3': 85.0 },
+        modules: { 'A1-A3': 18.7 },
       },
     ],
   },
@@ -271,6 +284,7 @@ export const LCA_COMPONENTS: Record<string, LcaComponentConfig> = {
     density: 410,
     referenceUnit: 'm3',
     referenceQuantity: 1,
+    // EN 15804:2012+A1:2013 — EPD-SCH-20130123-IBC1-DE (IBU)
     indicators: [
       {
         indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
@@ -285,8 +299,20 @@ export const LCA_COMPONENTS: Record<string, LcaComponentConfig> = {
         modules: { 'A1-A3': 0.135 },
       },
       {
+        indicator: 'POCP', displayName: 'Photochemical Ozone Creation', unit: 'kg C2H4e',
+        modules: { 'A1-A3': 0.0684 },
+      },
+      {
         indicator: 'ODP', displayName: 'Ozone Depletion', unit: 'kg CFC-11e',
-        modules: { 'A1-A3': 0.00000214 },
+        modules: { 'A1-A3': 2.14e-06 },
+      },
+      {
+        indicator: 'ADPE', displayName: 'Abiotic Depletion (elements)', unit: 'kg Sbe',
+        modules: { 'A1-A3': 0.00321 },
+      },
+      {
+        indicator: 'ADPF', displayName: 'Abiotic Depletion (fossil)', unit: 'MJ',
+        modules: { 'A1-A3': 2170 },
       },
       {
         indicator: 'PENRT', displayName: 'Primary Energy (non-renewable)', unit: 'MJ',
@@ -301,26 +327,47 @@ export const LCA_COMPONENTS: Record<string, LcaComponentConfig> = {
     referenceUnit: 'm',
     referenceQuantity: 1,
     linearDensity: 1.58,
+    // EN 15804+A2:2019 — EPD NEPD-3589-2252-EN (EPD Norge)
     indicators: [
       {
         indicator: 'GWP-total', displayName: 'Global Warming Potential', unit: 'kg CO2e',
-        modules: { 'A1-A3': 2.85, 'A4': 0.060, 'A5': 0.047, 'C1': 0.010, 'C2': 0.020, 'C3': 0.142, 'C4': 0.045 },
+        modules: { 'A1-A3': 2.35, 'A4': 0.060, 'A5': 0.047, 'C1': 0.010, 'C2': 0.020, 'C3': 0.142, 'C4': 0.045, 'D': -0.824 },
       },
       {
-        indicator: 'AP', displayName: 'Acidification', unit: 'kg SO2e',
-        modules: { 'A1-A3': 0.012 },
+        indicator: 'AP', displayName: 'Acidification', unit: 'mol H+e',
+        modules: { 'A1-A3': 0.00593 },
       },
       {
-        indicator: 'EP', displayName: 'Eutrophication', unit: 'kg PO4e',
-        modules: { 'A1-A3': 0.0015 },
+        indicator: 'EP-freshwater', displayName: 'Eutrophication (freshwater)', unit: 'kg Pe',
+        modules: { 'A1-A3': 0.000129 },
+      },
+      {
+        indicator: 'EP-marine', displayName: 'Eutrophication (marine)', unit: 'kg Ne',
+        modules: { 'A1-A3': 0.00167 },
+      },
+      {
+        indicator: 'EP-terrestrial', displayName: 'Eutrophication (terrestrial)', unit: 'mol Ne',
+        modules: { 'A1-A3': 0.0184 },
       },
       {
         indicator: 'ODP', displayName: 'Ozone Depletion', unit: 'kg CFC-11e',
-        modules: { 'A1-A3': 0.0000012 },
+        modules: { 'A1-A3': 4.89e-08 },
+      },
+      {
+        indicator: 'POCP', displayName: 'Photochemical Ozone Creation', unit: 'kg NMVOCe',
+        modules: { 'A1-A3': 0.00481 },
+      },
+      {
+        indicator: 'ADPE', displayName: 'Abiotic Depletion (elements)', unit: 'kg Sbe',
+        modules: { 'A1-A3': 1.31e-05 },
+      },
+      {
+        indicator: 'ADPF', displayName: 'Abiotic Depletion (fossil)', unit: 'MJ',
+        modules: { 'A1-A3': 42.8 },
       },
       {
         indicator: 'PENRT', displayName: 'Primary Energy (non-renewable)', unit: 'MJ',
-        modules: { 'A1-A3': 120.0 },
+        modules: { 'A1-A3': 63.7 },
       },
     ],
   },

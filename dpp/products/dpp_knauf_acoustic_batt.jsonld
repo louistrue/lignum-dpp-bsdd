@@ -490,6 +490,54 @@
                             "module": "A1-A3",
                             "value": 0.025,
                             "unit": "m³"
+                        },
+                        {
+                            "indicator": "HWD",
+                            "module": "A1-A3",
+                            "value": 0.000012,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "NHWD",
+                            "module": "A1-A3",
+                            "value": 0.45,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "RWD",
+                            "module": "A1-A3",
+                            "value": 0.000008,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "CRU",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "MFR",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "MER",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "kg"
+                        },
+                        {
+                            "indicator": "EEE",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
+                        },
+                        {
+                            "indicator": "EET",
+                            "module": "A1-A3",
+                            "value": 0,
+                            "unit": "MJ"
                         }
                     ]
                 }
