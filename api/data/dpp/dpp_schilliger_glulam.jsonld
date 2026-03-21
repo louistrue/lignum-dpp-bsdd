@@ -156,7 +156,7 @@
             "dcterms:title": "Environmental Product Declaration",
             "dpp:labelSet": [
                 "EPD",
-                "EN15804+A2",
+                "EN15804+A1",
                 "ISO22057"
             ],
             "dpp:elements": [
@@ -199,8 +199,7 @@
                             "C1",
                             "C2",
                             "C3",
-                            "C4",
-                            "D"
+                            "C4"
                         ],
                         "allocationCompliesWithPCR": true,
                         "genericLCASourceUsed": false,

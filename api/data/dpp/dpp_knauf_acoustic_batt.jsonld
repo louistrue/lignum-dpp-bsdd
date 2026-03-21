@@ -247,7 +247,7 @@
                     "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/FireRating",
                     "dpp:valueElement": {
                         "type": "dpp:ValueElement",
-                        "dpp:textValue": "A1",
+                        "dpp:textValue": "A2-s1,d0",
                         "dpp:unit": "-"
                     },
                     "dpp:wasDerivedFrom": {
@@ -370,7 +370,7 @@
                             "indicator": "EP-freshwater",
                             "module": "A1-A3",
                             "value": 0.00012,
-                            "unit": "kg PO4e"
+                            "unit": "kg P eq"
                         },
                         {
                             "indicator": "EP-marine",
@@ -573,7 +573,7 @@
                     "dpp:dictionaryReference": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/FireRating",
                     "dpp:valueElement": {
                         "type": "dpp:ValueElement",
-                        "dpp:textValue": "A1",
+                        "dpp:textValue": "A2-s1,d0",
                         "dpp:unit": "-"
                     },
                     "dpp:wasDerivedFrom": {

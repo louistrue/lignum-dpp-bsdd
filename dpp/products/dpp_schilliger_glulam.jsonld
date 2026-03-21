@@ -156,7 +156,7 @@
             "dcterms:title": "Environmental Product Declaration",
             "dpp:labelSet": [
                 "EPD",
-                "EN15804+A2",
+                "EN15804+A1",
                 "ISO22057"
             ],
             "dpp:elements": [
@@ -184,9 +184,19 @@
                         "corePCR": "EN 15804:2012+A1:2013",
                         "subCategoryPCR": "Solid wood products",
                         "informationModulesReported": [
-                            "A1-A3",
+                            "A1",
+                            "A2",
+                            "A3",
                             "A4",
                             "A5",
+                            "B1",
+                            "B2",
+                            "B3",
+                            "B4",
+                            "B5",
+                            "B6",
+                            "B7",
+                            "C1",
                             "C2",
                             "C3",
                             "C4"
