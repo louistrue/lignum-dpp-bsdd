@@ -26,23 +26,41 @@ function stepStr(s: string): string {
   return "'" + s.replace(/'/g, "''") + "'";
 }
 
+/** Format a number as a valid STEP REAL token.
+ *  STEP requires uppercase 'E' for scientific notation and a decimal point
+ *  in the mantissa (e.g. 8.E-7, not 8e-7). */
+function stepReal(n: number): string {
+  let s = String(n);
+  // Uppercase the exponent marker
+  s = s.replace('e', 'E');
+  if (s.includes('E')) {
+    const [mantissa, exp] = s.split('E');
+    // Ensure mantissa has a decimal point
+    const m = mantissa.includes('.') ? mantissa : mantissa + '.';
+    return m + 'E' + exp;
+  }
+  // For non-scientific notation, ensure a decimal point exists
+  if (!s.includes('.')) s += '.';
+  return s;
+}
+
 /** Determine IFC measure type from unit string */
 function ifcMeasure(value: string, unit: string): string {
   const v = value.trim();
   const u = unit.trim().toLowerCase().replace(/²/g, '2').replace(/³/g, '3').replace(/·/g, '/');
   const isNum = !isNaN(parseFloat(v));
 
-  if ((u === 'w/mk' || u === 'w/m/k') && isNum) return `IFCTHERMALCONDUCTIVITYMEASURE(${parseFloat(v)})`;
-  if ((u === 'kg/m3' || u === 'kg/m^3') && isNum) return `IFCMASSDENSITYMEASURE(${parseFloat(v)})`;
-  if ((u === 'mm' || u === 'm') && isNum) return `IFCPOSITIVELENGTHMEASURE(${parseFloat(v)})`;
-  if (u === 'mpa' && isNum) return `IFCPRESSUREMEASURE(${parseFloat(v)})`;
+  if ((u === 'w/mk' || u === 'w/m/k') && isNum) return `IFCTHERMALCONDUCTIVITYMEASURE(${stepReal(parseFloat(v))})`;
+  if ((u === 'kg/m3' || u === 'kg/m^3') && isNum) return `IFCMASSDENSITYMEASURE(${stepReal(parseFloat(v))})`;
+  if ((u === 'mm' || u === 'm') && isNum) return `IFCPOSITIVELENGTHMEASURE(${stepReal(parseFloat(v))})`;
+  if (u === 'mpa' && isNum) return `IFCPRESSUREMEASURE(${stepReal(parseFloat(v))})`;
 
   // EPD units → IfcReal
   const epdUnits = ['kgco2e', 'kgso2e', 'kgcfc-11e', 'kgpo4e', 'mj', 'kj', 'kpa', 'kn/m2',
     'kpa/s/m2', 'kpas/m2', '%', '%-', 'm2k/w', 'bar'];
-  if (epdUnits.includes(u.replace(/ /g, '')) && isNum) return `IFCREAL(${parseFloat(v)})`;
+  if (epdUnits.includes(u.replace(/ /g, '')) && isNum) return `IFCREAL(${stepReal(parseFloat(v))})`;
 
-  if ((u === '-' || u === '') && isNum) return `IFCREAL(${parseFloat(v)})`;
+  if ((u === '-' || u === '') && isNum) return `IFCREAL(${stepReal(parseFloat(v))})`;
 
   // Text value
   return `IFCLABEL(${stepStr(v)})`;
