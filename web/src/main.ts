@@ -35,6 +35,7 @@ const resultsMatchTable = $('#results-match-table');
 const downloadBtn = $('#download-btn');
 const emissionsBtn = $('#emissions-btn');
 const restartBtn = $('#restart-btn');
+const sampleBtn = $('#sample-btn');
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -134,6 +135,27 @@ dropzone.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => {
   const file = fileInput.files?.[0];
   if (file) handleFile(file);
+});
+
+sampleBtn.addEventListener('click', async () => {
+  sampleBtn.disabled = true;
+  sampleBtn.textContent = 'Loading sample…';
+  try {
+    const resp = await fetch(import.meta.env.BASE_URL + 'samples/POC_QTO.ifc');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const blob = await resp.blob();
+    const file = new File([blob], 'POC_QTO.ifc', { type: 'application/octet-stream' });
+    handleFile(file);
+  } catch (err) {
+    sampleBtn.textContent = 'Failed to load sample';
+    setTimeout(() => {
+      sampleBtn.disabled = false;
+      sampleBtn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Use Sample Model
+        <span class="sample-hint">POC_QTO.ifc — timber frame building</span>`;
+    }, 2000);
+  }
 });
 
 clearBtn.addEventListener('click', () => {

@@ -182,6 +182,61 @@ h1 {
 }
 .file-label { color: var(--oak); cursor: pointer; text-decoration: underline; font-weight: 500; }
 
+/* ── Sample model button ── */
+.dropzone-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.dropzone-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.dropzone-divider-text {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.btn-sample {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--oak);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.btn-sample:hover {
+  border-color: var(--oak-muted);
+  background: var(--border-light);
+  color: var(--ink-soft);
+}
+.btn-sample:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-sample svg {
+  color: var(--oak-muted);
+  flex-shrink: 0;
+}
+.sample-hint {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
 /* ── File info bar ── */
 .file-info {
   display: flex;
