@@ -558,3 +558,56 @@ footer .sep { margin: 0 8px; color: var(--border); }
   color: var(--ink-soft);
 }
 .btn-sm:hover { border-color: var(--oak-muted); color: var(--ink); }
+
+/* ── Responsive / Mobile ── */
+@media (max-width: 640px) {
+  main { padding: 0 16px 48px; }
+
+  .hero { padding: 28px 0 16px; }
+  h1 { font-size: 22px; }
+  .subtitle { font-size: 13px; }
+
+  /* Stepper: hide connector lines, show as compact row */
+  .steps { gap: 4px; padding: 16px 0 20px; }
+  .step-line { margin: 0 4px; }
+  .step-label { font-size: 11px; }
+  .step-num { width: 24px; height: 24px; font-size: 11px; }
+  .step { gap: 4px; }
+
+  /* Chips */
+  .chip { font-size: 10px; padding: 3px 8px; }
+
+  /* Dropzone */
+  .dropzone { padding: 36px 16px; }
+
+  /* Stats grid: 3 columns on mobile instead of 6 */
+  .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-value { font-size: 18px; }
+  .stat-card { padding: 10px 8px; }
+
+  /* Tables: horizontal scroll */
+  .match-table, .breakdown-table { display: block; overflow-x: auto; }
+
+  /* File info bar */
+  .file-info { flex-direction: column; align-items: flex-start; gap: 8px; font-size: 13px; }
+
+  /* Results actions */
+  .results-actions { flex-direction: column; gap: 10px; }
+
+  /* Buttons */
+  .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+  .btn-download { font-size: 15px; padding: 12px 24px; }
+
+  /* LCA actions */
+  .lca-actions { flex-direction: column; }
+  .lca-actions .btn-sm { width: 100%; justify-content: center; }
+
+  /* Footer */
+  footer { margin-top: 28px; }
+}
+
+@media (max-width: 400px) {
+  .steps { flex-wrap: wrap; justify-content: center; gap: 2px; }
+  .step-line { display: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
