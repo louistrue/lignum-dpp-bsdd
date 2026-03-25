@@ -137,6 +137,13 @@ fileInput.addEventListener('change', () => {
   if (file) handleFile(file);
 });
 
+const sampleBtnHTML = sampleBtn.innerHTML;
+
+function resetSampleBtn() {
+  sampleBtn.disabled = false;
+  sampleBtn.innerHTML = sampleBtnHTML;
+}
+
 sampleBtn.addEventListener('click', async () => {
   sampleBtn.disabled = true;
   sampleBtn.textContent = 'Loading sample…';
@@ -146,15 +153,10 @@ sampleBtn.addEventListener('click', async () => {
     const blob = await resp.blob();
     const file = new File([blob], 'POC_QTO.ifc', { type: 'application/octet-stream' });
     handleFile(file);
+    resetSampleBtn();
   } catch (err) {
     sampleBtn.textContent = 'Failed to load sample';
-    setTimeout(() => {
-      sampleBtn.disabled = false;
-      sampleBtn.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Use Sample Model
-        <span class="sample-hint">POC_QTO.ifc — timber frame building</span>`;
-    }, 2000);
+    setTimeout(resetSampleBtn, 2000);
   }
 });
 
@@ -162,6 +164,7 @@ clearBtn.addEventListener('click', () => {
   currentFile = null;
   enrichedBlob = null;
   fileInput.value = '';
+  resetSampleBtn();
   setStep(1);
 });
 
@@ -271,5 +274,6 @@ restartBtn.addEventListener('click', () => {
   progressFill.style.width = '0%';
   progressFill.style.background = '';
   progressFill.classList.remove('indeterminate');
+  resetSampleBtn();
   setStep(1);
 });
