@@ -35,7 +35,7 @@ const resultsMatchTable = $('#results-match-table');
 const downloadBtn = $('#download-btn');
 const emissionsBtn = $('#emissions-btn');
 const restartBtn = $('#restart-btn');
-const sampleBtn = $('#sample-btn');
+const sampleBtn = $<HTMLButtonElement>('#sample-btn');
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
