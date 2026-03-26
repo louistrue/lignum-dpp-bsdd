@@ -35,6 +35,7 @@ const resultsMatchTable = $('#results-match-table');
 const downloadBtn = $('#download-btn');
 const emissionsBtn = $('#emissions-btn');
 const restartBtn = $('#restart-btn');
+const sampleBtn = $<HTMLButtonElement>('#sample-btn');
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -136,10 +137,34 @@ fileInput.addEventListener('change', () => {
   if (file) handleFile(file);
 });
 
+const sampleBtnHTML = sampleBtn.innerHTML;
+
+function resetSampleBtn() {
+  sampleBtn.disabled = false;
+  sampleBtn.innerHTML = sampleBtnHTML;
+}
+
+sampleBtn.addEventListener('click', async () => {
+  sampleBtn.disabled = true;
+  sampleBtn.textContent = 'Loading sample…';
+  try {
+    const resp = await fetch(import.meta.env.BASE_URL + 'samples/POC_QTO.ifc');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const blob = await resp.blob();
+    const file = new File([blob], 'POC_QTO.ifc', { type: 'application/octet-stream' });
+    handleFile(file);
+    resetSampleBtn();
+  } catch (err) {
+    sampleBtn.textContent = 'Failed to load sample';
+    setTimeout(resetSampleBtn, 2000);
+  }
+});
+
 clearBtn.addEventListener('click', () => {
   currentFile = null;
   enrichedBlob = null;
   fileInput.value = '';
+  resetSampleBtn();
   setStep(1);
 });
 
@@ -249,5 +274,6 @@ restartBtn.addEventListener('click', () => {
   progressFill.style.width = '0%';
   progressFill.style.background = '';
   progressFill.classList.remove('indeterminate');
+  resetSampleBtn();
   setStep(1);
 });
